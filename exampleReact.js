@@ -3,8 +3,8 @@ var ReactDOM = require('react-dom');
 var d3 = require('d3');
 var _ = require('lodash');
 
-var genetree = require('./genetree.json');
-var gene = require('./gene.json');
+var genetree = require('./fixtures/genetree.json');
+var gene = require('./fixtures/gene.json');
 
 var m = [20, 120, 20, 120],
   w = 480 - m[1] - m[3],

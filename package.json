@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "d3": "^3.5.14",
+    "gramene-trees-client": "^2.3.1",
     "lodash": "^4.2.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
