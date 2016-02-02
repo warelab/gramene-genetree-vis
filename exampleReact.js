@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var d3 = require('d3');
+var _ = require('lodash');
 
 var genetree = require('./genetree.json');
 var gene = require('./gene.json');
@@ -183,7 +184,10 @@ var Node = React.createClass({
     nodeEnter.select("circle")
       .attr("r", 3)
       .style("opacity", function(d) {
-        return d.node.node_type || hovered || d.gene._id === d.node.gene_stable_id ? 1 : 0;
+        var opaque = hovered ||
+          d.gene._id === d.node.gene_stable_id ||
+          _.includes(_.get(d.gene, 'homology.within_species_paralog'), d.node.gene_stable_id);
+        return opaque ? 1 : 0;
       })
       .style("fill", fillColor);
 
@@ -194,8 +198,10 @@ var Node = React.createClass({
       })
       .attr("dy", ".35em")
       .attr("text-anchor", function (d) { return d.node.children || d.node._children ? "end" : "start"; })
-      .text(function (d) { return d.node.gene_stable_id || ''; })
-      .style("fill-opacity", hovered ? 1 : 0);
+      .text(function (d) { return d.node.gene_display_label || d.node.gene_stable_id || ''; })
+      .style("fill-opacity", function(d) {
+        return hovered || d.gene._id === d.node.gene_stable_id ? 1 : 0;
+      });
   }
 });
 
