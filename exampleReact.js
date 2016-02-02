@@ -3,19 +3,47 @@ var ReactDOM = require('react-dom');
 var d3 = require('d3');
 
 var genetree = require('./genetree.json');
+var gene = require('./gene.json');
 
 var m = [20, 120, 20, 120],
-  w = 1280 - m[1] - m[3],
+  w = 480 - m[1] - m[3],
   h = 800 - m[0] - m[2];
 
 var x0 = h / 2;
 var y0 = 0;
 
+function scaleBranchLengths(nodes, w) {
+  // Visit all nodes and adjust y pos width distance metric
+  var visitPreOrder = function (root, callback) {
+    callback(root);
+    if (root.children) {
+      for (var i = root.children.length - 1; i >= 0; i--) {
+        visitPreOrder(root.children[i], callback)
+      }
+    }
+  };
+  visitPreOrder(nodes[0], function (node) {
+    node.rootDist = (node.parent ? node.parent.rootDist : 0) + Math.max(node.distance_to_parent, 0.02)
+  });
+  var rootDists = nodes.map(function (n) { return n.rootDist; });
+  var yscale = d3.scale.linear()
+    .domain([0, d3.max(rootDists)])
+    .range([0, w]);
+  var xscale = d3.scale.linear()
+    .domain([nodes[0].left_index, nodes[0].right_index])
+    .range([0, h]);
+  visitPreOrder(nodes[0], function (node) {
+    node.x = xscale((node.left_index + node.right_index) / 2);
+    node.y = yscale(node.rootDist);
+  });
+  return yscale;
+}
+
 function transformNode(d) {
   var x, y;
-  if (d.x) {
-    x = d.x;
-    y = d.y;
+  if (d.node.x) {
+    x = d.node.x;
+    y = d.node.y;
   }
   else {
     x = x0;
@@ -35,16 +63,20 @@ var Tree = React.createClass({
   render: function () {
     var nodes, nodeComponents, edgeComponents;
     // Compute the new tree layout.
-    nodes = this.tree.nodes(this.props.data).reverse();
+    nodes = this.tree.nodes(this.props.data);
+
+    scaleBranchLengths(nodes, w);
+
+    //nodes = nodes.reverse();
 
     nodeComponents = nodes.map(function (node, idx) {
-        node.id = idx;
-        return <Node key={node.id} node={node}/>;
-      });
+      node.id = 'Node' + idx;
+      return <Node key={node.id} node={node} gene={gene}/>;
+    });
 
     edgeComponents = nodes.filter(function (n) { return n.parent })
-      .map(function (node) {
-        return <Edge key={node.id} source={node} target={node.parent}/>
+      .map(function (node, idx) {
+        return <Edge key={node.id} source={node} target={node.parent} gene={gene}/>
       });
 
     return (
@@ -62,7 +94,13 @@ var Tree = React.createClass({
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired
+    node: React.PropTypes.object.isRequired,
+    gene: React.PropTypes.object
+  },
+  getInitialState: function () {
+    return {
+      hovered: false
+    }
   },
   componentWillMount: function () {
     var n = this.props.node;
@@ -73,17 +111,33 @@ var Node = React.createClass({
   componentDidMount: function () {
     this.d3El = d3.select(ReactDOM.findDOMNode(this));
     this.d3El
-      .datum(this.props.node)
+      .datum(this.props)
       .call(this.update);
   },
   componentDidUpdate: function () {
     this.d3El
-      .datum(this.props.node)
+      .datum(this.props)
       .call(this.update);
+  },
+
+
+  hover: function () {
+    console.log('hover', this.props);
+    this.setState({hovered: true});
+  },
+
+  unhover: function () {
+    console.log('unhover', this.props);
+    this.setState({hovered: false});
   },
   render: function () {
     return (
-      <g className="node" id={this.props.node.id} onClick={this.handleClick}>
+      <g className="node"
+         id={this.props.node.id}
+         onClick={this.handleClick}
+         onMouseOver={this.hover}
+         onMouseOut={this.unhover}
+      >
         <circle />
         <text />
       </g>
@@ -91,8 +145,34 @@ var Node = React.createClass({
   },
 
   update: function (selection) {
+    var hovered, fillColor, nodeEnter;
+    hovered = this.state.hovered;
+
+    fillColor = function(d) {
+      var result = '#fff';
+
+      if(d.node.node_type) {
+        switch(d.node.node_type) {
+          case 'speciation':
+            result = 'red';
+            break;
+          case "duplication":
+            result = 'blue';
+            break;
+          default:
+            result = 'grey';
+        }
+      }
+
+      if(d.node.gene_stable_id === d.gene._id) {
+        result = 'red';
+      }
+
+      return result;
+    };
+
     // Enter any new nodes at the parent's previous position.
-    var nodeEnter = selection
+    nodeEnter = selection
       .attr("class", "node")
       .attr("transform", transformNode)
       .on("click", function (d) {
@@ -101,34 +181,58 @@ var Node = React.createClass({
       });
 
     nodeEnter.select("circle")
-      .attr("r", 4.5)
-      .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; });
+      .attr("r", 3)
+      .style("opacity", function(d) {
+        return d.node.node_type || hovered || d.gene._id === d.node.gene_stable_id ? 1 : 0;
+      })
+      .style("fill", fillColor);
+
 
     nodeEnter.select("text")
       .attr("x", function (d) {
-        return d.children || d._children ? -10 : 10;
+        return d.node.children || d.node._children ? -10 : 10;
       })
       .attr("dy", ".35em")
-      .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
-      .text(function (d) { return d.node_type || d.gene_stable_id; })
-      .style("fill-opacity", 1);
+      .attr("text-anchor", function (d) { return d.node.children || d.node._children ? "end" : "start"; })
+      .text(function (d) { return d.node.gene_stable_id || ''; })
+      .style("fill-opacity", hovered ? 1 : 0);
   }
 });
 
 var Edge = React.createClass({
-  diagonal: function (d) {
-    var y = (!d.target.children || d.target.children.length == 0)
-      ? 0
-      : d.target.y;
+  diagonal: (function () {
+    var projection = function (d) { return [d.y, d.x]; }
 
-    return "M" + d.source.y + ',' + d.source.x +
-      'L' + d.source.y + ',' + d.target.x +
-      'L' + y + ',' + d.target.x
-      ;
-  },
+    var path = function (pathData) {
+      return "M" + pathData[0] + ' ' + pathData[1] + " " + pathData[2];
+    };
+
+    function diagonal(diagonalPath, i) {
+      var source = diagonalPath.source,
+        target = diagonalPath.target,
+        pathData = [source, {x: source.x, y: target.y}, target];
+      pathData = pathData.map(projection);
+      return path(pathData)
+    }
+
+    diagonal.projection = function (x) {
+      if (!arguments.length) return projection;
+      projection = x;
+      return diagonal;
+    };
+
+    diagonal.path = function (x) {
+      if (!arguments.length) return path;
+      path = x;
+      return diagonal;
+    };
+
+    return diagonal;
+  })(),
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired  // parent
+    target: React.PropTypes.object.isRequired,  // parent
+    gene: React.PropTypes.object
   },
   componentDidMount: function () {
     this.d3El = d3.select(ReactDOM.findDOMNode(this));
@@ -146,9 +250,17 @@ var Edge = React.createClass({
     selection.attr("d", this.diagonal);
   },
 
+  hover: function () {
+    console.log('hover', this.props);
+  },
+
+  unhover: function () {
+    console.log('unhover', this.props);
+  },
+
   render: function () {
     return (
-      <path className="link" />
+      <path className="link" onMouseOver={this.hover} onMouseOut={this.unhover}/>
     )
   }
 });
