@@ -2,6 +2,9 @@ var React = require('react');
 var d3 = require('d3');
 var _ = require('lodash');
 
+var Edge = require('./Edge.jsx');
+var Node = require('./Node.jsx');
+
 var GeneTree = React.createClass({
   propTypes: {
     width: React.PropTypes.number.isRequired,
@@ -18,7 +21,7 @@ var GeneTree = React.createClass({
     // Compute the new tree layout.
     nodes = this.tree.nodes(this.props.genetree);
 
-    scaleBranchLengths(nodes, this.props.width);
+    scaleBranchLengths(nodes, this.props.width, this.props.height);
 
     nodeComponents = nodes.map(function (node, idx) {
       node.id = 'Node' + idx;
@@ -49,7 +52,7 @@ var GeneTree = React.createClass({
 
 module.exports = GeneTree;
 
-function scaleBranchLengths(nodes, w) {
+function scaleBranchLengths(nodes, w, h) {
   // Visit all nodes and adjust y pos width distance metric
   var visitPreOrder = function (root, callback) {
     callback(root);
@@ -60,17 +63,18 @@ function scaleBranchLengths(nodes, w) {
     }
   };
   visitPreOrder(nodes[0], function (node) {
-    node.root_dist = (node.parent ? node.parent.root_dist : 0) + Math.max(node.distance_to_parent, 0.02)
+    node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0)
+    console.log(node, Math.max(node.model.distance_to_parent, 0.02));
   });
   var rootDists = nodes.map(function (n) { return n.root_dist; });
   var yscale = d3.scale.linear()
     .domain([0, d3.max(rootDists)])
     .range([0, w]);
   var xscale = d3.scale.linear()
-    .domain([nodes[0].left_index, nodes[0].right_index])
+    .domain([nodes[0].model.left_index, nodes[0].model.right_index])
     .range([0, h]);
   visitPreOrder(nodes[0], function (node) {
-    node.x = xscale((node.left_index + node.right_index) / 2);
+    node.x = xscale((node.model.left_index + node.model.right_index) / 2);
     node.y = yscale(node.root_dist);
   });
   return yscale;

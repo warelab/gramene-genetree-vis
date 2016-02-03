@@ -1,3 +1,4 @@
+var React = require('react');
 var ReactDOM = require('react-dom');
 var GeneTree = require('./src/components/GeneTree.jsx');
 
@@ -9,6 +10,9 @@ var GrameneTrees = require('gramene-trees-client');
 var exampleGenetree = GrameneTrees.genetree.tree(genetreeFixture);
 
 ReactDOM.render(
-  <GeneTree genetree={exampleGenetree} width="480" height="800" />,
+  <GeneTree genetree={exampleGenetree}
+            geneOfInterest={geneFixture}
+            width={480}
+            height={800} />,
   document.getElementById('tree')
 );
