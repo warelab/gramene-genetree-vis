@@ -36,7 +36,7 @@ var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
     target: React.PropTypes.object.isRequired,  // parent
-    gene: React.PropTypes.object
+    geneOfInterest: React.PropTypes.object
   },
   componentDidMount: function () {
     this.d3El = d3.select(ReactDOM.findDOMNode(this));

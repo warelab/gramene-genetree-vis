@@ -7,7 +7,7 @@ var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    gene: React.PropTypes.object
+    geneOfInterest: React.PropTypes.object
   },
   getInitialState: function () {
     return {
@@ -76,7 +76,7 @@ var Node = React.createClass({
         }
       }
 
-      if(d.node.model.gene_stable_id === d.gene._id) {
+      if(d.node.model.gene_stable_id === d.geneOfInterest._id) {
         result = 'red';
       }
 
@@ -96,8 +96,8 @@ var Node = React.createClass({
       .attr("r", 3)
       .style("opacity", function(d) {
         var opaque = hovered ||
-          d.gene._id === d.node.model.gene_stable_id ||
-          _.includes(_.get(d.gene, 'homology.within_species_paralog'), d.node.model.gene_stable_id);
+          d.geneOfInterest._id === d.node.model.gene_stable_id ||
+          _.includes(_.get(d.geneOfInterest, 'homology.within_species_paralog'), d.node.model.gene_stable_id);
         return opaque ? 1 : 0;
       })
       .style("fill", fillColor);
@@ -111,7 +111,7 @@ var Node = React.createClass({
       .attr("text-anchor", function (d) { return d.node.children || d.node._children ? "end" : "start"; })
       .text(function (d) { return d.node.model.gene_display_label || d.node.model.gene_stable_id || ''; })
       .style("fill-opacity", function(d) {
-        return hovered || d.gene._id === d.node.model.gene_stable_id ? 1 : 0;
+        return hovered || d.geneOfInterest._id === d.node.model.gene_stable_id ? 1 : 0;
       });
   }
 });
