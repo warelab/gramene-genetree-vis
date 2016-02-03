@@ -13,7 +13,7 @@ ReactDOM.render(
   <TreeVis genetree={exampleGenetree}
            geneOfInterest={geneFixture}
            taxonomy={taxonomy}
-           width={480}
+           width={600}
            height={800}/>,
   document.getElementById('tree')
 );

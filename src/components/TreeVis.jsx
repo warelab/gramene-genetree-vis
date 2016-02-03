@@ -44,7 +44,7 @@ var TreeVis = React.createClass({
   layoutNodes: function layoutNodes(nodes) {
     var w, h, visitPreOrder, rootDists, xscale, yscale;
 
-    w = this.props.width;
+    w = this.props.width / 2;
     h = this.props.height;
 
     // Visit all nodes and adjust y pos width distance metric
@@ -100,7 +100,7 @@ var TreeVis = React.createClass({
   },
   addTaxonDistanceInformationToNodes: function (nodes) {
     var theGeneTaxonId, theTaxonNode, theTaxonPath,
-      theTaxonPathIds, taxonomy, relationLUT, lcaLUT;
+      theTaxonPathIds, taxonomy, relationLUT, distances, maxima;
 
     theGeneTaxonId = _.get(this.props, 'geneOfInterest.taxon_id');
     taxonomy = this.props.taxonomy;
@@ -110,6 +110,10 @@ var TreeVis = React.createClass({
       theTaxonPath = theTaxonNode.getPath();
       theTaxonPathIds = _.keyBy(theTaxonPath, 'model.id');
       relationLUT = {};
+      maxima = {
+        lcaDistance: 0,
+        pathDistance: 0
+      };
 
       _.forEach(nodes, function (node) {
         var nodeTaxonId, nodeTaxon, pathDistance, lcaDistance, lca;
@@ -137,12 +141,20 @@ var TreeVis = React.createClass({
             lcaDistance = theTaxonPath.length - _.indexOf(theTaxonPath, lca) - 1;
           }
 
-          relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = {
+          distances = {
             lcaDistance: lcaDistance,
-            pathDistance: pathDistance
-          }
+            pathDistance: pathDistance,
+            maxima: maxima
+          };
+          
+          maxima.lcaDistance = Math.max(maxima.lcaDistance, distances.lcaDistance);
+          maxima.pathDistance = Math.max(maxima.pathDistance, distances.pathDistance);
+          
+          relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = distances;
         }
       });
+
+      
     }
   }
 });
