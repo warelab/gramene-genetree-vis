@@ -58,8 +58,7 @@ var TreeVis = React.createClass({
       }
     };
     visitPreOrder(nodes[0], function (node) {
-      node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0)
-      console.log(node, Math.max(node.model.distance_to_parent, 0.02));
+      node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0);
     });
     rootDists = nodes.map(function (n) { return n.root_dist; });
     yscale = d3.scale.linear()
