@@ -6,7 +6,13 @@ var Node = require('./Node.jsx');
 
 var GeneTree = React.createClass({
   propTypes: {
-    nodes: React.PropTypes.array.isRequired
+    nodes: React.PropTypes.array.isRequired,
+    onGeneSelect: React.PropTypes.func.isRequired
+  },
+  handleNodeSelect: function(node) {
+    if(node.model.gene_stable_id) {
+      this.props.onGeneSelect(node.model.gene_stable_id);
+    }
   },
   render: function () {
     var nodes, nodeComponents, edgeComponents;
@@ -16,7 +22,9 @@ var GeneTree = React.createClass({
     nodeComponents = nodes.map(function (node, idx) {
       node.id = 'Node' + idx;
       return <Node key={node.id}
-                   node={node} />;
+                   node={node}
+                   onSelect={this.handleNodeSelect}
+              />;
     }.bind(this));
 
     edgeComponents = nodes.filter(function (n) { return n.parent })

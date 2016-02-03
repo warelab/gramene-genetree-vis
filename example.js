@@ -11,7 +11,7 @@ var taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
 ReactDOM.render(
   <TreeVis genetree={exampleGenetree}
-           geneOfInterest={geneFixture}
+           initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
            width={600}
            height={800}/>,

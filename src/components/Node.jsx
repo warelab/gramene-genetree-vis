@@ -4,8 +4,10 @@ var _ = require('lodash');
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired
+    node: React.PropTypes.object.isRequired,
+    onSelect: React.PropTypes.func.isRequired
   },
+
   getInitialState: function () {
     return {
       hovered: false
@@ -14,6 +16,7 @@ var Node = React.createClass({
 
   handleClick: function() {
     console.log('clicked', this.props);
+    this.props.onSelect(this.props.node);
   },
 
   hover: function () {
@@ -47,8 +50,7 @@ var Node = React.createClass({
          onClick={this.handleClick}
          onMouseOver={this.hover}
          onMouseOut={this.unhover}
-         transform={transform}
-      >
+         transform={transform}>
         <circle r="3"/>
         <text x="10" 
               dy=".35em" 

@@ -1,6 +1,7 @@
 var React = require('react');
 var scale = require('d3').scale.linear;
 var _ = require('lodash');
+var GrameneClient = require('gramene-search-client').client;
 
 var GeneTree = require('./GeneTree.jsx');
 
@@ -9,27 +10,42 @@ var TreeVis = React.createClass({
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
     genetree: React.PropTypes.object.isRequired,
-    geneOfInterest: React.PropTypes.object,
+    initialGeneOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object
   },
   getInitialState: function () {
-    return {};
+    return {
+      geneOfInterest: this.props.initialGeneOfInterest
+    };
   },
   componentWillMount: function () {
-    var initNodesDeferred = function initNodesDeferred() {
-      var nodes = _.cloneDeep(this.props.genetree.all());
-      this.layoutNodes(nodes);
-      this.relateNodesToGeneOfInterest(nodes);
-      this.setState({nodes: nodes});
-    }.bind(this);
-    process.nextTick(initNodesDeferred);
+    this.initNodesDeferred();
+  },
+  initNodesDeferred: function() {
+    process.nextTick(this.initNodes);
+  },
+  initNodes: function() {
+    var nodes = _.cloneDeep(this.props.genetree.all());
+    this.layoutNodes(nodes);
+    this.relateNodesToGeneOfInterest(nodes, this.props.initialGeneOfInterest);
+    this.setState({nodes: nodes});
+  },
+  handleGeneSelect: function(id) {
+    GrameneClient.genes(id).then(function(response) {
+      var geneOfInterest = response.docs[0];
+      this.relateNodesToGeneOfInterest(this.state.nodes, geneOfInterest);
+      this.setState({geneOfInterest: geneOfInterest});
+    }.bind(this))
+  },
+  componentWillUpdate: function(newProps, newState) {
+
   },
   render: function () {
     var genetree;
 
     if (this.state.nodes) {
       genetree = (
-        <GeneTree nodes={this.state.nodes}/>
+        <GeneTree nodes={this.state.nodes} onGeneSelect={this.handleGeneSelect} />
       );
     }
 
@@ -72,15 +88,14 @@ var TreeVis = React.createClass({
     });
     return yscale;
   },
-  relateNodesToGeneOfInterest: function (nodes) {
+  relateNodesToGeneOfInterest: function (nodes, geneOfInterest) {
     _.forEach(nodes, function (node) {
       node.relationToGeneOfInterest = {};
     });
-    this.addHomologyInformationToNodes(nodes);
-    this.addTaxonDistanceInformationToNodes(nodes);
+    this.addHomologyInformationToNodes(nodes, geneOfInterest);
+    this.addTaxonDistanceInformationToNodes(nodes, geneOfInterest);
   },
-  addHomologyInformationToNodes: function (nodes) {
-    var theGene = this.props.geneOfInterest;
+  addHomologyInformationToNodes: function (nodes, theGene) {
     if (theGene) {
       var homologs = indexHomologs(theGene);
       _.forEach(nodes, function (node) {
@@ -98,11 +113,11 @@ var TreeVis = React.createClass({
       });
     }
   },
-  addTaxonDistanceInformationToNodes: function (nodes) {
+  addTaxonDistanceInformationToNodes: function (nodes, geneOfInterest) {
     var theGeneTaxonId, theTaxonNode, theTaxonPath,
       theTaxonPathIds, taxonomy, relationLUT, distances, maxima;
 
-    theGeneTaxonId = _.get(this.props, 'geneOfInterest.taxon_id');
+    theGeneTaxonId = geneOfInterest.taxon_id;
     taxonomy = this.props.taxonomy;
 
     if (theGeneTaxonId && taxonomy) {
