@@ -38,6 +38,8 @@ var TreeVis = React.createClass({
       </svg>
     );
   },
+
+  // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
   scaleBranchLengths: function scaleBranchLengths(nodes) {
     var w, h, visitPreOrder, rootDists, xscale, yscale;
 
