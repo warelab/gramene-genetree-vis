@@ -29,8 +29,7 @@ var TreeVis = React.createClass({
 
     if (this.state.nodes) {
       genetree = (
-        <GeneTree geneOfInterest={this.props.geneOfInterest}
-                  nodes={this.state.nodes}/>
+        <GeneTree nodes={this.state.nodes}/>
       );
     }
 

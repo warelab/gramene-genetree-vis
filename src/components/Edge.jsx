@@ -6,8 +6,7 @@ var _ = require('lodash');
 var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired,  // parent
-    geneOfInterest: React.PropTypes.object
+    target: React.PropTypes.object.isRequired  // parent
   },
   componentDidMount: function () {
     this.d3El = d3.select(ReactDOM.findDOMNode(this));
