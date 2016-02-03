@@ -9,7 +9,8 @@ var TreeVis = React.createClass({
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
     genetree: React.PropTypes.object.isRequired,
-    geneOfInterest: React.PropTypes.object
+    geneOfInterest: React.PropTypes.object,
+    taxonomy: React.PropTypes.object
   },
   getInitialState: function () {
     return {};
@@ -17,7 +18,8 @@ var TreeVis = React.createClass({
   componentWillMount: function () {
     var initNodesDeferred = function initNodesDeferred() {
       var nodes = _.cloneDeep(this.props.genetree.all());
-      this.scaleBranchLengths(nodes);
+      this.layoutNodes(nodes);
+      this.relateNodesToGeneOfInterest(nodes);
       this.setState({nodes: nodes});
     }.bind(this);
     process.nextTick(initNodesDeferred);
@@ -40,7 +42,7 @@ var TreeVis = React.createClass({
   },
 
   // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
-  scaleBranchLengths: function scaleBranchLengths(nodes) {
+  layoutNodes: function layoutNodes(nodes) {
     var w, h, visitPreOrder, rootDists, xscale, yscale;
 
     w = this.props.width;
@@ -71,7 +73,91 @@ var TreeVis = React.createClass({
       node.y = yscale(node.root_dist);
     });
     return yscale;
+  },
+  relateNodesToGeneOfInterest: function (nodes) {
+    _.forEach(nodes, function (node) {
+      node.relationToGeneOfInterest = {};
+    });
+    this.addHomologyInformationToNodes(nodes);
+    this.addTaxonDistanceInformationToNodes(nodes);
+  },
+  addHomologyInformationToNodes: function (nodes) {
+    var theGene = this.props.geneOfInterest;
+    if (theGene) {
+      var homologs = indexHomologs(theGene);
+      _.forEach(nodes, function (node) {
+        var nodeId, homology;
+        nodeId = node.model.gene_stable_id;
+        if (nodeId) {
+          if (nodeId === theGene._id) {
+            homology = 'self';
+          }
+          else {
+            homology = homologs[nodeId];
+          }
+          node.relationToGeneOfInterest.homology = homology;
+        }
+      });
+    }
+  },
+  addTaxonDistanceInformationToNodes: function (nodes) {
+    var theGeneTaxonId, theTaxonNode, theTaxonPath,
+      theTaxonPathIds, taxonomy, relationLUT, lcaLUT;
+
+    theGeneTaxonId = _.get(this.props, 'geneOfInterest.taxon_id');
+    taxonomy = this.props.taxonomy;
+
+    if (theGeneTaxonId && taxonomy) {
+      theTaxonNode = taxonomy.indices.id[theGeneTaxonId];
+      theTaxonPath = theTaxonNode.getPath();
+      theTaxonPathIds = _.keyBy(theTaxonPath, 'model.id');
+      relationLUT = {};
+
+      _.forEach(nodes, function (node) {
+        var nodeTaxonId, nodeTaxon, pathDistance, lcaDistance, lca;
+        nodeTaxonId = node.model.taxon_id || node.model.node_taxon_id;
+
+        // have we already seen this?
+        if (relationLUT[nodeTaxonId]) {
+          node.relationToGeneOfInterest.taxonomy = relationLUT[nodeTaxonId];
+        }
+        else {
+          if (nodeTaxonId === theGeneTaxonId) {
+            lcaDistance = 0;
+            pathDistance = 0;
+          }
+          else {
+            if ((lca = theTaxonPathIds[nodeTaxonId])) {
+              pathDistance = 0;
+            }
+            else {
+              nodeTaxon = taxonomy.indices.id[nodeTaxonId];
+              lca = theTaxonNode.lcaWith([nodeTaxon]);
+              pathDistance = lca.pathTo(nodeTaxon).length - 1;
+            }
+
+            lcaDistance = theTaxonPath.length - _.indexOf(theTaxonPath, lca) - 1;
+          }
+
+          relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = {
+            lcaDistance: lcaDistance,
+            pathDistance: pathDistance
+          }
+        }
+      });
+    }
   }
 });
+
+// IN -> key: homologyType, value: [geneId]
+// OUT-> key: geneId, value: homologyType
+function indexHomologs(theGene) {
+  return _.transform(theGene.homology, function (result, value, key) {
+    _.forEach(value, function (id) {
+      result[id] = key;
+    });
+    return result;
+  }, {});
+}
 
 module.exports = TreeVis;

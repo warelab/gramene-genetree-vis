@@ -43,7 +43,7 @@ var Edge = React.createClass({
 module.exports = Edge;
 
 // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L77
-function diagonal() {
+var diagonal = (function diagonal() {
   var projection = function (d) { return [d.y, d.x]; }
 
   var path = function (pathData) {
@@ -71,4 +71,4 @@ function diagonal() {
   };
 
   return diagonal;
-}
+})();
