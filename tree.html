@@ -8,15 +8,66 @@
     <style type="text/css">
 
 
+        .node {
+            opacity: 0;
+        }
+
+        .node .interaction-helper {
+            opacity: 0;
+        }
+
         .node circle {
+            opacity: 0;
             cursor: pointer;
             fill: #fff;
             stroke: steelblue;
             stroke-width: 1px;
+            transition: all 200ms ease-in-out;
+        }
+
+        .node.homolog,
+        .node.hover,
+        .node:hover {
+            opacity: 1;
+            /*transform: scale(1.2);*/
+        }
+
+        .node.hover circle,
+        .node:hover circle {
+            fill: blue;
+            opacity: 1;
+        }
+
+        .node.ortholog_one2one circle,
+        .node.ortholog_one2many circle,
+        .node.ortholog_many2many circle {
+            opacity: 1;
+            stroke: orange;
+        }
+
+        .node.within_species_paralog circle {
+            opacity: 1;
+            stroke: green;
+        }
+
+        .node.self circle {
+            opacity: 1;
+            stroke: red;
+            fill: red;
         }
 
         .node text {
             font-size: 11px;
+            fill-opacity: 0;
+            transition: fill-opacity 200ms;
+        }
+
+        /*.node.homolog text,*/
+        .node.self text,
+        .node.hover text,
+        .node:hover text {
+            /*fill: blue;*/
+            fill-opacity: 1;
         }
 
         path.link {

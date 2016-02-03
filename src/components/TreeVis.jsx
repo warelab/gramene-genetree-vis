@@ -1,5 +1,5 @@
 var React = require('react');
-var d3 = require('d3');
+var scale = require('d3').scale.linear;
 var _ = require('lodash');
 
 var GeneTree = require('./GeneTree.jsx');
@@ -60,10 +60,10 @@ var TreeVis = React.createClass({
       node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0);
     });
     rootDists = nodes.map(function (n) { return n.root_dist; });
-    yscale = d3.scale.linear()
-      .domain([0, d3.max(rootDists)])
+    yscale = scale()
+      .domain([0, _.max(rootDists)])
       .range([0, w]);
-    xscale = d3.scale.linear()
+    xscale = scale()
       .domain([nodes[0].model.left_index, nodes[0].model.right_index])
       .range([0, h]);
     visitPreOrder(nodes[0], function (node) {
