@@ -35,7 +35,6 @@ var Edge = React.createClass({
     score = stats.lcaDistance + stats.pathDistance;
     colorScale = scale().domain([0, max]).range(['green', 'red']);
     color = colorScale(score);
-    console.log(color, max, score, this.props.source);
     return {stroke: color};
   },
 
