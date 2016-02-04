@@ -14,9 +14,7 @@ var TreeVis = React.createClass({
     taxonomy: React.PropTypes.object
   },
   getInitialState: function () {
-    return {
-      geneOfInterest: this.props.initialGeneOfInterest
-    };
+    return {};
   },
   componentWillMount: function () {
     this.initNodesDeferred();
@@ -24,17 +22,23 @@ var TreeVis = React.createClass({
   initNodesDeferred: function () {
     process.nextTick(this.initNodes);
   },
-  initNodes: function () {
-    var nodes = _.cloneDeep(this.props.genetree.all());
+  initNodes: function (geneOfInterest) {
+    var genetree, nodes;
+    genetree = _.cloneDeep(this.props.genetree);
+    nodes = genetree.all();
+    geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
+    this.relateNodesToGeneOfInterest(nodes, geneOfInterest);
+    this.collapseNodes(genetree, this.props.initialGeneOfInterest, 20);
     this.layoutNodes(nodes);
-    this.relateNodesToGeneOfInterest(nodes, this.props.initialGeneOfInterest);
-    this.setState({nodes: nodes});
+    this.setState({
+      genetree: genetree,
+      geneOfInterest: geneOfInterest
+    });
   },
   handleGeneSelect: function (id) {
     GrameneClient.genes(id).then(function (response) {
       var geneOfInterest = response.docs[0];
-      this.relateNodesToGeneOfInterest(this.state.nodes, geneOfInterest);
-      this.setState({geneOfInterest: geneOfInterest});
+      this.initNodes(geneOfInterest);
     }.bind(this))
   },
   componentWillUpdate: function (newProps, newState) {
@@ -43,9 +47,9 @@ var TreeVis = React.createClass({
   render: function () {
     var genetree;
 
-    if (this.state.nodes) {
+    if (this.state.genetree) {
       genetree = (
-        <GeneTree nodes={this.state.nodes} onGeneSelect={this.handleGeneSelect}/>
+        <GeneTree nodes={this.state.genetree.all()} onGeneSelect={this.handleGeneSelect}/>
       );
     }
 
@@ -54,6 +58,10 @@ var TreeVis = React.createClass({
         {genetree}
       </svg>
     );
+  },
+
+  collapseNodes: function() {
+
   },
 
   // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
