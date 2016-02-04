@@ -21,23 +21,23 @@ var TreeVis = React.createClass({
   componentWillMount: function () {
     this.initNodesDeferred();
   },
-  initNodesDeferred: function() {
+  initNodesDeferred: function () {
     process.nextTick(this.initNodes);
   },
-  initNodes: function() {
+  initNodes: function () {
     var nodes = _.cloneDeep(this.props.genetree.all());
     this.layoutNodes(nodes);
     this.relateNodesToGeneOfInterest(nodes, this.props.initialGeneOfInterest);
     this.setState({nodes: nodes});
   },
-  handleGeneSelect: function(id) {
-    GrameneClient.genes(id).then(function(response) {
+  handleGeneSelect: function (id) {
+    GrameneClient.genes(id).then(function (response) {
       var geneOfInterest = response.docs[0];
       this.relateNodesToGeneOfInterest(this.state.nodes, geneOfInterest);
       this.setState({geneOfInterest: geneOfInterest});
     }.bind(this))
   },
-  componentWillUpdate: function(newProps, newState) {
+  componentWillUpdate: function (newProps, newState) {
 
   },
   render: function () {
@@ -45,7 +45,7 @@ var TreeVis = React.createClass({
 
     if (this.state.nodes) {
       genetree = (
-        <GeneTree nodes={this.state.nodes} onGeneSelect={this.handleGeneSelect} />
+        <GeneTree nodes={this.state.nodes} onGeneSelect={this.handleGeneSelect}/>
       );
     }
 
@@ -96,10 +96,12 @@ var TreeVis = React.createClass({
     this.addTaxonDistanceInformationToNodes(nodes, geneOfInterest);
   },
   addHomologyInformationToNodes: function (nodes, theGene) {
+    var homologs, representatives;
     if (theGene) {
-      var homologs = indexHomologs(theGene);
+      homologs = indexHomologs(theGene);
+      representatives = indexReps(theGene);
       _.forEach(nodes, function (node) {
-        var nodeId, homology;
+        var nodeId, homology, repType;
         nodeId = node.model.gene_stable_id;
         if (nodeId) {
           if (nodeId === theGene._id) {
@@ -108,7 +110,9 @@ var TreeVis = React.createClass({
           else {
             homology = homologs[nodeId];
           }
+
           node.relationToGeneOfInterest.homology = homology;
+          node.relationToGeneOfInterest.repType = representatives[nodeId];
         }
       });
     }
@@ -161,15 +165,15 @@ var TreeVis = React.createClass({
             pathDistance: pathDistance,
             maxima: maxima
           };
-          
+
           maxima.lcaDistance = Math.max(maxima.lcaDistance, distances.lcaDistance);
           maxima.pathDistance = Math.max(maxima.pathDistance, distances.pathDistance);
-          
+
           relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = distances;
         }
       });
 
-      
+
     }
   }
 });
@@ -181,6 +185,15 @@ function indexHomologs(theGene) {
     _.forEach(value, function (id) {
       result[id] = key;
     });
+    return result;
+  }, {});
+}
+
+// IN -> key: representativeType, value: gene doc
+// OUT-> key: geneId, value: representativeType
+function indexReps(theGene) {
+  return _.transform(theGene.representative, function (result, rep, repType) {
+    result[rep.id] = repType;
     return result;
   }, {});
 }

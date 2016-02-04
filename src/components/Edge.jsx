@@ -15,7 +15,7 @@ var Edge = React.createClass({
     console.log('unhover', this.props);
   },
 
-  path: function() {
+  path: function () {
     var source, target, coords;
     source = this.props.source;
     target = this.props.target;
@@ -28,7 +28,7 @@ var Edge = React.createClass({
     return 'M' + coords.join(' ');
   },
 
-  style: function() {
+  style: function () {
     var stats, colorScale, color, max, score;
     stats = _.get(this.props.source, 'relationToGeneOfInterest.taxonomy');
     max = stats.maxima.lcaDistance + stats.maxima.pathDistance;

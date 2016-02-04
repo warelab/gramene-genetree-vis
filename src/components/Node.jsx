@@ -14,7 +14,7 @@ var Node = React.createClass({
     }
   },
 
-  handleClick: function() {
+  handleClick: function () {
     console.log('clicked', this.props);
     this.props.onSelect(this.props.node);
   },
@@ -29,33 +29,46 @@ var Node = React.createClass({
     this.setState({hovered: false});
   },
 
-  render: function () {
-    var node, className, homology, transform, text;
-    node = this.props.node;
+  className: function () {
+    var className, homology, repType;
+
     className = 'node';
-    transform = 'translate(' + node.y + ', ' + node.x + ')';
-    text = node.model.gene_display_label || 
-      node.model.gene_stable_id || '';
-    homology = _.get(node, 'relationToGeneOfInterest.homology');
-    if(this.state.hovered) {
+    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
+    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
+    if (this.state.hovered) {
       className += ' hover';
     }
-    if(homology) {
+    if (homology) {
       className += ' homolog ' + homology;
     }
+    if (repType) {
+      className += ' representative';
+    }
+    return className;
+  },
 
+  transform: function () {
+    return 'translate(' + this.props.node.y + ', ' + this.props.node.x + ')';
+  },
+
+  text: function () {
+    return _.get(this.props.node, 'model.gene_display_label') ||
+      _.get(this.props.node, 'model.gene_stable_id') ||
+      '';
+  },
+
+  render: function () {
     return (
-      <g className={className}
-         id={node.id}
+      <g className={this.className()}
+         transform={this.transform()}
          onClick={this.handleClick}
          onMouseOver={this.hover}
-         onMouseOut={this.unhover}
-         transform={transform}>
+         onMouseOut={this.unhover}>
         <circle r="3"/>
-        <text x="10" 
-              dy=".35em" 
+        <text x="10"
+              dy=".35em"
               textAnchor="start">
-          {text}
+          {this.text()}
         </text>
       </g>
     )

@@ -56,6 +56,12 @@
             fill: red;
         }
 
+        .node.representative circle {
+            opacity: 1;
+            stroke: orange;
+            fill: orange;
+        }
+
         .node text {
             font-size: 11px;
             fill-opacity: 0;
@@ -64,6 +70,7 @@
 
         /*.node.homolog text,*/
         .node.self text,
+        .node.representative text,
         .node.hover text,
         .node:hover text {
             /*fill: blue;*/
@@ -82,10 +89,6 @@
 <body>
 <div id="body">
     <div id="tree"></div>
-    <div id="footer">
-        d3.layout.tree
-        <div class="hint">click or option-click to expand or collapse</div>
-    </div>
 </div>
 <script src="build/bundle.js"></script>
 </body>
