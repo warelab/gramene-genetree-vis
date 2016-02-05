@@ -5,7 +5,8 @@ var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired
+    onSelect: React.PropTypes.func.isRequired,
+    onHover: React.PropTypes.func.isRequired
   },
 
   getInitialState: function () {
@@ -21,6 +22,7 @@ var Node = React.createClass({
 
   hover: function () {
     console.log('hover', this.props);
+    this.props.onHover(this.props.node);
     this.setState({hovered: true});
   },
 
@@ -52,9 +54,11 @@ var Node = React.createClass({
   },
 
   text: function () {
-    return _.get(this.props.node, 'model.gene_display_label') ||
+    return (
+      _.get(this.props.node, 'model.gene_display_label') ||
       _.get(this.props.node, 'model.gene_stable_id') ||
-      '';
+      ''
+    );
   },
 
   render: function () {

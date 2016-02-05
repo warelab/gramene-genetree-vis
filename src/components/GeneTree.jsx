@@ -7,13 +7,23 @@ var Node = require('./Node.jsx');
 var GeneTree = React.createClass({
   propTypes: {
     nodes: React.PropTypes.array.isRequired,
-    onGeneSelect: React.PropTypes.func.isRequired
+    onGeneSelect: React.PropTypes.func.isRequired,
+    onInternalNodeSelect: React.PropTypes.func.isRequired,
+    onNodeHover: React.PropTypes.func.isRequired
   },
   handleNodeSelect: function (node) {
     if (node.model.gene_stable_id) {
-      this.props.onGeneSelect(node.model.gene_stable_id);
+      this.props.onGeneSelect(node);
+    }
+    else {
+      this.props.onInternalNodeSelect(node);
     }
   },
+
+  handleHover: function(node) {
+    this.props.onNodeHover(node);
+  },
+
   render: function () {
     var nodes, nodeComponents, edgeComponents;
     // Compute the new tree layout.
@@ -23,6 +33,7 @@ var GeneTree = React.createClass({
       return <Node key={idx}
                    node={node}
                    onSelect={this.handleNodeSelect}
+                   onHover={this.handleHover}
       />;
     }.bind(this));
 
@@ -30,7 +41,8 @@ var GeneTree = React.createClass({
       .map(function (node, idx) {
         return <Edge key={idx}
                      source={node}
-                     target={node.parent}/>
+                     target={node.parent}
+                     onHover={this.handleHover}/>
       }.bind(this));
 
     return (

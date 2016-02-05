@@ -23,92 +23,179 @@ var TreeVis = React.createClass({
     process.nextTick(this.initNodes);
   },
   initNodes: function (geneOfInterest) {
-    var genetree, nodes;
+    var genetree;
     genetree = _.cloneDeep(this.props.genetree);
-    nodes = genetree.all();
+    genetree.walk(function(n, idx) { n.idx = idx; return n; });
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
-    this.relateNodesToGeneOfInterest(nodes, geneOfInterest);
-    this.collapseNodes(genetree, this.props.initialGeneOfInterest, 20);
-    this.layoutNodes(nodes);
+    this.relateNodesToGeneOfInterest(genetree, geneOfInterest);
+    this.collapseNodes(genetree, geneOfInterest, 20);
+    this.layoutNodes(genetree);
     this.setState({
       genetree: genetree,
       geneOfInterest: geneOfInterest
     });
   },
-  handleGeneSelect: function (id) {
-    GrameneClient.genes(id).then(function (response) {
+  handleGeneSelect: function (geneNode) {
+    GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
       var geneOfInterest = response.docs[0];
       this.initNodes(geneOfInterest);
     }.bind(this))
   },
-  componentWillUpdate: function (newProps, newState) {
-
+  handleInternalNodeSelect: function (node) {
+    this.setState({selectedInternalNode: node});
+  },
+  handleNodeHover: function (node) {
+    this.setState({hoveredNode: node});
   },
   render: function () {
-    var genetree;
+    var genetree, selections;
 
     if (this.state.genetree) {
       genetree = (
-        <GeneTree nodes={this.state.genetree.all()} onGeneSelect={this.handleGeneSelect}/>
+        <GeneTree nodes={this.state.genetree.all()}
+                  onGeneSelect={this.handleGeneSelect}
+                  onInternalNodeSelect={this.handleInternalNodeSelect}
+                  onNodeHover={this.handleNodeHover}/>
+      );
+    }
+
+    selections = [];
+    if(this.state.geneOfInterest) {
+      selections.push(
+        <li key="gene">
+          <h4>Gene</h4>
+          <p>{this.state.geneOfInterest._id}</p>
+        </li>
+      );
+    }
+
+    if(this.state.selectedInternalNode) {
+      selections.push(
+        <li key="internal-node">
+          <h4>Internal</h4>
+          <p>{this.state.selectedInternalNode.model.node_taxon} {this.state.selectedInternalNode.model.node_type}</p>
+        </li>
+      );
+    }
+
+    if(this.state.hoveredNode) {
+      var hoverText = this.state.hoveredNode.model.node_taxon ?
+        this.state.hoveredNode.model.node_taxon + ' ' + this.state.hoveredNode.model.node_type :
+        this.state.hoveredNode.model.gene_stable_id + ' ' + this.state.hoveredNode.model.system_name;
+      selections.push(
+        <li key="hovered-node">
+          <h4>Hovered</h4>
+          <p>{hoverText}</p>
+        </li>
       );
     }
 
     return (
-      <svg width={this.props.width} height={this.props.height}>
-        {genetree}
-      </svg>
+      <div className="genetree-vis">
+        <div className="selections">
+          <ul>
+            {selections}
+          </ul>
+        </div>
+        <svg width={this.props.width} height={this.props.height}>
+          {genetree}
+        </svg>
+      </div>
     );
   },
 
-  collapseNodes: function() {
+  collapseNodes: function (genetree, geneOfInterest, maxVisibleNodes) {
+    var nodesToExpand, paralogIds, paralogNodes, paralogPathIds, repIds, pathIds;
 
+    // get node_ids of representatives and gene of interest.
+    repIds = _.values(geneOfInterest.representative).map(function (rep) { return rep.id; });
+    nodesToExpand = _.map(repIds, idToNode);
+    nodesToExpand.push(idToNode(geneOfInterest._id));
+
+    // get and index all node_ids in the paths for those nodes.
+    // these are the ones that should be expanded by default.
+    pathIds = _.reduce(nodesToExpand, nodesToPathIds, {});
+
+    paralogIds = _.get(geneOfInterest, 'homology.within_species_paralog');
+    paralogNodes = _.map(paralogIds, idToNode);
+    paralogPathIds = _.reduce(paralogNodes, nodesToPathIds, {});
+
+    genetree.walk(function (node) {
+      var nodeId = node.model.node_id;
+      node.displayInfo = {
+        expanded: !!pathIds[nodeId],
+        expandedBecause: pathIds[nodeId],
+        paralogs: paralogPathIds[nodeId]
+      };
+    });
+
+    function idToNode(id) { return genetree.indices.gene_stable_id[id]; }
+
+    function nodesToPathIds(acc, node) {
+      // key: pathNodeId
+      // value: array of actual nodes (not the ones in the path).
+
+      var paralogPairs, paralogLUT;
+      paralogPairs = _.map(node.getPath(), function (n) {
+        return [n.model.node_id, node];
+      });
+      paralogLUT = _.fromPairs(paralogPairs);
+
+      return _.assignWith(acc, paralogLUT, function (accVal, srcVal) {
+        return _.isUndefined(accVal) ? [srcVal] : _.concat(accVal, srcVal);
+      });
+    }
   },
 
   // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
-  layoutNodes: function layoutNodes(nodes) {
+  layoutNodes: function layoutNodes(genetree) {
     var w, h, visitPreOrder, rootDists, xscale, yscale;
 
     w = this.props.width / 2;
     h = this.props.height;
 
     // Visit all nodes and adjust y pos width distance metric
-    visitPreOrder = function (root, callback) {
-      callback(root);
-      if (root.children) {
-        for (var i = root.children.length - 1; i >= 0; i--) {
-          visitPreOrder(root.children[i], callback)
-        }
-      }
-    };
-    visitPreOrder(nodes[0], function (node) {
+    //visitPreOrder = function (root, callback) {
+    //  callback(root);
+    //  if (root.children) {
+    //    for (var i = root.children.length - 1; i >= 0; i--) {
+    //      visitPreOrder(root.children[i], callback)
+    //    }
+    //  }
+    //};
+    //visitPreOrder(nodes[0], function (node) {
+    //  node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0);
+    //});
+    genetree.walk(function (node) {
       node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0);
     });
-    rootDists = nodes.map(function (n) { return n.root_dist; });
+    rootDists = genetree.all().map(function (n) { return n.root_dist; });
     yscale = scale()
       .domain([0, _.max(rootDists)])
       .range([0, w]);
+
     xscale = scale()
-      .domain([nodes[0].model.left_index, nodes[0].model.right_index])
+      .domain([genetree.model.left_index, genetree.model.right_index])
       .range([0, h]);
-    visitPreOrder(nodes[0], function (node) {
+
+    genetree.walk(function (node) {
       node.x = xscale((node.model.left_index + node.model.right_index) / 2);
       node.y = yscale(node.root_dist);
     });
-    return yscale;
   },
-  relateNodesToGeneOfInterest: function (nodes, geneOfInterest) {
-    _.forEach(nodes, function (node) {
+  relateNodesToGeneOfInterest: function (genetree, geneOfInterest) {
+    genetree.walk(function (node) {
       node.relationToGeneOfInterest = {};
     });
-    this.addHomologyInformationToNodes(nodes, geneOfInterest);
-    this.addTaxonDistanceInformationToNodes(nodes, geneOfInterest);
+    this.addHomologyInformationToNodes(genetree, geneOfInterest);
+    this.addTaxonDistanceInformationToNodes(genetree, geneOfInterest);
   },
-  addHomologyInformationToNodes: function (nodes, theGene) {
+  addHomologyInformationToNodes: function (genetree, theGene) {
     var homologs, representatives;
     if (theGene) {
       homologs = indexHomologs(theGene);
       representatives = indexReps(theGene);
-      _.forEach(nodes, function (node) {
+      genetree.walk(function (node) {
         var nodeId, homology, repType;
         nodeId = node.model.gene_stable_id;
         if (nodeId) {
@@ -125,7 +212,7 @@ var TreeVis = React.createClass({
       });
     }
   },
-  addTaxonDistanceInformationToNodes: function (nodes, geneOfInterest) {
+  addTaxonDistanceInformationToNodes: function (genetree, geneOfInterest) {
     var theGeneTaxonId, theTaxonNode, theTaxonPath,
       theTaxonPathIds, taxonomy, relationLUT, distances, maxima;
 
@@ -142,7 +229,7 @@ var TreeVis = React.createClass({
         pathDistance: 0
       };
 
-      _.forEach(nodes, function (node) {
+      genetree.walk(function (node) {
         var nodeTaxonId, nodeTaxon, pathDistance, lcaDistance, lca;
         nodeTaxonId = node.model.taxon_id || node.model.node_taxon_id;
 

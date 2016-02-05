@@ -4,11 +4,13 @@ var scale = require('d3').scale.linear;
 var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired  // parent
+    target: React.PropTypes.object.isRequired, // parent
+    onHover: React.PropTypes.func.isRequired
   },
 
   hover: function () {
     console.log('hover', this.props);
+    this.props.onHover(this.props.source);
   },
 
   unhover: function () {
