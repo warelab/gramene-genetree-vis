@@ -2,18 +2,10 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <!--<link type="text/css" rel="stylesheet" href="style.css"/>-->
-    <!--<script type="text/javascript" src="d3/d3.js"></script>-->
-    <!--<script type="text/javascript" src="d3/d3.layout.js"></script>-->
     <style type="text/css">
 
-
-        .node {
-            opacity: 0;
-        }
-
-        .node .interaction-helper {
-            opacity: 0;
+        .node, .node * {
+            transition: all 2000ms ease-in-out;
         }
 
         .node circle {
@@ -25,38 +17,44 @@
             transition: all 200ms ease-in-out;
         }
 
-        .node.homolog,
+        .node .homolog,
         .node.hover,
         .node:hover {
             opacity: 1;
-            /*transform: scale(1.2);*/
         }
 
-        .node.hover circle,
-        .node:hover circle {
+        .node .homolog text,
+        .node.hover text,
+        .node:hover text {
+            fill-opacity: 1;
+        }
+
+        .node.hover .internal circle,
+        .node:hover .internal circle {
             fill: blue;
+            stroke: blue;
             opacity: 1;
         }
 
-        .node.ortholog_one2one circle,
-        .node.ortholog_one2many circle,
-        .node.ortholog_many2many circle {
+        .node .gene.ortholog_one2one circle,
+        .node .gene.ortholog_one2many circle,
+        .node .gene.ortholog_many2many circle {
             opacity: 1;
             stroke: orange;
         }
 
-        .node.within_species_paralog circle {
+        .node .gene.within_species_paralog circle {
             opacity: 1;
             stroke: green;
         }
 
-        .node.self circle {
+        .node .gene.self circle {
             opacity: 1;
             stroke: red;
             fill: red;
         }
 
-        .node.representative circle {
+        .node .gene.representative circle {
             opacity: 1;
             stroke: orange;
             fill: orange;
@@ -69,8 +67,8 @@
         }
 
         /*.node.homolog text,*/
-        .node.self text,
-        .node.representative text,
+        .node .self text,
+        .node .representative text,
         .node.hover text,
         .node:hover text {
             /*fill: blue;*/

@@ -14,6 +14,6 @@ ReactDOM.render(
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
            width={600}
-           height={800}/>,
+           height={250}/>,
   document.getElementById('tree')
 );

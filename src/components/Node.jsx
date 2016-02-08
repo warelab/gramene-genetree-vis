@@ -1,6 +1,10 @@
 var React = require('react');
 var _ = require('lodash');
 
+var Collapsed = require('./nodeTypes/Collapsed.jsx');
+var Internal = require('./nodeTypes/Internal.jsx');
+var Gene = require('./nodeTypes/Gene.jsx');
+
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
@@ -31,49 +35,40 @@ var Node = React.createClass({
     this.setState({hovered: false});
   },
 
-  className: function () {
-    var className, homology, repType;
-
-    className = 'node';
-    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
-    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
-    if (this.state.hovered) {
-      className += ' hover';
-    }
-    if (homology) {
-      className += ' homolog ' + homology;
-    }
-    if (repType) {
-      className += ' representative';
-    }
-    return className;
-  },
-
   transform: function () {
     return 'translate(' + this.props.node.y + ', ' + this.props.node.x + ')';
   },
 
-  text: function () {
-    return (
-      _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id') ||
-      ''
-    );
+  className: function () {
+    var className, homology, repType;
+
+    className = 'node';
+    if (this.state.hovered) {
+      className += ' hover';
+    }
+    return className;
   },
 
   render: function () {
+    var node, component;
+    node = this.props.node;
+    if (node.model.gene_stable_id) {
+      component = Gene;
+    }
+    else if (!node.displayInfo.expanded) {
+      component = Collapsed;
+    }
+    else {
+      component = Internal;
+    }
+
     return (
       <g className={this.className()}
          transform={this.transform()}
          onClick={this.handleClick}
          onMouseOver={this.hover}
          onMouseOut={this.unhover}>
-        <circle r="3"/>
-        <text x="10"
-              dy=".35em"
-              textAnchor="start">
-          {this.text()}
-        </text>
+        {React.createElement(component, {node: node})}
       </g>
     )
   }

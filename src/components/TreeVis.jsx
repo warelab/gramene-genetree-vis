@@ -25,7 +25,7 @@ var TreeVis = React.createClass({
     process.nextTick(this.initNodes);
   },
   initNodes: function (geneOfInterest) {
-    var genetree, nodes;
+    var genetree, visibleNodes;
     genetree = this.genetree;
     if(!genetree) {
       genetree = this.genetree = _.cloneDeep(this.props.genetree);
@@ -37,11 +37,11 @@ var TreeVis = React.createClass({
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
 
     relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
-    nodes = layoutTree(genetree, geneOfInterest, this.props.width / 2, this.props.height);
+    visibleNodes = layoutTree(genetree, geneOfInterest, this.props.width / 2, this.props.height);
 
     this.setState({
-      nodes: nodes,
-      geneOfInterest: geneOfInterest
+      geneOfInterest: geneOfInterest,
+      visibleNodes: visibleNodes
     });
   },
   handleGeneSelect: function (geneNode) {
@@ -59,9 +59,9 @@ var TreeVis = React.createClass({
   render: function () {
     var genetree, selections;
 
-    if (this.state.nodes) {
+    if (this.state.visibleNodes) {
       genetree = (
-        <GeneTree nodes={this.state.nodes}
+        <GeneTree nodes={this.state.visibleNodes}
                   onGeneSelect={this.handleGeneSelect}
                   onInternalNodeSelect={this.handleInternalNodeSelect}
                   onNodeHover={this.handleNodeHover}/>

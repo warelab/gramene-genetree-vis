@@ -1,21 +1,44 @@
 var scale = require('d3').scale.linear;
+var _ = require('lodash');
 
 function addDisplayInfo(genetree, geneOfInterest) {
-  var paralogPathIds, pathIds;
+  var paralogPathIds, orthologPathIds, pathIds;
 
   pathIds = getPathIds(geneOfInterest);
   paralogPathIds = getParalogPathIds();
+  orthologPathIds = getOrthologPathIds();
 
   genetree.walk(function (node) {
-    var nodeId = node.model.node_id;
-    node.displayInfo = {
-      expanded: !!pathIds[nodeId],
-      expandedBecause: pathIds[nodeId],
-      paralogs: paralogPathIds[nodeId]
+    var nodeId, isLeafNode, parentNodeId, displayInfo;
+    nodeId = node.model.node_id;
+    isLeafNode = !!node.model.gene_stable_id;
+    displayInfo = {
+      expanded: false,
+      leafNode: isLeafNode
     };
+
+    if (!!pathIds[nodeId]) {
+      displayInfo.expanded = true;
+      displayInfo.expandedBecause = pathIds[nodeId];
+    }
+    else {
+      parentNodeId = node.parent.model.node_id;
+
+      if(isLeafNode && pathIds[parentNodeId]) {
+        displayInfo.expanded = true;
+        displayInfo.expandedBecause = pathIds[parentNodeId];
+      }
+    }
+
+    if(displayInfo.expanded) {
+      displayInfo.paralogs = paralogPathIds[nodeId];
+      displayInfo.orthologs = orthologPathIds[nodeId];
+    }
+
+    node.displayInfo = displayInfo;
   });
 
-  function getPathIds(geneOfInterest) {
+  function getPathIds() {
     var nodesToExpand, repIds;
 
     // get node_ids of representatives and gene of interest.
@@ -28,11 +51,28 @@ function addDisplayInfo(genetree, geneOfInterest) {
     return _.reduce(nodesToExpand, nodesToPathIds, {});
   }
 
-  function getParalogPathIds(theGene) {
-    var paralogIds, paralogNodes;
-    paralogIds = _.get(theGene, 'homology.within_species_paralog');
-    paralogNodes = _.map(paralogIds, idToNode);
-    return _.reduce(paralogNodes, nodesToPathIds, {});
+  function pathIdsImpl(path) {
+    var ids, nodes;
+    ids = _.get(geneOfInterest, path);
+    nodes = _.map(ids, idToNode);
+    return _.reduce(nodes, nodesToPathIds, {});
+  }
+
+  function getParalogPathIds() {
+    return pathIdsImpl('homology.within_species_paralog');
+  }
+
+  function getOrthologPathIds() {
+    var keys, filteredKeys, pathIdsArray, result;
+    keys =_.keys(geneOfInterest.homology).map(function(key) { return 'homology.' + key; });
+    filteredKeys = _.filter(keys, function(key) { return key.indexOf('ortholog') > -1; });
+    pathIdsArray = _.map(filteredKeys, pathIdsImpl);
+    result = _.reduce(pathIdsArray, function(acc, obj) {
+        return _.mergeWith(acc, obj, function mergeIndexedPathIds(accVal, objVal) {
+          return _.isArray(accVal) ? accVal.concat(objVal) : objVal;
+        });
+      });
+    return result;
   }
 
   function idToNode(id) {
@@ -40,6 +80,7 @@ function addDisplayInfo(genetree, geneOfInterest) {
   }
 
   function nodesToPathIds(acc, node) {
+    // take an array of nodes, return an object with
     // key: pathNodeId
     // value: array of actual nodes (not the ones in the path).
 
@@ -65,10 +106,10 @@ function calculateXIndex(genetree) {
     nodeName += node.displayInfo.expanded ? '*' : '<';
     console.log(_.repeat(' ', node.depth()) + nodeName + ' start : ' + node.model.left_index + '->' + node.model.right_index + '. offset is ' + offset);
     correctedLeftIndex = node.model.left_index - offset;
-    if(node.displayInfo.expanded) {
+    if (node.displayInfo.expanded) {
       offsetIncrement = 0;
-      if(_.isArray(node.children)) {
-        for(var i = 0; i < node.children.length; i++) {
+      if (_.isArray(node.children)) {
+        for (var i = 0; i < node.children.length; i++) {
           offsetIncrement += calcXIndexFor(node.children[i], offset + offsetIncrement);
           //offset += ;
         }
