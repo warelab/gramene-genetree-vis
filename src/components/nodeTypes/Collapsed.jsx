@@ -10,6 +10,22 @@ var Collapsed = React.createClass({
     onHover: React.PropTypes.func.isRequired
   },
 
+  getInitialState: function() {
+    return {};
+  },
+
+  select: function() {
+
+  },
+
+  hover: function() {
+
+  },
+
+  unhover: function() {
+
+  },
+
   className: function () {
     var className;
 
@@ -38,7 +54,10 @@ var Collapsed = React.createClass({
 
   render: function () {
     return (
-      <g className={this.className()}>
+      <g className={this.className()}
+        onMouseOver={this.hover}
+        onMouseOut={this.unhover}
+        onClick={this.select} >
         {this.triangle()}
         {this.text()}
       </g>

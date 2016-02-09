@@ -19,7 +19,9 @@ var TreeVis = React.createClass({
     taxonomy: React.PropTypes.object
   },
   getInitialState: function () {
-    return {};
+    return {
+      additionalVisibleNodes: {}
+    };
   },
   componentWillMount: function () {
     this.initNodesDeferred();
@@ -45,7 +47,7 @@ var TreeVis = React.createClass({
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
 
     relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
-    visibleNodes = layoutTree(genetree, geneOfInterest, this.w / 2, this.h);
+    visibleNodes = layoutTree(genetree, geneOfInterest, this.w / 2, this.h, this.state.additionalVisibleNodes);
 
     this.setState({
       geneOfInterest: geneOfInterest,
@@ -59,17 +61,36 @@ var TreeVis = React.createClass({
     }.bind(this))
   },
   handleInternalNodeSelect: function (node) {
-    //highlightClade(this.genetree, node, 'select');
-    this.setState({selectedInternalNode: node});
+    var nodeId, additionalVisibleNodes, allVisibleNodes;
+    nodeId = node.model.node_id;
+    additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
+
+    if(additionalVisibleNodes[nodeId]) {
+      delete additionalVisibleNodes[nodeId];
+    } else {
+      additionalVisibleNodes[nodeId] = node;
+    }
+
+    allVisibleNodes = layoutTree(
+      this.genetree,
+      this.state.geneOfInterest,
+      this.w / 2,
+      this.h,
+      additionalVisibleNodes
+    );
+
+    this.setState({
+      selectedInternalNode: node,
+      additionalVisibleNodes: additionalVisibleNodes,
+      visibleNodes: allVisibleNodes
+    });
   },
   handleNodeHover: function (node) {
-    //highlightClade(this.genetree, node, 'hover');
     if (this.state.hoveredNode === node) {
       this.setState({hoveredNode: undefined});
     }
   },
   handleNodeUnhover: function (node) {
-    //highlightClade(this.genetree, node, 'unhover');
     this.setState({hoveredNode: node});
   },
   render: function () {

@@ -9,23 +9,22 @@ var Node = React.createClass({
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired
   },
-
-  componentWillMount: function () {
-    this.initNodeComponent();
-  },
-
-  initNodeComponent: function () {
-    var node = this.props.node;
+  
+  getNodeComponent: function () {
+    var node, nodeTypeComponent;
+    node = this.props.node;
 
     if (node.model.gene_stable_id) {
-      this.nodeTypeComponent = Gene;
+      nodeTypeComponent = Gene;
     }
     else if (!node.displayInfo.expanded) {
-      this.nodeTypeComponent = Collapsed;
+      nodeTypeComponent = Collapsed;
     }
     else {
-      this.nodeTypeComponent = Internal;
+      nodeTypeComponent = Internal;
     }
+    
+    return nodeTypeComponent;
   },
 
   getInitialState: function () {
@@ -54,7 +53,7 @@ var Node = React.createClass({
          transform={this.transform()}
          onClick={this.handleClick}>
         <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
-        {React.createElement(this.nodeTypeComponent, {node: this.props.node})}
+        {React.createElement(this.getNodeComponent(), {node: this.props.node})}
       </g>
     )
   }

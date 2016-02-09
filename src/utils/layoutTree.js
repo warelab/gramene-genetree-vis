@@ -1,10 +1,10 @@
 var scale = require('d3').scale.linear;
 var _ = require('lodash');
 
-function addDisplayInfo(genetree, geneOfInterest) {
+function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
   var paralogPathIds, orthologPathIds, pathIds;
 
-  pathIds = getPathIds(geneOfInterest);
+  pathIds = getPathIds();
   paralogPathIds = getParalogPathIds();
   orthologPathIds = getOrthologPathIds();
 
@@ -20,6 +20,10 @@ function addDisplayInfo(genetree, geneOfInterest) {
     if (!!pathIds[nodeId]) {
       displayInfo.expanded = true;
       displayInfo.expandedBecause = pathIds[nodeId];
+    }
+    else if(!!additionalVisibleIds[nodeId]) {
+      displayInfo.expanded = true;
+      displayInfo.expandedBecause = 'selected';
     }
     else {
       parentNodeId = node.parent.model.node_id;
@@ -160,8 +164,8 @@ function layoutNodes(genetree, w, h) {
   }
 }
 
-module.exports = function layoutTree(genetree, geneOfInterest, x, y) {
-  addDisplayInfo(genetree, geneOfInterest);
+module.exports = function layoutTree(genetree, geneOfInterest, x, y, additionalVisibleNodes) {
+  addDisplayInfo(genetree, geneOfInterest, additionalVisibleNodes);
   calculateXIndex(genetree);
   return layoutNodes(genetree, x, y);
 };
