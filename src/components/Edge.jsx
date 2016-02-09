@@ -2,6 +2,8 @@ var React = require('react');
 var _ = require('lodash');
 var scale = require('d3').scale.linear;
 
+var taxonomyColor = require('../utils/taxonomyColor');
+
 var defaultXAdjust = require('./nodeTypes/Internal.jsx').xy;
 
 // see CSS selector ".node:hover .internal"
@@ -16,7 +18,7 @@ var Edge = React.createClass({
     //onUnhover: React.PropTypes.func.isRequired
   },
 
-  pathCoords: function() {
+  pathCoords: function () {
     var source, target, xAdjust, adjustedTargetX;
     source = this.props.source;
     target = this.props.target;
@@ -37,19 +39,19 @@ var Edge = React.createClass({
     return 'M' + this.pathCoords().join(' ');
   },
 
-  interactionRect: function(c1, c2) {
+  interactionRect: function (c1, c2) {
     var props = {
-      x: Math.min( c1[0], c2[0] ) - 1,
-      y: Math.min( c1[1], c2[1] ) - 1,
-      width: Math.abs( c1[0] - c2[0] ) + 2,
-      height: Math.abs( c1[1] - c2[1] ) + 2
+      x: Math.min(c1[0], c2[0]) - 1,
+      y: Math.min(c1[1], c2[1]) - 1,
+      width: Math.abs(c1[0] - c2[0]) + 2,
+      height: Math.abs(c1[1] - c2[1]) + 2
     };
     return (
       <rect {...props} />
     );
   },
 
-  interactionHelper: function() {
+  interactionHelper: function () {
     var coords, rect1, rect2;
 
     coords = this.pathCoords();
@@ -65,24 +67,16 @@ var Edge = React.createClass({
   },
 
   style: function () {
-    var stats, colorScale, color, max, score;
-    stats = _.get(this.props.source, 'relationToGeneOfInterest.taxonomy');
-    max = stats.maxima.lcaDistance + stats.maxima.pathDistance;
-    score = stats.lcaDistance + stats.pathDistance;
-    colorScale = scale().domain([0, max]).range(['green', 'red']);
-    color = colorScale(score);
-    return {stroke: color};
+    return {stroke: taxonomyColor(this.props.source)};
   },
 
   render: function () {
-    var path = this.path();
-    var style = this.style();
     return (
       <g className="edge">
         {this.interactionHelper()}
         <path className="link"
-              d={path}
-              style={style} />
+              d={this.path()}
+              style={this.style()}/>
       </g>
     )
   }

@@ -1,3 +1,5 @@
+var scale = require('d3').scale.linear;
+
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy) {
   genetree.walk(function (node) {
     node.relationToGeneOfInterest = {};
@@ -103,6 +105,10 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
         relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = distances;
       }
     });
+
+    maxima.colorScale = scale()
+      .domain([0, maxima.lcaDistance + maxima.pathDistance])
+      .range(['green', 'red']);
   }
 }
 

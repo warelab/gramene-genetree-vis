@@ -43,7 +43,13 @@
 
         .node:hover ~ g.clade .link,
         .edge:hover .link,
-        .edge:hover ~ g.clade .link {
+        .edge:hover ~ g.clade .link,
+        .node:hover ~ g.clade circle,
+        .edge:hover ~ g.clade circle,
+        .edge:hover + .node circle,
+        .node:hover ~ g.clade .collapsed path,
+        .edge:hover + .node .collapsed path,
+        .edge:hover ~ g.clade .collapsed path {
             stroke-width: 2;
         }
 
@@ -77,6 +83,14 @@
         .node .self text,
         .node .representative text,
         .node:hover text {
+            fill-opacity: 1;
+        }
+
+        .collapsed path {
+            stroke-width: 1;
+        }
+
+        .collapsed text {
             fill-opacity: 1;
         }
 

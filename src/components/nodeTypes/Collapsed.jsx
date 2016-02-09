@@ -1,6 +1,8 @@
 var React = require('react');
 var _ = require('lodash');
 
+var taxonomyColor = require('../../utils/taxonomyColor');
+
 var Collapsed = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
@@ -10,37 +12,36 @@ var Collapsed = React.createClass({
   },
 
   className: function () {
-    var className, homology, repType;
+    var className;
 
     className = 'collapsed';
-    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
-    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
-    if (homology) {
-      className += ' homolog ' + homology;
-    }
-    if (repType) {
-      className += ' representative';
-    }
+
     return className;
   },
 
   text: function () {
+    return <text x="36"
+                 dy=".35em">Hello</text>;
+  },
+
+  style: function () {
+    var color = taxonomyColor(this.props.node)
+    return {fill: color, stroke: color};
+  },
+
+  triangle: function() {
+    var d = 'M0,0 30,10 30,-10 0,0';
+
     return (
-      _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id') ||
-      ''
-    );
+      <path d={d} style={this.style()} />
+    )
   },
 
   render: function () {
     return (
       <g className={this.className()}>
-        <circle r="3"/>
-        <text x="10"
-              dy=".35em"
-              textAnchor="start">
-          {this.text()}
-        </text>
+        {this.triangle()}
+        {this.text()}
       </g>
     )
   }
