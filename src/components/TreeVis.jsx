@@ -6,11 +6,15 @@ var GeneTree = require('./GeneTree.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
+//var highlightClade = require('../utils/highlightClade');
+
+const DEFAULT_MARGIN = 10;
 
 var TreeVis = React.createClass({
   propTypes: {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
+    margin: React.PropTypes.number,
     genetree: React.PropTypes.object.isRequired,
     initialGeneOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object
@@ -20,24 +24,29 @@ var TreeVis = React.createClass({
   },
   componentWillMount: function () {
     this.initNodesDeferred();
+    this.initDimensions();
   },
   initNodesDeferred: function () {
     process.nextTick(this.initNodes);
   },
+  initDimensions: function() {
+    this.margin = this.props.margin || DEFAULT_MARGIN;
+    this.w = this.props.width - (2 * this.margin);
+    this.h = this.props.height - (2 * this.margin);
+
+    this.transform = 'translate(' + this.margin + ', ' + this.margin + ')';
+  },
   initNodes: function (geneOfInterest) {
     var genetree, visibleNodes;
     genetree = this.genetree;
+
     if(!genetree) {
       genetree = this.genetree = _.cloneDeep(this.props.genetree);
     }
-    //genetree.walk(function (n, idx) {
-    //  n.idx = idx;
-    //  return n;
-    //});
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
 
     relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
-    visibleNodes = layoutTree(genetree, geneOfInterest, this.props.width / 2, this.props.height);
+    visibleNodes = layoutTree(genetree, geneOfInterest, this.w / 2, this.h);
 
     this.setState({
       geneOfInterest: geneOfInterest,
@@ -51,9 +60,17 @@ var TreeVis = React.createClass({
     }.bind(this))
   },
   handleInternalNodeSelect: function (node) {
+    //highlightClade(this.genetree, node, 'select');
     this.setState({selectedInternalNode: node});
   },
   handleNodeHover: function (node) {
+    //highlightClade(this.genetree, node, 'hover');
+    if(this.state.hoveredNode === node) {
+      this.setState({hoveredNode: undefined});
+    }
+  },
+  handleNodeUnhover: function (node) {
+    //highlightClade(this.genetree, node, 'unhover');
     this.setState({hoveredNode: node});
   },
   render: function () {
@@ -64,7 +81,8 @@ var TreeVis = React.createClass({
         <GeneTree nodes={this.state.visibleNodes}
                   onGeneSelect={this.handleGeneSelect}
                   onInternalNodeSelect={this.handleInternalNodeSelect}
-                  onNodeHover={this.handleNodeHover}/>
+                  onNodeHover={this.handleNodeHover}
+                  onNodeUnhover={this.handleNodeUnhover}/>
       );
     }
 
@@ -101,14 +119,16 @@ var TreeVis = React.createClass({
 
     return (
       <div className="genetree-vis">
+        <svg width={this.props.width} height={this.props.height}>
+          <g className="margin" transform={this.transform}>
+            {genetree}
+          </g>
+        </svg>
         <div className="selections">
           <ul>
             {selections}
           </ul>
         </div>
-        <svg width={this.props.width} height={this.props.height}>
-          {genetree}
-        </svg>
       </div>
     );
   }

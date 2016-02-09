@@ -10,16 +10,12 @@ var Gene = React.createClass({
   },
 
   className: function () {
-    var className, homology, repType;
+    var className, nodeType;
 
     className = 'internal';
-    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
-    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
-    if (homology) {
-      className += ' homolog ' + homology;
-    }
-    if (repType) {
-      className += ' representative';
+    nodeType = _.get(this.props.node, 'model.node_type');
+    if(nodeType) {
+      className += ' ' + nodeType;
     }
     return className;
   },
@@ -35,7 +31,7 @@ var Gene = React.createClass({
   render: function () {
     return (
       <g className={this.className()}>
-        <circle r="3"/>
+        <rect x="-2" y="-2" width="4" height="4"/>
         <text x="10"
               dy=".35em"
               textAnchor="start">

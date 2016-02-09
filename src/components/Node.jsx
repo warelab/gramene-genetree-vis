@@ -10,7 +10,8 @@ var Node = React.createClass({
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired
+    onHover: React.PropTypes.func.isRequired,
+    onUnhover: React.PropTypes.func.isRequired
   },
 
   getInitialState: function () {
@@ -20,18 +21,16 @@ var Node = React.createClass({
   },
 
   handleClick: function () {
-    console.log('clicked', this.props);
     this.props.onSelect(this.props.node);
   },
 
   hover: function () {
-    console.log('hover', this.props);
     this.props.onHover(this.props.node);
     this.setState({hovered: true});
   },
 
   unhover: function () {
-    console.log('unhover', this.props);
+    this.props.onUnhover(this.props.node);
     this.setState({hovered: false});
   },
 
@@ -68,6 +67,7 @@ var Node = React.createClass({
          onClick={this.handleClick}
          onMouseOver={this.hover}
          onMouseOut={this.unhover}>
+        <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
         {React.createElement(component, {node: node})}
       </g>
     )
