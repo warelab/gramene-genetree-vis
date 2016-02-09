@@ -1,5 +1,4 @@
 var React = require('react');
-var _ = require('lodash');
 
 var Collapsed = require('./nodeTypes/Collapsed.jsx');
 var Internal = require('./nodeTypes/Internal.jsx');
@@ -9,9 +8,6 @@ var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired
-    //onSelect: React.PropTypes.func.isRequired,
-    //onHover: React.PropTypes.func.isRequired,
-    //onUnhover: React.PropTypes.func.isRequired
   },
 
   componentWillMount: function() {

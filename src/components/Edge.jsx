@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('lodash');
 var scale = require('d3').scale.linear;
 
 var xAdjust = require('./nodeTypes/Internal.jsx').xy;

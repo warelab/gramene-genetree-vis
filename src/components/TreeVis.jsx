@@ -6,7 +6,6 @@ var GeneTree = require('./GeneTree.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
-//var highlightClade = require('../utils/highlightClade');
 
 const DEFAULT_MARGIN = 10;
 
