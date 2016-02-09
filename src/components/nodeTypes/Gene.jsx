@@ -37,8 +37,7 @@ var Gene = React.createClass({
       <g className={this.className()}>
         <circle r="3"/>
         <text x="10"
-              dy=".35em"
-              textAnchor="start">
+              dy=".35em">
           {this.text()}
         </text>
       </g>
