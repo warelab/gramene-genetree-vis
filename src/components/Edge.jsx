@@ -1,9 +1,6 @@
 var React = require('react');
-var _ = require('lodash');
-var scale = require('d3').scale.linear;
 
 var taxonomyColor = require('../utils/taxonomyColor');
-
 var defaultXAdjust = require('./nodeTypes/Internal.jsx').xy;
 
 // see CSS selector ".node:hover .internal"

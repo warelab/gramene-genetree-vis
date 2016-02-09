@@ -1,5 +1,4 @@
 var React = require('react');
-var _ = require('lodash');
 
 var taxonomyColor = require('../../utils/taxonomyColor');
 
@@ -25,7 +24,7 @@ var Collapsed = React.createClass({
   },
 
   style: function () {
-    var color = taxonomyColor(this.props.node)
+    var color = taxonomyColor(this.props.node);
     return {fill: color, stroke: color};
   },
 

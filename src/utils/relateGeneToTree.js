@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var scale = require('d3').scale.linear;
 
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy) {
@@ -14,7 +15,7 @@ function addHomologyInformationToNodes(genetree, theGene) {
     homologs = indexHomologs(theGene);
     representatives = indexReps(theGene);
     genetree.walk(function (node) {
-      var nodeId, homology, repType;
+      var nodeId, homology;
       nodeId = node.model.gene_stable_id;
       if (nodeId) {
         if (nodeId === theGene._id) {
@@ -53,7 +54,7 @@ function indexReps(theGene) {
 
 function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) {
   var theGeneTaxonId, theTaxonNode, theTaxonPath,
-    theTaxonPathIds, taxonomy, relationLUT, distances, maxima;
+    theTaxonPathIds, relationLUT, distances, maxima;
 
   theGeneTaxonId = geneOfInterest.taxon_id;
 

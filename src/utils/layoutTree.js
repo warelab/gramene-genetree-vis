@@ -101,16 +101,13 @@ function calculateXIndex(genetree) {
   maxXindex = -Infinity;
   minXindex = Infinity;
   function calcXIndexFor(node, offset) {
-    var nodeName, offsetIncrement, correctedLeftIndex, correctedRightIndex;
-    nodeName = node.model.node_taxon ? node.model.node_taxon + ';' + node.model.node_type : node.model.gene_stable_id;
-    nodeName += node.displayInfo.expanded ? '*' : '<';
+    var offsetIncrement, correctedLeftIndex, correctedRightIndex;
     correctedLeftIndex = node.model.left_index - offset;
     if (node.displayInfo.expanded) {
       offsetIncrement = 0;
       if (_.isArray(node.children)) {
         for (var i = 0; i < node.children.length; i++) {
           offsetIncrement += calcXIndexFor(node.children[i], offset + offsetIncrement);
-          //offset += ;
         }
       }
     }
