@@ -16,7 +16,7 @@ var Internal = React.createClass({
 
     className = 'internal';
     nodeType = _.get(this.props.node, 'model.node_type');
-    if(nodeType) {
+    if (nodeType) {
       className += ' ' + nodeType;
     }
     return className;
@@ -33,7 +33,7 @@ var Internal = React.createClass({
   render: function () {
     return (
       <g className={this.className()}>
-        <rect x={Internal.xy} y={Internal.xy} width={Internal.wh} height={Internal.wh} />
+        <rect x={Internal.xy} y={Internal.xy} width={Internal.wh} height={Internal.wh}/>
         <text x="10"
               dy=".35em"
               textAnchor="start">

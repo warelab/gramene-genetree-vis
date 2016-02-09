@@ -28,11 +28,11 @@ var Collapsed = React.createClass({
     return {fill: color, stroke: color};
   },
 
-  triangle: function() {
+  triangle: function () {
     var d = 'M0,0 30,10 30,-10 0,0';
 
     return (
-      <path d={d} style={this.style()} />
+      <path d={d} style={this.style()}/>
     )
   },
 

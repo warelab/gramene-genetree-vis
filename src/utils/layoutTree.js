@@ -24,13 +24,13 @@ function addDisplayInfo(genetree, geneOfInterest) {
     else {
       parentNodeId = node.parent.model.node_id;
 
-      if(isLeafNode && pathIds[parentNodeId]) {
+      if (isLeafNode && pathIds[parentNodeId]) {
         displayInfo.expanded = true;
         displayInfo.expandedBecause = pathIds[parentNodeId];
       }
     }
 
-    if(displayInfo.expanded) {
+    if (displayInfo.expanded) {
       displayInfo.paralogs = paralogPathIds[nodeId];
       displayInfo.orthologs = orthologPathIds[nodeId];
     }
@@ -64,14 +64,14 @@ function addDisplayInfo(genetree, geneOfInterest) {
 
   function getOrthologPathIds() {
     var keys, filteredKeys, pathIdsArray, result;
-    keys =_.keys(geneOfInterest.homology).map(function(key) { return 'homology.' + key; });
-    filteredKeys = _.filter(keys, function(key) { return key.indexOf('ortholog') > -1; });
+    keys = _.keys(geneOfInterest.homology).map(function (key) { return 'homology.' + key; });
+    filteredKeys = _.filter(keys, function (key) { return key.indexOf('ortholog') > -1; });
     pathIdsArray = _.map(filteredKeys, pathIdsImpl);
-    result = _.reduce(pathIdsArray, function(acc, obj) {
-        return _.mergeWith(acc, obj, function mergeIndexedPathIds(accVal, objVal) {
-          return _.isArray(accVal) ? accVal.concat(objVal) : objVal;
-        });
+    result = _.reduce(pathIdsArray, function (acc, obj) {
+      return _.mergeWith(acc, obj, function mergeIndexedPathIds(accVal, objVal) {
+        return _.isArray(accVal) ? accVal.concat(objVal) : objVal;
       });
+    });
     return result;
   }
 

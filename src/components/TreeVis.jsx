@@ -28,7 +28,7 @@ var TreeVis = React.createClass({
   initNodesDeferred: function () {
     process.nextTick(this.initNodes);
   },
-  initDimensions: function() {
+  initDimensions: function () {
     this.margin = this.props.margin || DEFAULT_MARGIN;
     this.w = this.props.width - (2 * this.margin);
     this.h = this.props.height - (2 * this.margin);
@@ -39,7 +39,7 @@ var TreeVis = React.createClass({
     var genetree, visibleNodes;
     genetree = this.genetree;
 
-    if(!genetree) {
+    if (!genetree) {
       genetree = this.genetree = _.cloneDeep(this.props.genetree);
     }
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
@@ -64,7 +64,7 @@ var TreeVis = React.createClass({
   },
   handleNodeHover: function (node) {
     //highlightClade(this.genetree, node, 'hover');
-    if(this.state.hoveredNode === node) {
+    if (this.state.hoveredNode === node) {
       this.setState({hoveredNode: undefined});
     }
   },

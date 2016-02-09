@@ -10,11 +10,11 @@ var Node = React.createClass({
     node: React.PropTypes.object.isRequired
   },
 
-  componentWillMount: function() {
+  componentWillMount: function () {
     this.initNodeComponent();
   },
 
-  initNodeComponent: function() {
+  initNodeComponent: function () {
     var node = this.props.node;
 
     if (node.model.gene_stable_id) {
