@@ -1,7 +1,7 @@
 var React = require('react');
 var _ = require('lodash');
 
-var Gene = React.createClass({
+var Collapsed = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
@@ -46,4 +46,4 @@ var Gene = React.createClass({
   }
 });
 
-module.exports = Gene;
+module.exports = Collapsed;

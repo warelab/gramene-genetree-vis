@@ -8,10 +8,10 @@ var Gene = require('./nodeTypes/Gene.jsx');
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired,
-    onUnhover: React.PropTypes.func.isRequired
+    node: React.PropTypes.object.isRequired
+    //onSelect: React.PropTypes.func.isRequired,
+    //onHover: React.PropTypes.func.isRequired,
+    //onUnhover: React.PropTypes.func.isRequired
   },
 
   componentWillMount: function() {
@@ -37,15 +37,7 @@ var Node = React.createClass({
   },
 
   handleClick: function () {
-    this.props.onSelect(this.props.node);
-  },
-
-  hover: function () {
-    this.props.onHover(this.props.node);
-  },
-
-  unhover: function () {
-    this.props.onUnhover(this.props.node);
+    //this.props.onSelect(this.props.node);
   },
 
   transform: function () {
@@ -64,9 +56,7 @@ var Node = React.createClass({
     return (
       <g className={this.className()}
          transform={this.transform()}
-         onClick={this.handleClick}
-         onMouseOver={this.hover}
-         onMouseOut={this.unhover}>
+         onClick={this.handleClick}>
         <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
         {React.createElement(this.nodeTypeComponent, {node: this.props.node})}
       </g>

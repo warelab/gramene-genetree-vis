@@ -16,19 +16,42 @@ var GeneTree = React.createClass({
     var Clade, geneTreeProps;
     geneTreeProps = this.props;
 
+    //noinspection JSUnusedAssignment
     Clade = this.Clade = React.createClass({
       propTypes: {
         node: React.PropTypes.object.isRequired
       },
+
+      componentWillMount: function() {
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        this.onSelect = this.props.node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
+      },
+
+      handleClick: function () {
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        this.onSelect(this.props.node);
+
+      },
+
+      hover: function () {
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        geneTreeProps.onNodeHover(this.props.node);
+
+      },
+
+      unhover: function () {
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        geneTreeProps.onNodeUnhover(this.props.node);
+
+      },
+
       render: function() {
-        var node, parent, children, onSelect, subClades, nodeComponent, edgeComponent;
+        var node, parent, children, subClades, nodeComponent, edgeComponent;
 
         //noinspection JSPotentiallyInvalidUsageOfThis
         node = this.props.node;
         parent = node.parent;
         children = node.children;
-
-        onSelect = node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
 
         if(_.isArray(children) && node.displayInfo.expanded) {
           subClades = children.map(function(childNode, idx) {
@@ -38,24 +61,23 @@ var GeneTree = React.createClass({
 
         nodeComponent = (
           <Node node={node}
-                onSelect={onSelect}
-                onHover={geneTreeProps.onNodeHover}
-                onUnhover={geneTreeProps.onNodeUnhover} />
+                onSelect={this.onSelect} />
         );
 
         if(parent) {
           edgeComponent = (
             <Edge source={node}
-                  target={parent}
-                  onHover={geneTreeProps.onNodeHover}
-                  onUnhover={geneTreeProps.onNodeUnhover} />
+                  target={parent} />
           );
         }
 
         return (
-          <g className="clade">
-            {nodeComponent}
+          <g className="clade"
+            onMouseOver={this.hover}
+            onMouseOut={this.unhover}
+            onClick={this.handleClick}>
             {edgeComponent}
+            {nodeComponent}
             {subClades}
           </g>
         );

@@ -1,7 +1,9 @@
 var React = require('react');
 var _ = require('lodash');
 
-var Gene = React.createClass({
+const INTERNAL_NODE_SIZE = 4;
+
+var Internal = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
@@ -31,7 +33,7 @@ var Gene = React.createClass({
   render: function () {
     return (
       <g className={this.className()}>
-        <rect x="-2" y="-2" width="4" height="4"/>
+        <rect x={Internal.xy} y={Internal.xy} width={Internal.wh} height={Internal.wh} />
         <text x="10"
               dy=".35em"
               textAnchor="start">
@@ -42,4 +44,7 @@ var Gene = React.createClass({
   }
 });
 
-module.exports = Gene;
+Internal.xy = INTERNAL_NODE_SIZE / -2;
+Internal.wh = INTERNAL_NODE_SIZE;
+
+module.exports = Internal;

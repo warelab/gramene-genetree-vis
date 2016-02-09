@@ -1,32 +1,29 @@
 var React = require('react');
 var scale = require('d3').scale.linear;
 
+var xAdjust = require('./nodeTypes/Internal.jsx').xy;
+
 var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired, // parent
-    onHover: React.PropTypes.func.isRequired,
-    onUnhover: React.PropTypes.func.isRequired
-  },
-
-  hover: function () {
-    console.log('hover', this.props);
-    this.props.onHover(this.props.source);
-  },
-
-  unhover: function () {
-    console.log('unhover', this.props);
-    this.props.onUnhover(this.props.source);
+    target: React.PropTypes.object.isRequired  // parent
+    //onHover: React.PropTypes.func.isRequired,
+    //onUnhover: React.PropTypes.func.isRequired
   },
 
   path: function () {
-    var source, target, coords;
+    var source, target, adjustedTargetX, coords;
     source = this.props.source;
     target = this.props.target;
+
+    // stop drawing the egde before it overlaps the parent node
+    // (the child edge is always drawn after the parent node)
+    adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
+
     coords = [
       [source.y, source.x],
       [target.y, source.x],
-      [target.y, target.x]
+      [target.y, adjustedTargetX]
     ];
 
     return 'M' + coords.join(' ');
@@ -46,11 +43,13 @@ var Edge = React.createClass({
     var path = this.path();
     var style = this.style();
     return (
-      <path className="link"
-            d={path}
-            style={style}
-            onMouseOver={this.hover}
-            onMouseOut={this.unhover}/>
+      <g className="edge">
+        <path className="interaction-helper"
+              d={path} />
+        <path className="link"
+              d={path}
+              style={style} />
+      </g>
     )
   }
 });

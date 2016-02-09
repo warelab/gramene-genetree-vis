@@ -8,28 +8,33 @@
             cursor: pointer;
         }
 
-        .node, .node * {
-            transition: all 200ms ease-in-out;
+        .clade * {
+            transition: all 500ms ease-in-out;
         }
 
-        .node .interaction-helper {
+        .interaction-helper {
             opacity: 0;
+        }
+
+        path.interaction-helper {
+            opacity: 1;
+            fill-opacity: 0;
+            stroke-width: 3;
         }
 
         .node circle {
             fill: #fff;
         }
 
-        .node.hover .internal,
         .node:hover .internal,
-        .node.hover .gene circle,
         .node:hover .gene circle {
             transform: scale(2);
         }
 
-        .node.hover .link,
-        .node:hover .link {
-            opacity: 0.7;
+        .node:hover ~ g.clade .link,
+        .edge:hover .link,
+        .edge:hover ~ g.clade .link {
+            stroke-width: 2;
         }
 
         .node .gene.ortholog_one2one circle,
@@ -61,7 +66,6 @@
         .node .homolog text,
         .node .self text,
         .node .representative text,
-        .node.hover text,
         .node:hover text {
             fill-opacity: 1;
         }
