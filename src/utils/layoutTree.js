@@ -104,7 +104,6 @@ function calculateXIndex(genetree) {
     var nodeName, offsetIncrement, correctedLeftIndex, correctedRightIndex;
     nodeName = node.model.node_taxon ? node.model.node_taxon + ';' + node.model.node_type : node.model.gene_stable_id;
     nodeName += node.displayInfo.expanded ? '*' : '<';
-    console.log(_.repeat(' ', node.depth()) + nodeName + ' start : ' + node.model.left_index + '->' + node.model.right_index + '. offset is ' + offset);
     correctedLeftIndex = node.model.left_index - offset;
     if (node.displayInfo.expanded) {
       offsetIncrement = 0;
@@ -124,8 +123,6 @@ function calculateXIndex(genetree) {
     node.xindex = (correctedRightIndex + correctedLeftIndex) / 2;
     maxXindex = Math.max(maxXindex, node.xindex);
     minXindex = Math.min(minXindex, node.xindex);
-
-    console.log(_.repeat(' ', node.depth()) + nodeName + ' end : ' + correctedLeftIndex + '->' + correctedRightIndex + ' gives xindex of ' + node.xindex + '. offset will be incremented by ' + offsetIncrement);
 
     return offsetIncrement;
   }
