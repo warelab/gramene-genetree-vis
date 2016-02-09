@@ -4,12 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
 
-        .node {
+        .node, .edge {
             cursor: pointer;
         }
 
         .clade * {
-            transition: all 500ms ease-in-out;
+            transition: all 200ms ease-in-out;
         }
 
         .interaction-helper {
@@ -26,8 +26,18 @@
             fill: #fff;
         }
 
+        .speciation rect {
+            fill: #cd0000;
+        }
+
+        .duplication rect {
+            fill: #000080;
+        }
+
+        /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
         .node:hover .internal,
-        .node:hover .gene circle {
+        .node:hover .gene circle,
+        .edge:hover + .node rect {
             transform: scale(2);
         }
 

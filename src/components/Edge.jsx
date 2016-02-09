@@ -2,32 +2,66 @@ var React = require('react');
 var _ = require('lodash');
 var scale = require('d3').scale.linear;
 
-var xAdjust = require('./nodeTypes/Internal.jsx').xy;
+var defaultXAdjust = require('./nodeTypes/Internal.jsx').xy;
+
+// see CSS selector ".node:hover .internal"
+const HOVER_SCALE_FACTOR = 2;
 
 var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired  // parent
+    target: React.PropTypes.object.isRequired,  // parent
+    shortenEdge: React.PropTypes.bool.isRequired  // parent
     //onHover: React.PropTypes.func.isRequired,
     //onUnhover: React.PropTypes.func.isRequired
   },
 
-  path: function () {
-    var source, target, adjustedTargetX, coords;
+  pathCoords: function() {
+    var source, target, xAdjust, adjustedTargetX;
     source = this.props.source;
     target = this.props.target;
 
     // stop drawing the egde before it overlaps the parent node
     // (the child edge is always drawn after the parent node)
+    xAdjust = this.props.shortenEdge ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
     adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
 
-    coords = [
+    return [
       [source.y, source.x],
       [target.y, source.x],
       [target.y, adjustedTargetX]
     ];
+  },
 
-    return 'M' + coords.join(' ');
+  path: function () {
+    return 'M' + this.pathCoords().join(' ');
+  },
+
+  interactionRect: function(c1, c2) {
+    var props = {
+      x: Math.min( c1[0], c2[0] ) - 1,
+      y: Math.min( c1[1], c2[1] ) - 1,
+      width: Math.abs( c1[0] - c2[0] ) + 2,
+      height: Math.abs( c1[1] - c2[1] ) + 2
+    };
+    return (
+      <rect {...props} />
+    );
+  },
+
+  interactionHelper: function() {
+    var coords, rect1, rect2;
+
+    coords = this.pathCoords();
+    rect1 = this.interactionRect(coords[0], coords[1]);
+    rect2 = this.interactionRect(coords[1], coords[2]);
+
+    return (
+      <g className="interaction-helper">
+        {rect1}
+        {rect2}
+      </g>
+    )
   },
 
   style: function () {
@@ -45,8 +79,7 @@ var Edge = React.createClass({
     var style = this.style();
     return (
       <g className="edge">
-        <path className="interaction-helper"
-              d={path} />
+        {this.interactionHelper()}
         <path className="link"
               d={path}
               style={style} />
