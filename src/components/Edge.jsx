@@ -5,7 +5,8 @@ var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
     target: React.PropTypes.object.isRequired, // parent
-    onHover: React.PropTypes.func.isRequired
+    onHover: React.PropTypes.func.isRequired,
+    onUnhover: React.PropTypes.func.isRequired
   },
 
   hover: function () {
@@ -15,6 +16,7 @@ var Edge = React.createClass({
 
   unhover: function () {
     console.log('unhover', this.props);
+    this.props.onUnhover(this.props.source);
   },
 
   path: function () {

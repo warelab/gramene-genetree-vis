@@ -14,10 +14,26 @@ var Node = React.createClass({
     onUnhover: React.PropTypes.func.isRequired
   },
 
-  getInitialState: function () {
-    return {
-      hovered: false
+  componentWillMount: function() {
+    this.initNodeComponent();
+  },
+
+  initNodeComponent: function() {
+    var node = this.props.node;
+
+    if (node.model.gene_stable_id) {
+      this.nodeTypeComponent = Gene;
     }
+    else if (!node.displayInfo.expanded) {
+      this.nodeTypeComponent = Collapsed;
+    }
+    else {
+      this.nodeTypeComponent = Internal;
+    }
+  },
+
+  getInitialState: function () {
+    return {};
   },
 
   handleClick: function () {
@@ -26,12 +42,10 @@ var Node = React.createClass({
 
   hover: function () {
     this.props.onHover(this.props.node);
-    this.setState({hovered: true});
   },
 
   unhover: function () {
     this.props.onUnhover(this.props.node);
-    this.setState({hovered: false});
   },
 
   transform: function () {
@@ -39,28 +53,14 @@ var Node = React.createClass({
   },
 
   className: function () {
-    var className, homology, repType;
+    var className;
 
     className = 'node';
-    if (this.state.hovered) {
-      className += ' hover';
-    }
+
     return className;
   },
 
   render: function () {
-    var node, component;
-    node = this.props.node;
-    if (node.model.gene_stable_id) {
-      component = Gene;
-    }
-    else if (!node.displayInfo.expanded) {
-      component = Collapsed;
-    }
-    else {
-      component = Internal;
-    }
-
     return (
       <g className={this.className()}
          transform={this.transform()}
@@ -68,7 +68,7 @@ var Node = React.createClass({
          onMouseOver={this.hover}
          onMouseOut={this.unhover}>
         <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
-        {React.createElement(component, {node: node})}
+        {React.createElement(this.nodeTypeComponent, {node: this.props.node})}
       </g>
     )
   }

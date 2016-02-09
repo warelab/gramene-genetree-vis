@@ -11,6 +11,58 @@ var GeneTree = React.createClass({
     onInternalNodeSelect: React.PropTypes.func.isRequired,
     onNodeHover: React.PropTypes.func.isRequired
   },
+
+  componentWillMount: function() {
+    var Clade, geneTreeProps;
+    geneTreeProps = this.props;
+
+    Clade = this.Clade = React.createClass({
+      propTypes: {
+        node: React.PropTypes.object.isRequired
+      },
+      render: function() {
+        var node, parent, children, onSelect, subClades, nodeComponent, edgeComponent;
+
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        node = this.props.node;
+        parent = node.parent;
+        children = node.children;
+
+        onSelect = node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
+
+        if(_.isArray(children) && node.displayInfo.expanded) {
+          subClades = children.map(function(childNode, idx) {
+            return <Clade key={idx} node={childNode} />
+          });
+        }
+
+        nodeComponent = (
+          <Node node={node}
+                onSelect={onSelect}
+                onHover={geneTreeProps.onNodeHover}
+                onUnhover={geneTreeProps.onNodeUnhover} />
+        );
+
+        if(parent) {
+          edgeComponent = (
+            <Edge source={node}
+                  target={parent}
+                  onHover={geneTreeProps.onNodeHover}
+                  onUnhover={geneTreeProps.onNodeUnhover} />
+          );
+        }
+
+        return (
+          <g className="clade">
+            {nodeComponent}
+            {edgeComponent}
+            {subClades}
+          </g>
+        );
+      }
+    });
+  },
+
   handleNodeSelect: function (node) {
     if (node.model.gene_stable_id) {
       this.props.onGeneSelect(node);
@@ -25,34 +77,11 @@ var GeneTree = React.createClass({
   },
 
   render: function () {
-    var nodes, nodeComponents, edgeComponents;
-    // Compute the new tree layout.
-    nodes = this.props.nodes;
-
-    nodeComponents = nodes.map(function (node, idx) {
-      return <Node key={idx}
-                   node={node}
-                   onSelect={this.handleNodeSelect}
-                   onHover={this.handleHover}
-      />;
-    }.bind(this));
-
-    edgeComponents = nodes.filter(function (n) { return n.parent })
-      .map(function (node, idx) {
-        return <Edge key={idx}
-                     source={node}
-                     target={node.parent}
-                     onHover={this.handleHover}/>
-      }.bind(this));
+    var Clade = this.Clade;
 
     return (
       <g className="genetree">
-        <g className="nodes">
-          {nodeComponents}
-        </g>
-        <g className="edges">
-          {edgeComponents}
-        </g>
+        <Clade node={this.props.nodes[0]} />
       </g>
     )
   }
