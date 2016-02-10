@@ -1,3 +1,5 @@
+'use strict';
+
 var React = require('react');
 
 var taxonomyColor = require('../utils/taxonomyColor');
@@ -26,9 +28,9 @@ var Edge = React.createClass({
     adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
 
     return [
-      [source.y, source.x],
-      [target.y, source.x],
-      [target.y, adjustedTargetX]
+      [0, 0],
+      [target.y - source.y, source.x - source.x],
+      [target.y - source.y, adjustedTargetX - source.x]
     ];
   },
 

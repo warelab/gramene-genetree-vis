@@ -1,3 +1,5 @@
+'use strict';
+
 var React = require('react');
 
 var Collapsed = require('./nodeTypes/Collapsed.jsx');
@@ -35,10 +37,6 @@ var Node = React.createClass({
     //this.props.onSelect(this.props.node);
   },
 
-  transform: function () {
-    return 'translate(' + this.props.node.y + ', ' + this.props.node.x + ')';
-  },
-
   className: function () {
     var className;
 
@@ -50,7 +48,7 @@ var Node = React.createClass({
   render: function () {
     return (
       <g className={this.className()}
-         transform={this.transform()}
+         //transform={this.transform()}
          onClick={this.handleClick}>
         <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
         {React.createElement(this.getNodeComponent(), {node: this.props.node})}

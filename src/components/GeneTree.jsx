@@ -1,3 +1,5 @@
+'use strict';
+
 var React = require('react');
 var _ = require('lodash');
 
@@ -7,7 +9,6 @@ var Node = require('./Node.jsx');
 var GeneTree = React.createClass({
   propTypes: {
     nodes: React.PropTypes.array.isRequired,
-    parentIsHovered: React.PropTypes.bool,
     onGeneSelect: React.PropTypes.func.isRequired,
     onInternalNodeSelect: React.PropTypes.func.isRequired,
     onNodeHover: React.PropTypes.func.isRequired
@@ -20,7 +21,10 @@ var GeneTree = React.createClass({
     //noinspection JSUnusedAssignment
     Clade = this.Clade = React.createClass({
       propTypes: {
-        node: React.PropTypes.object.isRequired
+        node: React.PropTypes.object.isRequired,
+        parentIsHovered: React.PropTypes.bool,
+        xOffset: React.PropTypes.number.isRequired,
+        yOffset: React.PropTypes.number.isRequired
       },
 
       getInitialState: function () {
@@ -52,6 +56,17 @@ var GeneTree = React.createClass({
         this.setState({hovered: false});
       },
 
+      transform: function () {
+        var x, y;
+
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        x = this.props.node.x - this.props.xOffset;
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        y = this.props.node.y - this.props.yOffset;
+
+        return 'translate(' + y + ', ' + x + ')';
+      },
+
       render: function () {
         var node, parent, children, hovered, subClades, nodeComponent, edgeComponent;
 
@@ -63,7 +78,11 @@ var GeneTree = React.createClass({
 
         if (_.isArray(children) && node.displayInfo.expanded) {
           subClades = children.map(function (childNode, idx) {
-            return <Clade key={idx} node={childNode} parentIsHovered={hovered}/>
+            return <Clade key={idx}
+                          node={childNode}
+                          parentIsHovered={hovered}
+                          xOffset={node.x}
+                          yOffset={node.y} />
           });
         }
 
@@ -86,7 +105,8 @@ var GeneTree = React.createClass({
           <g className="clade"
              onMouseOver={this.hover}
              onMouseOut={this.unhover}
-             onClick={this.handleClick}>
+             onClick={this.handleClick}
+             transform={this.transform()}>
             {edgeComponent}
             {nodeComponent}
             {subClades}
@@ -114,7 +134,7 @@ var GeneTree = React.createClass({
 
     return (
       <g className="genetree">
-        <Clade node={this.props.nodes[0]}/>
+        <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0} />
       </g>
     )
   }
