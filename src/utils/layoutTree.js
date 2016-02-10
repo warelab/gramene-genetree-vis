@@ -1,6 +1,8 @@
 var scale = require('d3').scale.linear;
 var _ = require('lodash');
 
+var calculateSvgHeight = require('./calculateSvgHeight');
+
 function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
   var paralogPathIds, orthologPathIds, pathIds;
 
@@ -101,6 +103,7 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
 }
 
 function calculateXIndex(genetree) {
+  const COLLAPSED_NODE_OFFSET_MODIFIER = 0;
   var maxXindex, minXindex;
   maxXindex = -Infinity;
   minXindex = Infinity;
@@ -116,7 +119,7 @@ function calculateXIndex(genetree) {
       }
     }
     else {
-      offsetIncrement = node.model.right_index - node.model.left_index;
+      offsetIncrement = node.model.right_index - node.model.left_index - 1;
     }
 
     correctedRightIndex = node.model.right_index - (offset + offsetIncrement);
@@ -134,9 +137,11 @@ function calculateXIndex(genetree) {
 }
 
 // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
-function layoutNodes(genetree, w, h) {
+function layoutNodes(genetree, w) {
   const MIN_DIST = 0.02;
-  var rootDists, xscale, yscale;
+  var rootDists, xscale, yscale, h;
+
+  h = calculateSvgHeight(genetree);
 
   // Visit all nodes depth first and adjust y pos width distance metric
   genetree.walk(function (node) {
@@ -164,8 +169,8 @@ function layoutNodes(genetree, w, h) {
   }
 }
 
-module.exports = function layoutTree(genetree, geneOfInterest, x, y, additionalVisibleNodes) {
+module.exports = function layoutTree(genetree, geneOfInterest, x, additionalVisibleNodes) {
   addDisplayInfo(genetree, geneOfInterest, additionalVisibleNodes);
   calculateXIndex(genetree);
-  return layoutNodes(genetree, x, y);
+  return layoutNodes(genetree, x);
 };

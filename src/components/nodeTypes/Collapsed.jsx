@@ -45,7 +45,7 @@ var Collapsed = React.createClass({
   },
 
   triangle: function () {
-    var d = 'M0,0 30,10 30,-10 0,0';
+    var d = 'M0,0 30,8 30,-8 0,0';
 
     return (
       <path d={d} style={this.style()}/>
