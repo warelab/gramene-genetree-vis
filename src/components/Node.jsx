@@ -1,75 +1,58 @@
+'use strict';
+
 var React = require('react');
-var _ = require('lodash');
+
+var Collapsed = require('./nodeTypes/Collapsed.jsx');
+var Internal = require('./nodeTypes/Internal.jsx');
+var Gene = require('./nodeTypes/Gene.jsx');
 
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired
+    taxonomy: React.PropTypes.object.isRequired
+  },
+  
+  getNodeComponent: function () {
+    var node, nodeTypeComponent;
+    node = this.props.node;
+
+    if (node.model.gene_stable_id) {
+      nodeTypeComponent = Gene;
+    }
+    else if (!node.displayInfo.expanded) {
+      nodeTypeComponent = Collapsed;
+    }
+    else {
+      nodeTypeComponent = Internal;
+    }
+    
+    return nodeTypeComponent;
   },
 
   getInitialState: function () {
-    return {
-      hovered: false
-    }
+    return {};
   },
 
   handleClick: function () {
-    console.log('clicked', this.props);
-    this.props.onSelect(this.props.node);
-  },
-
-  hover: function () {
-    console.log('hover', this.props);
-    this.setState({hovered: true});
-  },
-
-  unhover: function () {
-    console.log('unhover', this.props);
-    this.setState({hovered: false});
+    //this.props.onSelect(this.props.node);
   },
 
   className: function () {
-    var className, homology, repType;
+    var className;
 
     className = 'node';
-    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
-    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
-    if (this.state.hovered) {
-      className += ' hover';
-    }
-    if (homology) {
-      className += ' homolog ' + homology;
-    }
-    if (repType) {
-      className += ' representative';
-    }
+
     return className;
-  },
-
-  transform: function () {
-    return 'translate(' + this.props.node.y + ', ' + this.props.node.x + ')';
-  },
-
-  text: function () {
-    return _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id') ||
-      '';
   },
 
   render: function () {
     return (
       <g className={this.className()}
-         transform={this.transform()}
-         onClick={this.handleClick}
-         onMouseOver={this.hover}
-         onMouseOut={this.unhover}>
-        <circle r="3"/>
-        <text x="10"
-              dy=".35em"
-              textAnchor="start">
-          {this.text()}
-        </text>
+         //transform={this.transform()}
+         onClick={this.handleClick}>
+        <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
+        {React.createElement(this.getNodeComponent(), this.props)}
       </g>
     )
   }
