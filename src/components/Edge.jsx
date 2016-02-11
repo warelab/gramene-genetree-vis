@@ -1,53 +1,82 @@
+'use strict';
+
 var React = require('react');
-var scale = require('d3').scale.linear;
+
+var taxonomyColor = require('../utils/taxonomyColor');
+var defaultXAdjust = require('./nodeTypes/Internal.jsx').xy;
+
+// see CSS selector ".node:hover .internal"
+const HOVER_SCALE_FACTOR = 2;
 
 var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
-    target: React.PropTypes.object.isRequired  // parent
+    target: React.PropTypes.object.isRequired,  // parent
+    shortenEdge: React.PropTypes.bool.isRequired  // parent
+    //onHover: React.PropTypes.func.isRequired,
+    //onUnhover: React.PropTypes.func.isRequired
   },
 
-  hover: function () {
-    console.log('hover', this.props);
-  },
+  pathCoords: function () {
+    var source, target, xAdjust, adjustedTargetX;
+    source = this.props.source;
+    target = this.props.target;
 
-  unhover: function () {
-    console.log('unhover', this.props);
+    // stop drawing the egde before it overlaps the parent node
+    // (the child edge is always drawn after the parent node)
+    xAdjust = this.props.shortenEdge ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
+    adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
+
+    return [
+      [0, 0],
+      [target.y - source.y, source.x - source.x],
+      [target.y - source.y, adjustedTargetX - source.x]
+    ];
   },
 
   path: function () {
-    var source, target, coords;
-    source = this.props.source;
-    target = this.props.target;
-    coords = [
-      [source.y, source.x],
-      [target.y, source.x],
-      [target.y, target.x]
-    ];
+    return 'M' + this.pathCoords().join(' ');
+  },
 
-    return 'M' + coords.join(' ');
+  interactionRect: function (c1, c2) {
+    var props = {
+      x: Math.min(c1[0], c2[0]) - 1,
+      y: Math.min(c1[1], c2[1]) - 1,
+      width: Math.abs(c1[0] - c2[0]) + 2,
+      height: Math.abs(c1[1] - c2[1]) + 2
+    };
+    return (
+      <rect {...props} />
+    );
+  },
+
+  interactionHelper: function () {
+    var coords, rect1, rect2;
+
+    coords = this.pathCoords();
+    rect1 = this.interactionRect(coords[0], coords[1]);
+    rect2 = this.interactionRect(coords[1], coords[2]);
+
+    return (
+      <g className="interaction-helper">
+        {rect1}
+        {rect2}
+      </g>
+    )
   },
 
   style: function () {
-    var stats, colorScale, color, max, score;
-    stats = _.get(this.props.source, 'relationToGeneOfInterest.taxonomy');
-    max = stats.maxima.lcaDistance + stats.maxima.pathDistance;
-    score = stats.lcaDistance + stats.pathDistance;
-    colorScale = scale().domain([0, max]).range(['green', 'red']);
-    color = colorScale(score);
-    console.log(color, max, score, this.props.source);
-    return {stroke: color};
+    return {stroke: taxonomyColor(this.props.source)};
   },
 
   render: function () {
-    var path = this.path();
-    var style = this.style();
     return (
-      <path className="link"
-            d={path}
-            style={style}
-            onMouseOver={this.hover}
-            onMouseOut={this.unhover}/>
+      <g className="edge">
+        {this.interactionHelper()}
+        <path className="link"
+              d={this.path()}
+              style={this.style()}/>
+      </g>
     )
   }
 });

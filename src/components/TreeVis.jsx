@@ -1,201 +1,129 @@
+'use strict';
+
 var React = require('react');
-var scale = require('d3').scale.linear;
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 
 var GeneTree = require('./GeneTree.jsx');
 
+var relateGeneToTree = require('../utils/relateGeneToTree');
+var layoutTree = require('../utils/layoutTree');
+var calculateSvgHeight = require('../utils/calculateSvgHeight');
+
+const DEFAULT_MARGIN = 10;
+
 var TreeVis = React.createClass({
   propTypes: {
     width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
+    //height: React.PropTypes.number.isRequired,
+    margin: React.PropTypes.number,
     genetree: React.PropTypes.object.isRequired,
     initialGeneOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object
   },
   getInitialState: function () {
     return {
-      geneOfInterest: this.props.initialGeneOfInterest
+      additionalVisibleNodes: {}
     };
   },
   componentWillMount: function () {
-    this.initNodesDeferred();
+    this.initHeightAndMargin();
+    this.initNodes();
+    this.reinitHeight();
   },
-  initNodesDeferred: function () {
-    process.nextTick(this.initNodes);
+  initHeightAndMargin: function () {
+    this.margin = this.props.margin || DEFAULT_MARGIN;
+    this.w = this.props.width - (2 * this.margin);
+
+    this.transform = 'translate(' + this.margin + ', ' + this.margin + ')';
   },
-  initNodes: function () {
-    var nodes = _.cloneDeep(this.props.genetree.all());
-    this.layoutNodes(nodes);
-    this.relateNodesToGeneOfInterest(nodes, this.props.initialGeneOfInterest);
-    this.setState({nodes: nodes});
+  reinitHeight: function() {
+    this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
   },
-  handleGeneSelect: function (id) {
-    GrameneClient.genes(id).then(function (response) {
+  initNodes: function (geneOfInterest) {
+    var genetree, visibleNodes;
+    genetree = this.genetree;
+
+    if (!genetree) {
+      genetree = this.genetree = _.cloneDeep(this.props.genetree);
+    }
+    geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
+
+    relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
+    visibleNodes = layoutTree(genetree, geneOfInterest, this.w / 2, this.state.additionalVisibleNodes);
+
+    this.setState({
+      geneOfInterest: geneOfInterest,
+      visibleNodes: visibleNodes
+    });
+  },
+  handleGeneSelect: function (geneNode) {
+    GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
       var geneOfInterest = response.docs[0];
-      this.relateNodesToGeneOfInterest(this.state.nodes, geneOfInterest);
-      this.setState({geneOfInterest: geneOfInterest});
+      this.initNodes(geneOfInterest);
+      this.reinitHeight();
     }.bind(this))
   },
-  componentWillUpdate: function (newProps, newState) {
+  handleInternalNodeSelect: function (node) {
+    var additionalVisibleNodes, allVisibleNodes, nodeId;
+    additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
 
+    nodeId = node.model.node_id;
+    if(additionalVisibleNodes[nodeId]) {
+      delete additionalVisibleNodes[nodeId];
+    } else {
+      additionalVisibleNodes[nodeId] = node;
+    }
+
+    allVisibleNodes = layoutTree(
+      this.genetree,
+      this.state.geneOfInterest,
+      this.w / 2,
+      additionalVisibleNodes
+    );
+
+    this.reinitHeight();
+
+    this.setState({
+      selectedInternalNode: node,
+      additionalVisibleNodes: additionalVisibleNodes,
+      visibleNodes: allVisibleNodes
+    });
+  },
+  handleNodeHover: function (node) {
+    if (this.state.hoveredNode === node) {
+      this.setState({hoveredNode: undefined});
+    }
+  },
+  handleNodeUnhover: function (node) {
+    this.setState({hoveredNode: node});
   },
   render: function () {
-    var genetree;
+    var genetree, height;
 
-    if (this.state.nodes) {
+    height = this.h + (2 * this.margin);
+
+    if (this.state.visibleNodes) {
       genetree = (
-        <GeneTree nodes={this.state.nodes} onGeneSelect={this.handleGeneSelect}/>
+        <GeneTree nodes={this.state.visibleNodes}
+                  onGeneSelect={this.handleGeneSelect}
+                  onInternalNodeSelect={this.handleInternalNodeSelect}
+                  onNodeHover={this.handleNodeHover}
+                  onNodeUnhover={this.handleNodeUnhover}
+                  taxonomy={this.props.taxonomy} />
       );
     }
 
     return (
-      <svg width={this.props.width} height={this.props.height}>
-        {genetree}
-      </svg>
+      <div className="genetree-vis">
+        <svg width={this.props.width} height={height}>
+          <g className="tree-wrapper" transform={this.transform}>
+            {genetree}
+          </g>
+        </svg>
+      </div>
     );
-  },
-
-  // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
-  layoutNodes: function layoutNodes(nodes) {
-    var w, h, visitPreOrder, rootDists, xscale, yscale;
-
-    w = this.props.width / 2;
-    h = this.props.height;
-
-    // Visit all nodes and adjust y pos width distance metric
-    visitPreOrder = function (root, callback) {
-      callback(root);
-      if (root.children) {
-        for (var i = root.children.length - 1; i >= 0; i--) {
-          visitPreOrder(root.children[i], callback)
-        }
-      }
-    };
-    visitPreOrder(nodes[0], function (node) {
-      node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, 0.02) || 0);
-    });
-    rootDists = nodes.map(function (n) { return n.root_dist; });
-    yscale = scale()
-      .domain([0, _.max(rootDists)])
-      .range([0, w]);
-    xscale = scale()
-      .domain([nodes[0].model.left_index, nodes[0].model.right_index])
-      .range([0, h]);
-    visitPreOrder(nodes[0], function (node) {
-      node.x = xscale((node.model.left_index + node.model.right_index) / 2);
-      node.y = yscale(node.root_dist);
-    });
-    return yscale;
-  },
-  relateNodesToGeneOfInterest: function (nodes, geneOfInterest) {
-    _.forEach(nodes, function (node) {
-      node.relationToGeneOfInterest = {};
-    });
-    this.addHomologyInformationToNodes(nodes, geneOfInterest);
-    this.addTaxonDistanceInformationToNodes(nodes, geneOfInterest);
-  },
-  addHomologyInformationToNodes: function (nodes, theGene) {
-    var homologs, representatives;
-    if (theGene) {
-      homologs = indexHomologs(theGene);
-      representatives = indexReps(theGene);
-      _.forEach(nodes, function (node) {
-        var nodeId, homology, repType;
-        nodeId = node.model.gene_stable_id;
-        if (nodeId) {
-          if (nodeId === theGene._id) {
-            homology = 'self';
-          }
-          else {
-            homology = homologs[nodeId];
-          }
-
-          node.relationToGeneOfInterest.homology = homology;
-          node.relationToGeneOfInterest.repType = representatives[nodeId];
-        }
-      });
-    }
-  },
-  addTaxonDistanceInformationToNodes: function (nodes, geneOfInterest) {
-    var theGeneTaxonId, theTaxonNode, theTaxonPath,
-      theTaxonPathIds, taxonomy, relationLUT, distances, maxima;
-
-    theGeneTaxonId = geneOfInterest.taxon_id;
-    taxonomy = this.props.taxonomy;
-
-    if (theGeneTaxonId && taxonomy) {
-      theTaxonNode = taxonomy.indices.id[theGeneTaxonId];
-      theTaxonPath = theTaxonNode.getPath();
-      theTaxonPathIds = _.keyBy(theTaxonPath, 'model.id');
-      relationLUT = {};
-      maxima = {
-        lcaDistance: 0,
-        pathDistance: 0
-      };
-
-      _.forEach(nodes, function (node) {
-        var nodeTaxonId, nodeTaxon, pathDistance, lcaDistance, lca;
-        nodeTaxonId = node.model.taxon_id || node.model.node_taxon_id;
-
-        // have we already seen this?
-        if (relationLUT[nodeTaxonId]) {
-          node.relationToGeneOfInterest.taxonomy = relationLUT[nodeTaxonId];
-        }
-        else {
-          if (nodeTaxonId === theGeneTaxonId) {
-            lcaDistance = 0;
-            pathDistance = 0;
-          }
-          else {
-            if ((lca = theTaxonPathIds[nodeTaxonId])) {
-              pathDistance = 0;
-            }
-            else {
-              nodeTaxon = taxonomy.indices.id[nodeTaxonId];
-              lca = theTaxonNode.lcaWith([nodeTaxon]);
-              pathDistance = lca.pathTo(nodeTaxon).length - 1;
-            }
-
-            lcaDistance = theTaxonPath.length - _.indexOf(theTaxonPath, lca) - 1;
-          }
-
-          distances = {
-            lcaDistance: lcaDistance,
-            pathDistance: pathDistance,
-            maxima: maxima
-          };
-
-          maxima.lcaDistance = Math.max(maxima.lcaDistance, distances.lcaDistance);
-          maxima.pathDistance = Math.max(maxima.pathDistance, distances.pathDistance);
-
-          relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = distances;
-        }
-      });
-
-
-    }
   }
 });
-
-// IN -> key: homologyType, value: [geneId]
-// OUT-> key: geneId, value: homologyType
-function indexHomologs(theGene) {
-  return _.transform(theGene.homology, function (result, value, key) {
-    _.forEach(value, function (id) {
-      result[id] = key;
-    });
-    return result;
-  }, {});
-}
-
-// IN -> key: representativeType, value: gene doc
-// OUT-> key: geneId, value: representativeType
-function indexReps(theGene) {
-  return _.transform(theGene.representative, function (result, rep, repType) {
-    result[rep.id] = repType;
-    return result;
-  }, {});
-}
 
 module.exports = TreeVis;
