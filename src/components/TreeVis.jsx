@@ -1,5 +1,7 @@
 'use strict';
 
+require('../../styles/tree.less');
+
 var React = require('react');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;

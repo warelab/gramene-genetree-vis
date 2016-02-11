@@ -3,20 +3,13 @@
 module.exports = function (grunt) {
   require('jit-grunt')(grunt);
 
-  grunt.initConfig({
-    less: {
-      development: {
-        options: {
-          compress: false,
-          yuicompress: true,
-          optimization: 2
-        },
-        files: {
-          "build/style.css": "styles/*.less"
-        }
-      }
-    },
+  var lessifyOptions = {
+    plugins: [
+      new (require('less-plugin-autoprefix'))({browsers: ["last 2 versions"]})
+    ]
+  };
 
+  grunt.initConfig({
     browserify: {
       options: {
 
@@ -24,6 +17,7 @@ module.exports = function (grunt) {
           debug: true
         },
         transform: [
+          ['node-lessify', lessifyOptions],
           ['babelify', {presets: ["es2015", "react"]}]
         ]
       },
@@ -43,7 +37,7 @@ module.exports = function (grunt) {
 
     watch: {
       browserify: {
-        files: ['<%= browserify.dev.src %>', 'src/**/*.js', 'src/**/*.jsx'],
+        files: ['<%= browserify.dev.src %>', 'src/**/*.js', 'src/**/*.jsx', 'styles/**/*.less'],
         tasks: ['browserify:dev']
       }
     }
