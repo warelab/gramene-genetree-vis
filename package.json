@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "Visualize a genetree using d3",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:warelab/gramene-genetree-vis.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "d3": "^3.5.14",
     "gramene-search-client": "^2.5.5",
