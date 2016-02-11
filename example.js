@@ -1,4 +1,5 @@
-var React = require('react');
+//noinspection JSUnusedLocalSymbols
+var React = require('react'); // This var is required after JSX->JS transpile.
 var ReactDOM = require('react-dom');
 var TreeVis = require('./src/components/TreeVis.jsx');
 

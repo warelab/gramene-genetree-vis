@@ -1,5 +1,5 @@
 {
-  "name": "@warelab/gramene-genetree-vis",
+  "name": "gramene-genetree-vis",
   "version": "1.0.0",
   "dependencies": {
     "d3": {

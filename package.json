@@ -1,5 +1,5 @@
 {
-  "name": "@warelab/gramene-genetree-vis",
+  "name": "gramene-genetree-vis",
   "version": "1.0.0",
   "description": "Visualize a genetree using d3",
   "main": "index.js",
@@ -28,6 +28,8 @@
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",
     "grunt-contrib-watch": "^0.6.1",
-    "jit-grunt": "^0.9.1"
+    "jit-grunt": "^0.9.1",
+    "less-plugin-autoprefix": "^1.5.1",
+    "node-lessify": "^0.1.1"
   }
 }
