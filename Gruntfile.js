@@ -28,7 +28,7 @@ module.exports = function (grunt) {
         ]
       },
       dev: {
-        src: './exampleReact.js',
+        src: './example.js',
         dest: 'build/bundle.js'
 
       },
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
 
     watch: {
       browserify: {
-        files: ['exampleReact.js', 'src/**/*.js', 'src/**/*.jsx'],
+        files: ['<%= browserify.dev.src %>', 'src/**/*.js', 'src/**/*.jsx'],
         tasks: ['browserify:dev']
       }
     }

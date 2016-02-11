@@ -3,17 +3,22 @@
   "version": "1.0.0",
   "description": "Visualize a genetree using d3",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:warelab/gramene-genetree-vis.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "d3": "^3.5.14",
+    "gramene-search-client": "^2.5.5",
+    "gramene-trees-client": "^2.3.1",
     "lodash": "^4.2.0",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "reflux": "^0.3.0"
+    "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel": "^6.3.26",
