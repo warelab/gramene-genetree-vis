@@ -1,6 +1,6 @@
 {
   "name": "gramene-genetree-vis",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "dependencies": {
     "d3": {
       "version": "3.5.14",
