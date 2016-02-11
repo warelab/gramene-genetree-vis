@@ -8,7 +8,8 @@ var Gene = React.createClass({
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired
+    onHover: React.PropTypes.func.isRequired,
+    taxonomy: React.PropTypes.object.isRequired
   },
 
   className: function () {
@@ -27,11 +28,19 @@ var Gene = React.createClass({
   },
 
   text: function () {
-    return (
+    var geneId, taxonId, species;
+    geneId =
       _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id') ||
-      ''
-    );
+      _.get(this.props.node, 'model.gene_stable_id');
+
+    if(geneId.length < 8) {
+      taxonId = this.props.node.model.taxon_id;
+      species = _.get(this.props.taxonomy.indices.id[taxonId], 'model.name');
+      return species + ': ' + geneId;
+    }
+    else {
+      return geneId;
+    }
   },
 
   render: function () {

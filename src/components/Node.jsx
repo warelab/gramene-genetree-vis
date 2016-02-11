@@ -9,7 +9,8 @@ var Gene = require('./nodeTypes/Gene.jsx');
 var Node = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired
+    node: React.PropTypes.object.isRequired,
+    taxonomy: React.PropTypes.object.isRequired
   },
   
   getNodeComponent: function () {
@@ -51,7 +52,7 @@ var Node = React.createClass({
          //transform={this.transform()}
          onClick={this.handleClick}>
         <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
-        {React.createElement(this.getNodeComponent(), {node: this.props.node})}
+        {React.createElement(this.getNodeComponent(), this.props)}
       </g>
     )
   }

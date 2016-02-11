@@ -37,8 +37,28 @@ var Collapsed = React.createClass({
   },
 
   text: function () {
+    var node, texts, homologs, orthologs, paralogs;
+    node = this.props.node;
+    homologs = node.leafNodes().length;
+    orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
+    paralogs = _.get(node, 'displayInfo.paralogs.length') || 0;
+    texts = [this.props.node.model.node_taxon + ': ' + homologs + ' genes'];
+
+    addToTexts(paralogs, 'paralog');
+    addToTexts(orthologs, 'ortholog');
+
+    function addToTexts(count, type) {
+      var text, countText;
+      if(count) {
+        countText = count === homologs ? 'all' : count;
+        text = countText + ' ' + type;
+        if (count > 1) text += 's';
+        texts.push(text);
+      }
+    }
+
     return <text x="36"
-                 dy=".35em">Hello</text>;
+                 dy=".35em">{texts.join(', ')}</text>;
   },
 
   style: function () {

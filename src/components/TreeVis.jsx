@@ -65,17 +65,15 @@ var TreeVis = React.createClass({
     }.bind(this))
   },
   handleInternalNodeSelect: function (node) {
-    var additionalVisibleNodes, allVisibleNodes;
+    var additionalVisibleNodes, allVisibleNodes, nodeId;
     additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
 
-    node.walk(function(n) {
-      var id = n.model.node_id;
-      if(additionalVisibleNodes[id]) {
-        delete additionalVisibleNodes[id];
-      } else {
-        additionalVisibleNodes[id] = n;
-      }
-    });
+    nodeId = node.model.node_id;
+    if(additionalVisibleNodes[nodeId]) {
+      delete additionalVisibleNodes[nodeId];
+    } else {
+      additionalVisibleNodes[nodeId] = node;
+    }
 
     allVisibleNodes = layoutTree(
       this.genetree,
@@ -101,7 +99,7 @@ var TreeVis = React.createClass({
     this.setState({hoveredNode: node});
   },
   render: function () {
-    var genetree, selections, height;
+    var genetree, height;
 
     height = this.h + (2 * this.margin);
 
@@ -111,40 +109,10 @@ var TreeVis = React.createClass({
                   onGeneSelect={this.handleGeneSelect}
                   onInternalNodeSelect={this.handleInternalNodeSelect}
                   onNodeHover={this.handleNodeHover}
-                  onNodeUnhover={this.handleNodeUnhover}/>
+                  onNodeUnhover={this.handleNodeUnhover}
+                  taxonomy={this.props.taxonomy} />
       );
     }
-
-    //selections = [];
-    //if (this.state.geneOfInterest) {
-    //  selections.push(
-    //    <li key="gene">
-    //      <h4>Gene</h4>
-    //      <p>{this.state.geneOfInterest._id}</p>
-    //    </li>
-    //  );
-    //}
-    //
-    //if (this.state.selectedInternalNode) {
-    //  selections.push(
-    //    <li key="internal-node">
-    //      <h4>Internal</h4>
-    //      <p>{this.state.selectedInternalNode.model.node_taxon} {this.state.selectedInternalNode.model.node_type}</p>
-    //    </li>
-    //  );
-    //}
-    //
-    //if (this.state.hoveredNode) {
-    //  var hoverText = this.state.hoveredNode.model.node_taxon ?
-    //  this.state.hoveredNode.model.node_taxon + ' ' + this.state.hoveredNode.model.node_type :
-    //  this.state.hoveredNode.model.gene_stable_id + ' ' + this.state.hoveredNode.model.system_name;
-    //  selections.push(
-    //    <li key="hovered-node">
-    //      <h4>Hovered</h4>
-    //      <p>{hoverText}</p>
-    //    </li>
-    //  );
-    //}
 
     return (
       <div className="genetree-vis">
@@ -153,11 +121,6 @@ var TreeVis = React.createClass({
             {genetree}
           </g>
         </svg>
-        <div className="selections">
-          <ul>
-            {selections}
-          </ul>
-        </div>
       </div>
     );
   }

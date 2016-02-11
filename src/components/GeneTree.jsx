@@ -11,7 +11,8 @@ var GeneTree = React.createClass({
     nodes: React.PropTypes.array.isRequired,
     onGeneSelect: React.PropTypes.func.isRequired,
     onInternalNodeSelect: React.PropTypes.func.isRequired,
-    onNodeHover: React.PropTypes.func.isRequired
+    onNodeHover: React.PropTypes.func.isRequired,
+    taxonomy: React.PropTypes.object
   },
 
   componentWillMount: function () {
@@ -34,6 +35,10 @@ var GeneTree = React.createClass({
       componentWillMount: function () {
         //noinspection JSPotentiallyInvalidUsageOfThis
         this.onSelect = this.props.node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
+      },
+
+      componentDidMount: function() {
+        this.setState({mounted: true});
       },
 
       handleClick: function (e) {
@@ -59,12 +64,20 @@ var GeneTree = React.createClass({
       transform: function () {
         var x, y;
 
-        //noinspection JSPotentiallyInvalidUsageOfThis
-        x = this.props.node.x - this.props.xOffset;
-        //noinspection JSPotentiallyInvalidUsageOfThis
-        y = this.props.node.y - this.props.yOffset;
+        if(this.state.mounted) {
+          //noinspection JSPotentiallyInvalidUsageOfThis
+          x = this.props.node.x - this.props.xOffset;
+          //noinspection JSPotentiallyInvalidUsageOfThis
+          y = this.props.node.y - this.props.yOffset;
+        }
+        else {
+          //noinspection JSPotentiallyInvalidUsageOfThis
+          x = this.props.xOffset;
+          //noinspection JSPotentiallyInvalidUsageOfThis
+          y = this.props.yOffset;
+        }
 
-        return 'translate(' + y + ', ' + x + ')';
+        return 'translate(' + y + 'px, ' + x + 'px)';
       },
 
       render: function () {
@@ -88,7 +101,8 @@ var GeneTree = React.createClass({
 
         nodeComponent = (
           <Node node={node}
-                onSelect={this.onSelect}/>
+                onSelect={this.onSelect}
+                taxonomy={geneTreeProps.taxonomy} />
         );
 
         if (parent) {
@@ -106,7 +120,7 @@ var GeneTree = React.createClass({
              onMouseOver={this.hover}
              onMouseOut={this.unhover}
              onClick={this.handleClick}
-             transform={this.transform()}>
+             style={{transform: this.transform()}}>
             {edgeComponent}
             {nodeComponent}
             {subClades}
