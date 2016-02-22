@@ -21,7 +21,8 @@ var TreeVis = React.createClass({
     margin: React.PropTypes.number,
     genetree: React.PropTypes.object.isRequired,
     initialGeneOfInterest: React.PropTypes.object,
-    taxonomy: React.PropTypes.object
+    taxonomy: React.PropTypes.object,
+    allowGeneSelection: React.PropTypes.bool
   },
   getInitialState: function () {
     return {
@@ -60,11 +61,13 @@ var TreeVis = React.createClass({
     });
   },
   handleGeneSelect: function (geneNode) {
-    GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
-      var geneOfInterest = response.docs[0];
-      this.initNodes(geneOfInterest);
-      this.reinitHeight();
-    }.bind(this))
+    if(this.props.allowGeneSelection) {
+      GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
+        var geneOfInterest = response.docs[0];
+        this.initNodes(geneOfInterest);
+        this.reinitHeight();
+      }.bind(this));
+    }
   },
   handleInternalNodeSelect: function (node) {
     var additionalVisibleNodes, allVisibleNodes, nodeId;
