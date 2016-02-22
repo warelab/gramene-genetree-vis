@@ -6,6 +6,7 @@
 @collapsed_node_stroke_width: 1;
 
 @default_node_fill: #fff;
+@default_node_stroke: #777;
 
 @ortholog_stroke_color: orange;
 @paralog_stroke_color: green;
@@ -47,6 +48,7 @@
   }
 
   .node circle {
+    stroke: @default_node_stroke;
     fill: @default_node_fill;
   }
 
@@ -103,23 +105,14 @@
 
     text {
       font-size: @font_size;
-      fill-opacity: @invisible;
-      text-anchor: start;
-    }
-
-    .homolog text,
-    .self text,
-    .representative text {
       fill-opacity: @visible;
+      text-anchor: start;
     }
   }
 
   .collapsed {
     path {
       stroke-width: @collapsed_node_stroke_width;
-    }
-    text {
-      fill-opacity: @visible;
     }
   }
 }
