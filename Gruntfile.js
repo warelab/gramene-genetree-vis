@@ -3,23 +3,13 @@
 module.exports = function (grunt) {
   require('jit-grunt')(grunt);
 
-  var lessifyOptions = {
-    plugins: [
-      new (require('less-plugin-autoprefix'))({browsers: ["last 2 versions"]})
-    ]
-  };
-
   grunt.initConfig({
     browserify: {
       options: {
 
         browserifyOptions: {
           debug: true
-        },
-        transform: [
-          ['node-lessify', lessifyOptions],
-          ['babelify', {presets: ["es2015", "react"]}]
-        ]
+        }
       },
       dev: {
         src: './example.js',
