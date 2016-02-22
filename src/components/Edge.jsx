@@ -29,55 +29,99 @@ var Edge = React.createClass({
 
     return [
       [0, 0],
-      [target.y - source.y, source.x - source.x],
+      [target.y - source.y, 0],
       [target.y - source.y, adjustedTargetX - source.x]
     ];
   },
 
-  path: function () {
-    return 'M' + this.pathCoords().join(' ');
+  transform: function(c1, c2, size) {
+    var offset, transform;
+    size = size || 1;
+    offset = size / 2;
+
+    // either the x coords (index 0) or y coords (index 1)
+    // will differ.
+
+    // if x coords differ, scaleX
+    if(c1[0] !== c2[0]) {
+      transform = 'translate(' + c2[0] + 'px, '
+        + (c2[1] - offset) + 'px) '
+        + 'scaleX(' + (c1[0] - c2[0]) + ') ';
+
+      if(size !== 1) {
+        transform += 'scaleY(' + size + ') ';
+      }
+    }
+    // otherwise, scaleY
+    else {
+      transform = 'translate('
+        + (c2[0] - offset) + 'px, '
+        + c2[1] + 'px) '
+        + 'scaleY('+  (c1[1] - c2[1]) + ')';
+
+      if(size !== 1) {
+        transform += 'scaleX(' + size + ') ';
+      }
+    }
+
+    return transform;
   },
 
-  interactionRect: function (c1, c2) {
-    var props = {
-      x: Math.min(c1[0], c2[0]) - 1,
-      y: Math.min(c1[1], c2[1]) - 1,
-      width: Math.abs(c1[0] - c2[0]) + 2,
-      height: Math.abs(c1[1] - c2[1]) + 2
+  rect: function (c1, c2, className, size) {
+    var t, props;
+
+    t = this.transform(c1, c2, size);
+
+    props = {
+      className: className,
+      style: {
+        fill: taxonomyColor(this.props.source),
+        transform: t
+      },
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1
     };
+
     return (
       <rect {...props} />
     );
   },
 
-  interactionHelper: function () {
-    var coords, rect1, rect2;
+  edge: function() {
+    const coords = this.pathCoords();
+    const className = 'edge-rect';
+    const size = 1;
 
-    coords = this.pathCoords();
-    rect1 = this.interactionRect(coords[0], coords[1]);
-    rect2 = this.interactionRect(coords[1], coords[2]);
+    return (
+      <g>
+        {this.rect(coords[0], coords[1], className, size)}
+        {this.rect(coords[1], coords[2], className, size)}
+      </g>
+    );
+  },
+
+  interactionHelper: function () {
+    const coords = this.pathCoords();
+    const className = 'interaction-rect';
+    const size = 3;
 
     return (
       <g className="interaction-helper">
-        {rect1}
-        {rect2}
+        {this.rect(coords[0], coords[1], className, size)}
+        {this.rect(coords[1], coords[2], className, size)}
       </g>
-    )
-  },
-
-  style: function () {
-    return {stroke: taxonomyColor(this.props.source)};
+    );
   },
 
   render: function () {
     return (
       <g className="edge">
         {this.interactionHelper()}
-        <path className="link"
-              d={this.path()}
-              style={this.style()}/>
+        {this.edge()}
       </g>
-    )
+    );
   }
 });
 

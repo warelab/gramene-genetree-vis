@@ -1,25 +1,29 @@
+@transition_time: 300ms;
+
 .genetree-vis {
 
   .node, .edge {
     cursor: pointer;
   }
 
-  .tree-wrapper * {
-    transition: all 200ms ease-in-out;
-  }
+  .tree-wrapper {
+    /* transitions for mouse hover, etc, interactions */
+    * {
+      transition: all @transition_time ease-in-out;
+    }
 
-  .tree-wrapper .clade {
-    transition: transform 1000ms ease-in-out;
+    /* transitions for expanding/contracting clades */
+    .clade {
+      transition: transform @transition_time ease-in-out;
+
+      .edge-rect {
+        transition: scaleY @transition_time ease-in-out, scaleX @transition_time ease-in-out, transform @transition_time ease-in-out;
+      }
+    }
   }
 
   .interaction-helper {
     opacity: 0;
-  }
-
-  path.interaction-helper {
-    opacity: 1;
-    fill-opacity: 0;
-    stroke-width: 3;
   }
 
   .node circle {
@@ -37,16 +41,20 @@
   /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
   .node:hover .internal,
   .node:hover .gene circle,
-  .edge:hover + .node rect {
+  .node:hover ~ .clade .node rect,
+  .edge:hover ~ .clade .node rect {
     transform: scale(2);
   }
 
-  .node:hover ~ g.clade .link,
-  .edge:hover .link,
-  .edge:hover ~ g.clade .link,
+  .node:hover ~ .clade .interaction-rect {
+    opacity: 1;
+    fill-opacity: 1;
+  }
+
   .node:hover ~ g.clade circle,
   .edge:hover ~ g.clade circle,
   .edge:hover + .node circle,
+  .node:hover .collapsed path,
   .node:hover ~ g.clade .collapsed path,
   .edge:hover + .node .collapsed path,
   .edge:hover ~ g.clade .collapsed path {
@@ -92,10 +100,5 @@
 
   .collapsed text {
     fill-opacity: 1;
-  }
-
-  path.link {
-    fill: none;
-    stroke-width: 1px;
   }
 }
