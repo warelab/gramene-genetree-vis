@@ -12,73 +12,130 @@ var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
     target: React.PropTypes.object.isRequired,  // parent
-    shortenEdge: React.PropTypes.bool.isRequired  // parent
-    //onHover: React.PropTypes.func.isRequired,
-    //onUnhover: React.PropTypes.func.isRequired
+    cladeHovered: React.PropTypes.bool.isRequired,
+    thisCladeHovered: React.PropTypes.bool.isRequired
   },
 
   pathCoords: function () {
-    var source, target, xAdjust, adjustedTargetX;
+    var source, target, shouldAdjust, xAdjust, adjustedTargetX;
     source = this.props.source;
     target = this.props.target;
+    shouldAdjust = this.props.cladeHovered && !this.props.thisCladeHovered;
 
     // stop drawing the egde before it overlaps the parent node
     // (the child edge is always drawn after the parent node)
-    xAdjust = this.props.shortenEdge ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
+    xAdjust = shouldAdjust ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
     adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
 
     return [
       [0, 0],
-      [target.y - source.y, source.x - source.x],
+      [target.y - source.y, 0],
       [target.y - source.y, adjustedTargetX - source.x]
     ];
   },
 
-  path: function () {
-    return 'M' + this.pathCoords().join(' ');
+  transform: function(c1, c2, size) {
+    var offset, transform, x1, x2, y1, y2, shouldScaleX;
+    size = size || 1;
+    offset = size / 2;
+    x1 = c1[0];
+    y1 = c1[1];
+    x2 = c2[0];
+    y2 = c2[1];
+    shouldScaleX = x1 !== x2;
+
+    // either the x coords (index 0) or y coords (index 1)
+    // will differ.
+
+    // if x coords differ, scaleX
+    if(shouldScaleX) {
+      transform = 'translate(' + (x2 - offset) + 'px, '
+        + (y2 - offset) + 'px) '
+        + 'scaleX(' + (x1 - x2 + offset) + ') ';
+
+      if(size !== 1) {
+        transform += 'scaleY(' + size + ') ';
+      }
+    }
+    // otherwise, scaleY
+    else {
+      transform = 'translate('
+        + (x2 - offset) + 'px, '
+        + y2 + 'px) '
+        + 'scaleY('+  (y1 - y2) + ')';
+
+      if(size !== 1) {
+        transform += 'scaleX(' + size + ') ';
+      }
+    }
+
+    return transform;
   },
 
-  interactionRect: function (c1, c2) {
-    var props = {
-      x: Math.min(c1[0], c2[0]) - 1,
-      y: Math.min(c1[1], c2[1]) - 1,
-      width: Math.abs(c1[0] - c2[0]) + 2,
-      height: Math.abs(c1[1] - c2[1]) + 2
+  rect: function (c1, c2, className, size) {
+    var t, props;
+
+    t = this.transform(c1, c2, size);
+
+    props = {
+      className: className,
+      style: {
+        fill: taxonomyColor(this.props.source),
+        transform: t
+      },
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1
     };
+
     return (
       <rect {...props} />
     );
   },
 
-  interactionHelper: function () {
-    var coords, rect1, rect2;
+  edge: function() {
+    const coords = this.pathCoords();
+    const className = 'edge-rect';
+    const size = this.props.cladeHovered ?
+                    Edge.width.hovered :
+                    Edge.width.edge;
 
-    coords = this.pathCoords();
-    rect1 = this.interactionRect(coords[0], coords[1]);
-    rect2 = this.interactionRect(coords[1], coords[2]);
+    return (
+      <g>
+        {this.rect(coords[0], coords[1], className, size)}
+        {this.rect(coords[1], coords[2], className, size)}
+      </g>
+    );
+  },
+
+  interactionHelper: function () {
+    const coords = this.pathCoords();
+    const className = 'interaction-rect';
+    const size = Edge.width.helper;
 
     return (
       <g className="interaction-helper">
-        {rect1}
-        {rect2}
+        {this.rect(coords[0], coords[1], className, size)}
+        {this.rect(coords[1], coords[2], className, size)}
       </g>
-    )
-  },
-
-  style: function () {
-    return {stroke: taxonomyColor(this.props.source)};
+    );
   },
 
   render: function () {
     return (
       <g className="edge">
         {this.interactionHelper()}
-        <path className="link"
-              d={this.path()}
-              style={this.style()}/>
+        {this.edge()}
       </g>
-    )
+    );
   }
 });
+
+Edge.width = {
+  edge: 1,
+  hovered: 2,
+  helper: 4
+};
 
 module.exports = Edge;

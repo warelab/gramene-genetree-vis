@@ -45,7 +45,7 @@ var Collapsed = React.createClass({
     texts = [this.props.node.model.node_taxon + ': ' + homologs + ' genes'];
 
     addToTexts(paralogs, 'paralog');
-    addToTexts(orthologs, 'ortholog');
+    //addToTexts(orthologs, 'ortholog');
 
     function addToTexts(count, type) {
       var text, countText;
