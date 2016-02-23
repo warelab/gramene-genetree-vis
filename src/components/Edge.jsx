@@ -35,18 +35,23 @@ var Edge = React.createClass({
   },
 
   transform: function(c1, c2, size) {
-    var offset, transform;
+    var offset, transform, x1, x2, y1, y2, shouldScaleX;
     size = size || 1;
     offset = size / 2;
+    x1 = c1[0];
+    y1 = c1[1];
+    x2 = c2[0];
+    y2 = c2[1];
+    shouldScaleX = x1 !== x2;
 
     // either the x coords (index 0) or y coords (index 1)
     // will differ.
 
     // if x coords differ, scaleX
-    if(c1[0] !== c2[0]) {
-      transform = 'translate(' + c2[0] + 'px, '
-        + (c2[1] - offset) + 'px) '
-        + 'scaleX(' + (c1[0] - c2[0]) + ') ';
+    if(shouldScaleX) {
+      transform = 'translate(' + (x2 - offset) + 'px, '
+        + (y2 - offset) + 'px) '
+        + 'scaleX(' + (x1 - x2 + offset) + ') ';
 
       if(size !== 1) {
         transform += 'scaleY(' + size + ') ';
@@ -55,9 +60,9 @@ var Edge = React.createClass({
     // otherwise, scaleY
     else {
       transform = 'translate('
-        + (c2[0] - offset) + 'px, '
-        + c2[1] + 'px) '
-        + 'scaleY('+  (c1[1] - c2[1]) + ')';
+        + (x2 - offset) + 'px, '
+        + y2 + 'px) '
+        + 'scaleY('+  (y1 - y2) + ')';
 
       if(size !== 1) {
         transform += 'scaleX(' + size + ') ';
