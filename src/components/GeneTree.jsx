@@ -23,7 +23,7 @@ var GeneTree = React.createClass({
     Clade = this.Clade = React.createClass({
       propTypes: {
         node: React.PropTypes.object.isRequired,
-        parentIsHovered: React.PropTypes.bool,
+        cladeHovered: React.PropTypes.bool,
         xOffset: React.PropTypes.number.isRequired,
         yOffset: React.PropTypes.number.isRequired
       },
@@ -45,6 +45,14 @@ var GeneTree = React.createClass({
         e.stopPropagation();
         //noinspection JSPotentiallyInvalidUsageOfThis
         this.onSelect(this.props.node);
+
+        // it's confusing if a newly expanded clade is hovered.
+        // and besides, I haven't worked out how to get the
+        // internal node to be the correct size.
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        if(this.props.node.displayInfo.expanded) {
+          this.setState({hovered: false});
+        }
       },
 
       hover: function (e) {
@@ -81,19 +89,20 @@ var GeneTree = React.createClass({
       },
 
       render: function () {
-        var node, parent, children, hovered, subClades, nodeComponent, edgeComponent;
+        var node, parent, children, cladeHovered, subClades, nodeComponent, edgeComponent;
 
         //noinspection JSPotentiallyInvalidUsageOfThis
         node = this.props.node;
         parent = node.parent;
         children = node.children;
-        hovered = this.state.hovered;
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        cladeHovered = !!(this.props.cladeHovered || this.state.hovered);
 
         if (_.isArray(children) && node.displayInfo.expanded) {
           subClades = children.map(function (childNode, idx) {
             return <Clade key={idx}
                           node={childNode}
-                          parentIsHovered={hovered}
+                          cladeHovered={cladeHovered}
                           xOffset={node.x}
                           yOffset={node.y} />
           });
@@ -107,11 +116,11 @@ var GeneTree = React.createClass({
 
         if (parent) {
           //noinspection JSPotentiallyInvalidUsageOfThis
-          var shortenEdge = !!this.props.parentIsHovered;
           edgeComponent = (
             <Edge source={node}
                   target={parent}
-                  shortenEdge={shortenEdge}/>
+                  cladeHovered={cladeHovered}
+                  thisCladeHovered={!!this.state.hovered}/>
           );
         }
 

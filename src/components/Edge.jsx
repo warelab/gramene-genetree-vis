@@ -12,19 +12,19 @@ var Edge = React.createClass({
   propTypes: {
     source: React.PropTypes.object.isRequired, // child
     target: React.PropTypes.object.isRequired,  // parent
-    shortenEdge: React.PropTypes.bool.isRequired  // parent
-    //onHover: React.PropTypes.func.isRequired,
-    //onUnhover: React.PropTypes.func.isRequired
+    cladeHovered: React.PropTypes.bool.isRequired,
+    thisCladeHovered: React.PropTypes.bool.isRequired
   },
 
   pathCoords: function () {
-    var source, target, xAdjust, adjustedTargetX;
+    var source, target, shouldAdjust, xAdjust, adjustedTargetX;
     source = this.props.source;
     target = this.props.target;
+    shouldAdjust = this.props.cladeHovered && !this.props.thisCladeHovered;
 
     // stop drawing the egde before it overlaps the parent node
     // (the child edge is always drawn after the parent node)
-    xAdjust = this.props.shortenEdge ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
+    xAdjust = shouldAdjust ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
     adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
 
     return [
@@ -92,7 +92,9 @@ var Edge = React.createClass({
   edge: function() {
     const coords = this.pathCoords();
     const className = 'edge-rect';
-    const size = 1;
+    const size = this.props.cladeHovered ?
+                    Edge.width.hovered :
+                    Edge.width.edge;
 
     return (
       <g>
@@ -105,7 +107,7 @@ var Edge = React.createClass({
   interactionHelper: function () {
     const coords = this.pathCoords();
     const className = 'interaction-rect';
-    const size = 3;
+    const size = Edge.width.helper;
 
     return (
       <g className="interaction-helper">
@@ -124,5 +126,11 @@ var Edge = React.createClass({
     );
   }
 });
+
+Edge.width = {
+  edge: 1,
+  hovered: 2,
+  helper: 4
+};
 
 module.exports = Edge;
