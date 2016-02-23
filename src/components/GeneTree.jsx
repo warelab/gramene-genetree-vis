@@ -89,11 +89,13 @@ var GeneTree = React.createClass({
       },
 
       renderSubClades: function () {
-        var node, children;
+        var node, children, cladeHovered;
 
         //noinspection JSPotentiallyInvalidUsageOfThis
         node = this.props.node;
         children = node.children;
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        cladeHovered = !!(this.props.cladeHovered || this.state.hovered);
 
         if (_.isArray(children) && node.displayInfo.expanded) {
           return children.map(function (childNode, idx) {
