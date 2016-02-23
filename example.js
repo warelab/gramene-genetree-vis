@@ -15,6 +15,6 @@ ReactDOM.render(
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
            width={600}
-           allowGeneSelection={false}/>,
+           allowGeneSelection={true}/>,
   document.getElementById('tree')
 );

@@ -17,6 +17,7 @@
 @duplication_color: #000080;
 
 @font_size: 11px;
+@font_weight_highlight: bolder;
 
 @invisible: 0;
 @visible: 1;
@@ -80,6 +81,10 @@
     + .node .collapsed path {
       stroke-width: @hover_stroke_width;
     }
+
+    ~ .clade text, text {
+      font-weight: @font_weight_highlight;
+    }
   }
 
   .node {
@@ -93,9 +98,14 @@
       stroke: @paralog_stroke_color;
     }
 
-    .gene.self circle {
-      stroke: @self_color;
-      fill: @self_color;
+    .gene.self {
+      circle {
+        stroke: @self_color;
+        fill: @self_color;
+      }
+      text {
+        font-weight: @font_weight_highlight;
+      }
     }
 
     .gene.representative circle {
