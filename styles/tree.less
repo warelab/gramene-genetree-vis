@@ -1,101 +1,128 @@
+@transition_time: 300ms;
+
+/* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
+@hover_scale_factor: 2;
+@hover_stroke_width: 2;
+@collapsed_node_stroke_width: 1;
+
+@default_node_fill: #fff;
+@default_node_stroke: #777;
+
+@ortholog_stroke_color: orange;
+@paralog_stroke_color: green;
+@representative_fill_color: @ortholog_stroke_color;
+@self_color: red;
+
+@speciation_color: #cd0000;
+@duplication_color: #000080;
+
+@font_size: 11px;
+@font_weight_highlight: bolder;
+
+@invisible: 0;
+@visible: 1;
+
 .genetree-vis {
 
   .node, .edge {
     cursor: pointer;
   }
 
-  .tree-wrapper * {
-    transition: all 200ms ease-in-out;
-  }
+  .tree-wrapper {
+    /* transitions for mouse hover, etc, interactions */
+    * {
+      transition: all @transition_time ease-in-out;
+    }
 
-  .tree-wrapper .clade {
-    transition: transform 1000ms ease-in-out;
+    /* transitions for expanding/contracting clades */
+    .clade {
+      transition: transform @transition_time ease-in-out;
+
+      .edge-rect {
+        transition: scaleY @transition_time ease-in-out, scaleX @transition_time ease-in-out, transform @transition_time ease-in-out;
+      }
+    }
   }
 
   .interaction-helper {
-    opacity: 0;
-  }
-
-  path.interaction-helper {
-    opacity: 1;
-    fill-opacity: 0;
-    stroke-width: 3;
+    opacity: @invisible;
   }
 
   .node circle {
-    fill: #fff;
+    stroke: @default_node_stroke;
+    fill: @default_node_fill;
   }
 
   .speciation rect {
-    fill: #cd0000;
+    fill: @speciation_color;
   }
 
   .duplication rect {
-    fill: #000080;
+    fill: @duplication_color;
   }
 
-  /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
-  .node:hover .internal,
-  .node:hover .gene circle,
-  .edge:hover + .node rect {
-    transform: scale(2);
+  .node:hover, .edge:hover {
+    .internal,
+    .gene circle,
+    ~ .clade .node rect,
+    + .node rect {
+      transform: scale(@hover_scale_factor);
+    }
+
+    ~ .clade .interaction-rect {
+      opacity: @visible;
+      fill-opacity: @visible;
+    }
+
+    ~ .clade circle,
+    + .node circle,
+    .collapsed path,
+    ~ .clade .collapsed path,
+    + .node .collapsed path {
+      stroke-width: @hover_stroke_width;
+    }
+
+    ~ .clade text, text {
+      font-weight: @font_weight_highlight;
+    }
   }
 
-  .node:hover ~ g.clade .link,
-  .edge:hover .link,
-  .edge:hover ~ g.clade .link,
-  .node:hover ~ g.clade circle,
-  .edge:hover ~ g.clade circle,
-  .edge:hover + .node circle,
-  .node:hover ~ g.clade .collapsed path,
-  .edge:hover + .node .collapsed path,
-  .edge:hover ~ g.clade .collapsed path {
-    stroke-width: 2;
+  .node {
+    .gene.ortholog_one2one circle,
+    .gene.ortholog_one2many circle,
+    .gene.ortholog_many2many circle {
+      stroke: @ortholog_stroke_color;
+    }
+
+    .gene.within_species_paralog circle {
+      stroke: @paralog_stroke_color;
+    }
+
+    .gene.self {
+      circle {
+        stroke: @self_color;
+        fill: @self_color;
+      }
+      text {
+        font-weight: @font_weight_highlight;
+      }
+    }
+
+    .gene.representative circle {
+      stroke: @ortholog_stroke_color;
+      fill: @representative_fill_color;
+    }
+
+    text {
+      font-size: @font_size;
+      fill-opacity: @visible;
+      text-anchor: start;
+    }
   }
 
-  .node .gene.ortholog_one2one circle,
-  .node .gene.ortholog_one2many circle,
-  .node .gene.ortholog_many2many circle {
-    stroke: orange;
-  }
-
-  .node .gene.within_species_paralog circle {
-    stroke: green;
-  }
-
-  .node .gene.self circle {
-    stroke: red;
-    fill: red;
-  }
-
-  .node .gene.representative circle {
-    stroke: orange;
-    fill: orange;
-  }
-
-  .node text {
-    font-size: 11px;
-    fill-opacity: 0;
-    text-anchor: start;
-  }
-
-  .node .homolog text,
-  .node .self text,
-  .node .representative text,
-  .node:hover text {
-    fill-opacity: 1;
-  }
-
-  .collapsed path {
-    stroke-width: 1;
-  }
-
-  .collapsed text {
-    fill-opacity: 1;
-  }
-
-  path.link {
-    fill: none;
-    stroke-width: 1px;
+  .collapsed {
+    path {
+      stroke-width: @collapsed_node_stroke_width;
+    }
   }
 }
