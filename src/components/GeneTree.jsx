@@ -37,7 +37,7 @@ var GeneTree = React.createClass({
         this.onSelect = this.props.node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
       },
 
-      componentDidMount: function() {
+      componentDidMount: function () {
         this.setState({mounted: true});
       },
 
@@ -50,7 +50,7 @@ var GeneTree = React.createClass({
         // and besides, I haven't worked out how to get the
         // internal node to be the correct size.
         //noinspection JSPotentiallyInvalidUsageOfThis
-        if(this.props.node.displayInfo.expanded) {
+        if (this.props.node.displayInfo.expanded) {
           this.setState({hovered: false});
         }
       },
@@ -72,7 +72,7 @@ var GeneTree = React.createClass({
       transform: function () {
         var x, y;
 
-        if(this.state.mounted) {
+        if (this.state.mounted) {
           //noinspection JSPotentiallyInvalidUsageOfThis
           x = this.props.node.x - this.props.xOffset;
           //noinspection JSPotentiallyInvalidUsageOfThis
@@ -88,51 +88,68 @@ var GeneTree = React.createClass({
         return 'translate(' + y + 'px, ' + x + 'px)';
       },
 
-      render: function () {
-        var node, parent, children, cladeHovered, subClades, nodeComponent, edgeComponent;
+      renderSubClades: function () {
+        var node, children;
 
         //noinspection JSPotentiallyInvalidUsageOfThis
         node = this.props.node;
-        parent = node.parent;
         children = node.children;
-        //noinspection JSPotentiallyInvalidUsageOfThis
-        cladeHovered = !!(this.props.cladeHovered || this.state.hovered);
 
         if (_.isArray(children) && node.displayInfo.expanded) {
-          subClades = children.map(function (childNode, idx) {
+          return children.map(function (childNode, idx) {
             return <Clade key={idx}
                           node={childNode}
                           cladeHovered={cladeHovered}
                           xOffset={node.x}
-                          yOffset={node.y} />
+                          yOffset={node.y}/>
           });
         }
+      },
 
-        nodeComponent = (
+      renderNode: function () {
+        var node;
+
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        node = this.props.node;
+
+        return (
           <Node node={node}
                 onSelect={this.onSelect}
-                taxonomy={geneTreeProps.taxonomy} />
+                taxonomy={geneTreeProps.taxonomy}/>
         );
+      },
+
+      renderEdge: function () {
+        var node, parent, cladeHovered;
+
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        node = this.props.node;
+        parent = node.parent;
+        //noinspection JSPotentiallyInvalidUsageOfThis
+        cladeHovered = !!(this.props.cladeHovered || this.state.hovered);
 
         if (parent) {
           //noinspection JSPotentiallyInvalidUsageOfThis
-          edgeComponent = (
+          return (
             <Edge source={node}
                   target={parent}
                   cladeHovered={cladeHovered}
                   thisCladeHovered={!!this.state.hovered}/>
           );
         }
+      },
 
+      render: function () {
         return (
           <g className="clade"
              onMouseOver={this.hover}
              onMouseOut={this.unhover}
              onClick={this.handleClick}
              style={{transform: this.transform()}}>
-            {edgeComponent}
-            {nodeComponent}
-            {subClades}
+
+            {this.renderEdge()}
+            {this.renderNode()}
+            {this.renderSubClades()}
           </g>
         );
       }
@@ -157,7 +174,7 @@ var GeneTree = React.createClass({
 
     return (
       <g className="genetree">
-        <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0} />
+        <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0}/>
       </g>
     )
   }
