@@ -83,6 +83,7 @@ var Edge = React.createClass({
         fill: taxonomyColor(this.props.source),
         transform: t
       },
+      transform: t,
       x: 0,
       y: 0,
       width: 1,

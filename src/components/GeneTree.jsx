@@ -147,13 +147,26 @@ var GeneTree = React.createClass({
              onMouseOver={this.hover}
              onMouseOut={this.unhover}
              onClick={this.handleClick}
-             style={{transform: this.transform()}}>
+             transform={this.transform()}>
 
             {this.renderEdge()}
             {this.renderNode()}
             {this.renderSubClades()}
           </g>
         );
+        //return (
+        //  <g className="clade"
+        //     onMouseOver={this.hover}
+        //     onMouseOut={this.unhover}
+        //     onClick={this.handleClick}
+        //     transform={this.transform()}
+        //     style={{transform: this.transform()}}>
+        //
+        //    {this.renderEdge()}
+        //    {this.renderNode()}
+        //    {this.renderSubClades()}
+        //  </g>
+        //);
       }
     });
   },
