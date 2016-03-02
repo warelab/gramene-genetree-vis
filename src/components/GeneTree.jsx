@@ -3,6 +3,8 @@
 var React = require('react');
 var _ = require('lodash');
 
+var microsoftBrowser = require('../utils/microsoftBrowser');
+
 var Edge = require('./Edge.jsx');
 var Node = require('./Node.jsx');
 
@@ -69,8 +71,10 @@ var GeneTree = React.createClass({
         this.setState({hovered: false});
       },
 
-      transform: function () {
-        var x, y;
+      transform: function (isStyle) {
+        var x, y, px;
+
+        px = isStyle ? 'px' : '';
 
         if (this.state.mounted) {
           //noinspection JSPotentiallyInvalidUsageOfThis
@@ -85,7 +89,7 @@ var GeneTree = React.createClass({
           y = this.props.yOffset;
         }
 
-        return 'translate(' + y + 'px, ' + x + 'px)';
+        return 'translate(' + y + px + ', ' + x + px + ')';
       },
 
       renderSubClades: function () {
@@ -142,13 +146,22 @@ var GeneTree = React.createClass({
       },
 
       render: function () {
-        return (
-          <g className="clade"
-             onMouseOver={this.hover}
-             onMouseOut={this.unhover}
-             onClick={this.handleClick}
-             transform={this.transform()}>
+        var props = {
+          className: 'clade',
+          onMouseOver: this.hover,
+          onMouseOut: this.unhover,
+          onClick: this.handleClick
+        };
 
+        if(microsoftBrowser) {
+          props.transform = this.transform(false);
+        }
+        else {
+          props.style = { transform: this.transform(true) };
+        }
+
+        return (
+          <g {...props}>
             {this.renderEdge()}
             {this.renderNode()}
             {this.renderSubClades()}

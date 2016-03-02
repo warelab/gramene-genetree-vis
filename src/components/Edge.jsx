@@ -2,6 +2,7 @@
 
 var React = require('react');
 
+var microsoftBrowser = require('../utils/microsoftBrowser');
 var taxonomyColor = require('../utils/taxonomyColor');
 var defaultXAdjust = require('./nodeTypes/Internal.jsx').xy;
 
@@ -34,8 +35,9 @@ var Edge = React.createClass({
     ];
   },
 
-  transform: function(c1, c2, size) {
-    var offset, transform, x1, x2, y1, y2, shouldScaleX;
+  transform: function(c1, c2, size, isStyle) {
+    var px, offset, transform, x1, x2, y1, y2, shouldScaleX;
+    px = isStyle ? 'px' : '';
     size = size || 1;
     offset = size / 2;
     x1 = c1[0];
@@ -49,24 +51,16 @@ var Edge = React.createClass({
 
     // if x coords differ, scaleX
     if(shouldScaleX) {
-      transform = 'translate(' + (x2 - offset) + 'px, '
-        + (y2 - offset) + 'px) '
-        + 'scaleX(' + (x1 - x2 + offset) + ') ';
-
-      if(size !== 1) {
-        transform += 'scaleY(' + size + ') ';
-      }
+      transform = 'translate(' + (x2 - offset) + px + ', '
+        + (y2 - offset) + px + ') '
+        + 'scale(' + (x1 - x2 + offset) + ', ' + size +  ') ';
     }
     // otherwise, scaleY
     else {
       transform = 'translate('
-        + (x2 - offset) + 'px, '
-        + y2 + 'px) '
-        + 'scaleY('+  (y1 - y2) + ')';
-
-      if(size !== 1) {
-        transform += 'scaleX(' + size + ') ';
-      }
+        + (x2 - offset) + px + ', '
+        + y2 + px + ') '
+        + 'scale(' + size + ', ' +  (y1 - y2) + ')';
     }
 
     return transform;
@@ -80,15 +74,20 @@ var Edge = React.createClass({
     props = {
       className: className,
       style: {
-        fill: taxonomyColor(this.props.source),
-        transform: t
+        fill: taxonomyColor(this.props.source)
       },
-      transform: t,
       x: 0,
       y: 0,
       width: 1,
       height: 1
     };
+
+    if(microsoftBrowser) {
+      props.transform = this.transform(c1, c2, size, false);
+    }
+    else {
+      props.style.transform = this.transform(c1, c2, size, true);
+    }
 
     return (
       <rect {...props} />
