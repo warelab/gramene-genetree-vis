@@ -53,6 +53,7 @@ function indexReps(theGene) {
 }
 
 function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) {
+  /*const*/ var OUTGROUP_FLAG = -1;
   var theGeneTaxonId, theTaxonNode, theTaxonPath,
     theTaxonPathIds, relationLUT, distances, maxima;
 
@@ -87,11 +88,21 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
           }
           else {
             nodeTaxon = taxonomy.indices.id[nodeTaxonId];
-            lca = theTaxonNode.lcaWith([nodeTaxon]);
-            pathDistance = lca.pathTo(nodeTaxon).length - 1;
+            if(nodeTaxon) {
+              lca = theTaxonNode.lcaWith([nodeTaxon]);
+              pathDistance = lca.pathTo(nodeTaxon).length - 1;
+            }
+            else {
+              pathDistance = OUTGROUP_FLAG;
+            }
           }
 
-          lcaDistance = theTaxonPath.length - _.indexOf(theTaxonPath, lca) - 1;
+          if(pathDistance === OUTGROUP_FLAG) {
+            lcaDistance = OUTGROUP_FLAG;
+          }
+          else {
+            lcaDistance = theTaxonPath.length - _.indexOf(theTaxonPath, lca) - 1;
+          }
         }
 
         distances = {
@@ -104,6 +115,15 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
         maxima.pathDistance = Math.max(maxima.pathDistance, distances.pathDistance);
 
         relationLUT[nodeTaxonId] = node.relationToGeneOfInterest.taxonomy = distances;
+      }
+    });
+
+    // any taxa we don't have in the taxonomy tree, we will set to the max values seen.
+    // it's ok to modify values in the LUT because these point to the same refs as the nodes.
+    _.forIn(relationLUT, function updateOutgroupTaxa(distances) {
+      if(distances.lcaDistance === OUTGROUP_FLAG) {
+        distances.lcaDistance = maxima.lcaDistance;
+        distances.pathDistance = maxima.pathDistance;
       }
     });
 
