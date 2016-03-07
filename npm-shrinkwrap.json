@@ -1,6 +1,6 @@
 {
   "name": "gramene-genetree-vis",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "dependencies": {
     "abbrev": {
       "version": "1.0.7",
