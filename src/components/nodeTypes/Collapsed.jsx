@@ -42,7 +42,7 @@ var Collapsed = React.createClass({
     homologs = node.leafNodes().length;
     orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
     paralogs = _.get(node, 'displayInfo.paralogs.length') || 0;
-    texts = [this.props.node.model.node_taxon + ': ' + homologs + ' genes'];
+    texts = [this.props.node.model.taxon_name + ': ' + homologs + ' genes'];
 
     addToTexts(paralogs, 'paralog');
     //addToTexts(orthologs, 'ortholog');
