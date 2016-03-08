@@ -35,7 +35,8 @@ function addHomologyInformationToNodes(genetree, theGene) {
 // IN -> key: homologyType, value: [geneId]
 // OUT-> key: geneId, value: homologyType
 function indexHomologs(theGene) {
-  return _.transform(theGene.homology, function (result, value, key) {
+  var homologs = _.get(theGene, 'homology.homologous_genes');
+  return _.transform(homologs, function (result, value, key) {
     _.forEach(value, function (id) {
       result[id] = key;
     });

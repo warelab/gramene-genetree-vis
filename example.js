@@ -1,3 +1,5 @@
+'use strict';
+
 //noinspection JSUnusedLocalSymbols
 var React = require('react'); // This var is required after JSX->JS transpile.
 var ReactDOM = require('react-dom');
