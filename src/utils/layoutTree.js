@@ -63,12 +63,14 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
   }
 
   function getParalogPathIds() {
-    return pathIdsImpl('homology.within_species_paralog');
+    return pathIdsImpl('homology.homologous_genes.within_species_paralog');
   }
 
   function getOrthologPathIds() {
     var keys, filteredKeys, pathIdsArray, result;
-    keys = _.keys(geneOfInterest.homology).map(function (key) { return 'homology.' + key; });
+    keys = _.keys(_.get(geneOfInterest, 'homology.homologous_genes')).map(function (key) {
+      return 'homology.homologous_genes.' + key;
+    });
     filteredKeys = _.filter(keys, function (key) { return key.indexOf('ortholog') > -1; });
     pathIdsArray = _.map(filteredKeys, pathIdsImpl);
     result = _.reduce(pathIdsArray, function (acc, obj) {
