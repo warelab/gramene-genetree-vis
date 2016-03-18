@@ -47,7 +47,8 @@ function indexHomologs(theGene) {
 // IN -> key: representativeType, value: gene doc
 // OUT-> key: geneId, value: representativeType
 function indexReps(theGene) {
-  return _.transform(theGene.representative, function (result, rep, repType) {
+  var representative = _.get(theGene, 'homology.gene_tree.representative');
+  return _.transform(representative, function (result, rep, repType) {
     result[rep.id] = repType;
     return result;
   }, {});

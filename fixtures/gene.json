@@ -1,26 +1,20 @@
 {
-  "_id": "AT3G52430",
+  "_id": "scaffold_502313.1",
   "name": "PAD4",
-  "description": "Lipase-like PAD4 [Source:UniProtKB/Swiss-Prot;Acc:Q9S745]",
+  "description": "Phytoalexin deficient 4  [Source:UniProtKB/TrEMBL;Acc:D7LU62]",
   "biotype": "protein_coding",
-  "taxon_id": 3702,
-  "system_name": "arabidopsis_thaliana",
+  "taxon_id": 81972,
+  "system_name": "arabidopsis_lyrata",
   "db_type": "core",
-  "gene_idx": 19409,
+  "gene_idx": 18462,
   "location": {
-    "region": "3",
-    "start": 19431371,
-    "end": 19434403,
+    "region": "5",
+    "start": 16072441,
+    "end": 16075497,
     "strand": 1,
-    "map": "GCA_000001735.1"
+    "map": "GCA_000004255.1"
   },
   "xrefs": [
-    {
-      "db": "Uniprot_gn",
-      "ids": [
-        "PAD4"
-      ]
-    },
     {
       "db": "TAIR_SYMBOL",
       "ids": [
@@ -28,269 +22,33 @@
       ]
     },
     {
-      "db": "UniParc",
+      "db": "protein_id",
       "ids": [
-        "UPI000009D94F"
+        "EFH52402"
       ]
     },
     {
-      "db": "protein_id",
+      "db": "RefSeq_peptide_predicted",
       "ids": [
-        "ABR46055",
-        "ABR46054",
-        "ABR46049",
-        "ABR46056",
-        "ABR46050",
-        "ABR46048",
-        "ABR46044",
-        "ABR46042",
-        "ABR46040",
-        "ABZ02900",
-        "ABZ02897",
-        "ABZ02887",
-        "ABZ02896",
-        "ABZ02886",
-        "ABZ02882",
-        "ABZ02881",
-        "ABZ02879",
-        "ABZ02895",
-        "ABZ02894",
-        "ABZ02891",
-        "ABZ02883",
-        "ABZ02877",
-        "ABZ02872",
-        "ABZ02863",
-        "ABZ02862",
-        "ABZ02868",
-        "ABZ02861",
-        "ABZ02859",
-        "ABZ02857",
-        "ABZ02852",
-        "ABZ02847",
-        "ABZ02846",
-        "ABZ02845",
-        "ABZ02833",
-        "ABZ02839",
-        "ABZ02831",
-        "ABZ02829",
-        "ABZ02899",
-        "ABZ02890",
-        "ABZ02888",
-        "ABZ02864",
-        "ABZ02860",
-        "ABZ02848",
-        "ABZ02843",
-        "ABZ02840",
-        "ABZ02837",
-        "ABZ02828",
-        "ABZ02827",
-        "ABZ02830",
-        "ABZ02826",
-        "ABZ02821",
-        "ABZ02819",
-        "ABZ02818",
-        "ABZ02865",
-        "ABZ02850",
-        "ABZ02817",
-        "ABZ02832",
-        "ABZ02815",
-        "ABZ02812",
-        "ABZ02809",
-        "ABZ02808",
-        "ABZ02898",
-        "ABZ02893",
-        "ABZ02892",
-        "ABZ02889",
-        "ABZ02885",
-        "ABZ02884",
-        "ABZ02880",
-        "ABZ02878",
-        "ABZ02876",
-        "ABZ02875",
-        "ABZ02874",
-        "ABZ02873",
-        "ABZ02871",
-        "ABZ02870",
-        "ABZ02869",
-        "ABZ02867",
-        "ABZ02866",
-        "ABZ02858",
-        "ABZ02856",
-        "ABZ02855",
-        "ABZ02854",
-        "ABZ02853",
-        "ABZ02851",
-        "ABZ02849",
-        "ABZ02844",
-        "ABZ02842",
-        "ABZ02841",
-        "ABZ02838",
-        "ABZ02836",
-        "ABZ02835",
-        "ABZ02834",
-        "ABZ02825",
-        "ABZ02824",
-        "ABZ02823",
-        "ABZ02822",
-        "ABZ02820",
-        "ABZ02816",
-        "ABZ02814",
-        "ABZ02813",
-        "ABZ02811",
-        "ABZ02810",
-        "ABZ02807",
-        "ABZ02806",
-        "ABZ02805",
-        "CAB43438",
-        "AEE78945",
-        "ABR46053",
-        "ABR46052",
-        "ABR46051",
-        "ABR46047",
-        "ABR46046",
-        "ABR46045",
-        "ABR46043",
-        "ABR46041",
-        "ABR46039",
-        "ABR46038",
-        "ABR46037",
-        "AAF09479"
+        "XP_002876143"
+      ]
+    },
+    {
+      "db": "UniParc",
+      "ids": [
+        "UPI0001C6977B"
       ]
     },
     {
       "db": "EMBL",
       "ids": [
-        "EF470743",
-        "EF470742",
-        "EF470741",
-        "EF470737",
-        "EF470736",
-        "EF470735",
-        "EF470733",
-        "EF470731",
-        "EF470729",
-        "EF470728",
-        "EF470727",
-        "AF188329",
-        "AL050300",
-        "EF470745",
-        "EF470744",
-        "EF470739",
-        "EF470746",
-        "EF470740",
-        "EF470738",
-        "EF470734",
-        "EF470732",
-        "EF470730",
-        "EU405239",
-        "EU405236",
-        "EU405226",
-        "EU405235",
-        "EU405225",
-        "EU405221",
-        "EU405220",
-        "EU405218",
-        "EU405234",
-        "EU405233",
-        "EU405230",
-        "EU405222",
-        "EU405216",
-        "EU405211",
-        "EU405202",
-        "EU405201",
-        "EU405207",
-        "EU405200",
-        "EU405198",
-        "EU405196",
-        "EU405191",
-        "EU405186",
-        "EU405185",
-        "EU405184",
-        "EU405172",
-        "EU405178",
-        "EU405170",
-        "EU405168",
-        "EU405238",
-        "EU405229",
-        "EU405227",
-        "EU405203",
-        "EU405199",
-        "EU405187",
-        "EU405182",
-        "EU405179",
-        "EU405176",
-        "EU405167",
-        "EU405166",
-        "EU405169",
-        "EU405165",
-        "EU405160",
-        "EU405158",
-        "EU405157",
-        "EU405204",
-        "EU405189",
-        "EU405156",
-        "EU405171",
-        "EU405154",
-        "EU405151",
-        "EU405148",
-        "EU405147",
-        "EU405237",
-        "EU405232",
-        "EU405231",
-        "EU405228",
-        "EU405224",
-        "EU405223",
-        "EU405219",
-        "EU405217",
-        "EU405215",
-        "EU405214",
-        "EU405213",
-        "EU405212",
-        "EU405210",
-        "EU405209",
-        "EU405208",
-        "EU405206",
-        "EU405205",
-        "EU405197",
-        "EU405195",
-        "EU405194",
-        "EU405193",
-        "EU405192",
-        "EU405190",
-        "EU405188",
-        "EU405183",
-        "EU405181",
-        "EU405180",
-        "EU405177",
-        "EU405175",
-        "EU405174",
-        "EU405173",
-        "EU405164",
-        "EU405163",
-        "EU405162",
-        "EU405161",
-        "EU405159",
-        "EU405155",
-        "EU405153",
-        "EU405152",
-        "EU405150",
-        "EU405149",
-        "EU405146",
-        "EU405145",
-        "EU405144",
-        "CP002686"
+        "GL348717"
       ]
     },
     {
-      "db": "TAIR_TRANSLATION",
+      "db": "Uniprot/SPTREMBL",
       "ids": [
-        "AT3G52430"
-      ]
-    },
-    {
-      "db": "RefSeq_peptide",
-      "ids": [
-        "NP_190811"
+        "D7LU62"
       ]
     },
     {
@@ -300,101 +58,60 @@
       ]
     },
     {
-      "db": "Uniprot/SWISSPROT",
+      "db": "RefSeq_mRNA_predicted",
       "ids": [
-        "Q9S745"
+        "XM_002876097"
       ]
     },
     {
-      "db": "TAIR_LOCUS_MODEL",
+      "db": "RefSeq_dna_predicted",
       "ids": [
-        "AT3G52430.1"
-      ]
-    },
-    {
-      "db": "RefSeq_mRNA",
-      "ids": [
-        "NM_115103"
-      ]
-    },
-    {
-      "db": "WikiGene",
-      "ids": [
-        "824408"
-      ]
-    },
-    {
-      "db": "NASC_GENE_ID",
-      "ids": [
-        "AT3G52430"
+        "XM_002876097"
       ]
     },
     {
       "db": "EntrezGene",
       "ids": [
-        "824408"
+        "9312211"
       ]
     },
     {
-      "db": "TAIR_LOCUS",
+      "db": "WikiGene",
       "ids": [
-        "AT3G52430"
-      ]
-    },
-    {
-      "db": "UniGene",
-      "ids": [
-        "At.22858"
-      ]
-    },
-    {
-      "db": "ArrayExpress",
-      "ids": [
-        "AT3G52430"
-      ]
-    },
-    {
-      "db": "ARAPORT_GENE",
-      "ids": [
-        "AT3G52430"
+        "9312211"
       ]
     }
-  ],
-  "synonyms": [
-    "ARABIDOPSIS PHYTOALEXIN DEFICIENT 4",
-    "ATPAD4",
-    "PHYTOALEXIN DEFICIENT 4"
   ],
   "gene_structure": {
     "exons": [
       {
-        "id": "AT3G52430.1.exon1",
+        "id": "scaffold_502313.1.exon1",
         "start": 1,
-        "end": 486
+        "end": 311
       },
       {
-        "id": "AT3G52430.1.exon2",
-        "start": 1588,
-        "end": 3033
+        "id": "scaffold_502313.1.exon2",
+        "start": 1700,
+        "end": 3057
       }
     ],
     "transcripts": [
       {
         "exons": [
-          "AT3G52430.1.exon1",
-          "AT3G52430.1.exon2"
+          "scaffold_502313.1.exon1",
+          "scaffold_502313.1.exon2"
         ],
-        "length": 1932,
+        "length": 1669,
         "exon_junctions": [
-          486
+          311
         ],
         "cds": {
-          "start": 196,
-          "end": 1821
+          "start": 21,
+          "end": 1649
         },
         "translation": {
-          "id": "AT3G52430.1",
-          "length": 541,
+          "id": "scaffold_502313.1",
+          "length": 542,
           "features": {
             "domain": {
               "entries": [
@@ -403,7 +120,7 @@
                   "description": "Fungal lipase-like domain",
                   "db": "Pfam",
                   "interpro": "IPR002921",
-                  "start": 111,
+                  "start": 110,
                   "end": 185
                 },
                 {
@@ -411,7 +128,7 @@
                   "description": "Alpha/Beta hydrolase fold",
                   "db": "Gene3D",
                   "interpro": "IPR029058",
-                  "start": 110,
+                  "start": 109,
                   "end": 234
                 },
                 {
@@ -420,13 +137,13 @@
                   "db": "Superfamily",
                   "interpro": "IPR029058",
                   "start": 110,
-                  "end": 199
+                  "end": 200
                 }
               ],
               "architecture": [
                 {
                   "root": "29058",
-                  "start": 110,
+                  "start": 109,
                   "end": 234,
                   "interpro": "IPR029058",
                   "name": "AB_hydrolase",
@@ -437,10 +154,10 @@
             }
           }
         },
-        "id": "AT3G52430.1"
+        "id": "scaffold_502313.1"
       }
     ],
-    "canonical_transcript": "AT3G52430.1"
+    "canonical_transcript": "scaffold_502313.1"
   },
   "annotations": {
     "domains": {
@@ -458,6 +175,13 @@
     "GO": {
       "entries": [
         {
+          "id": "GO:0010618",
+          "name": "aerenchyma formation",
+          "namespace": "biological_process",
+          "def": "The process that gives rise to aerenchyma, parenchyma tissue containing particularly large intercellular spaces of schizogenous or lysigenous origin. This process pertains to the initial formation of a structure from unspecified parts.",
+          "subset": null
+        },
+        {
           "id": "GO:0010942",
           "name": "positive regulation of cell death",
           "namespace": "biological_process",
@@ -465,18 +189,13 @@
           "subset": null
         },
         {
-          "id": "GO:0010150",
-          "name": "leaf senescence",
+          "id": "GO:0009581",
+          "name": "detection of external stimulus",
           "namespace": "biological_process",
-          "def": "The process that occurs in a leaf near the end of its active life that is associated with the dismantling of cell components and membranes, loss of functional chloroplasts, and an overall decline in metabolism.",
-          "subset": null
-        },
-        {
-          "id": "GO:0010618",
-          "name": "aerenchyma formation",
-          "namespace": "biological_process",
-          "def": "The process that gives rise to aerenchyma, parenchyma tissue containing particularly large intercellular spaces of schizogenous or lysigenous origin. This process pertains to the initial formation of a structure from unspecified parts.",
-          "subset": null
+          "def": "The series of events in which an external stimulus is received by a cell and converted into a molecular signal.",
+          "subset": [
+            "gosubset_prok"
+          ]
         },
         {
           "id": "GO:0009816",
@@ -493,10 +212,36 @@
           "subset": null
         },
         {
+          "id": "GO:0004806",
+          "name": "triglyceride lipase activity",
+          "namespace": "molecular_function",
+          "def": "Catalysis of the reaction: triacylglycerol + H2O = diacylglycerol + a carboxylate.",
+          "subset": [
+            "goslim_chembl",
+            "gosubset_prok"
+          ]
+        },
+        {
           "id": "GO:0001666",
           "name": "response to hypoxia",
           "namespace": "biological_process",
           "def": "Any process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a stimulus indicating lowered oxygen tension. Hypoxia, defined as a decline in O2 levels below normoxic levels of 20.8 - 20.95%, results in metabolic adaptation at both the cellular and organismal level.",
+          "subset": null
+        },
+        {
+          "id": "GO:0043900",
+          "name": "regulation of multi-organism process",
+          "namespace": "biological_process",
+          "def": "Any process that modulates the frequency, rate or extent of a multi-organism process, a process in which an organism has an effect on another organism of the same or different species.",
+          "subset": [
+            "gosubset_prok"
+          ]
+        },
+        {
+          "id": "GO:0010310",
+          "name": "regulation of hydrogen peroxide metabolic process",
+          "namespace": "biological_process",
+          "def": "Any process that modulates the frequency, rate or extent of the chemical reactions and pathways involving hydrogen peroxide.",
           "subset": null
         },
         {
@@ -509,22 +254,27 @@
           ]
         },
         {
-          "id": "GO:0009581",
-          "name": "detection of external stimulus",
+          "id": "GO:0030968",
+          "name": "endoplasmic reticulum unfolded protein response",
           "namespace": "biological_process",
-          "def": "The series of events in which an external stimulus is received by a cell and converted into a molecular signal.",
+          "def": "The series of molecular signals generated as a consequence of the presence of unfolded proteins in the endoplasmic reticulum (ER) or other ER-related stress; results in changes in the regulation of transcription and translation.",
+          "subset": null
+        },
+        {
+          "id": "GO:0009697",
+          "name": "salicylic acid biosynthetic process",
+          "namespace": "biological_process",
+          "def": "The chemical reactions and pathways resulting in the formation of salicylic acid (2-hydroxybenzoic acid), a derivative of benzoic acid.",
           "subset": [
             "gosubset_prok"
           ]
         },
         {
-          "id": "GO:0009409",
-          "name": "response to cold",
+          "id": "GO:0010150",
+          "name": "leaf senescence",
           "namespace": "biological_process",
-          "def": "Any process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a cold stimulus, a temperature stimulus below the optimal temperature for that organism.",
-          "subset": [
-            "gosubset_prok"
-          ]
+          "def": "The process that occurs in a leaf near the end of its active life that is associated with the dismantling of cell components and membranes, loss of functional chloroplasts, and an overall decline in metabolism.",
+          "subset": null
         },
         {
           "id": "GO:0035304",
@@ -536,6 +286,45 @@
           ]
         },
         {
+          "id": "GO:0006629",
+          "name": "lipid metabolic process",
+          "namespace": "biological_process",
+          "def": "The chemical reactions and pathways involving lipids, compounds soluble in an organic solvent but not, or sparingly, in an aqueous solvent. Includes fatty acids; neutral fats, other fatty-acid esters, and soaps; long-chain (fatty) alcohols and waxes; sphingoids and other long-chain bases; glycolipids, phospholipids and sphingolipids; and carotenes, polyprenols, sterols, terpenes and other isoprenoids.",
+          "subset": [
+            "goslim_aspergillus",
+            "goslim_candida",
+            "goslim_chembl",
+            "goslim_generic",
+            "goslim_metagenomics",
+            "goslim_pir",
+            "goslim_plant",
+            "goslim_pombe",
+            "goslim_yeast",
+            "gosubset_prok"
+          ]
+        },
+        {
+          "id": "GO:0010200",
+          "name": "response to chitin",
+          "namespace": "biological_process",
+          "def": "A process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a chitin stimulus.",
+          "subset": null
+        },
+        {
+          "id": "GO:0050832",
+          "name": "defense response to fungus",
+          "namespace": "biological_process",
+          "def": "Reactions triggered in response to the presence of a fungus that act to protect the cell or organism.",
+          "subset": null
+        },
+        {
+          "id": "GO:0043069",
+          "name": "negative regulation of programmed cell death",
+          "namespace": "biological_process",
+          "def": "Any process that stops, prevents, or reduces the frequency, rate or extent of programmed cell death, cell death resulting from activation of endogenous cellular processes.",
+          "subset": null
+        },
+        {
           "id": "GO:0031348",
           "name": "negative regulation of defense response",
           "namespace": "biological_process",
@@ -543,10 +332,10 @@
           "subset": null
         },
         {
-          "id": "GO:0010310",
-          "name": "regulation of hydrogen peroxide metabolic process",
+          "id": "GO:0010363",
+          "name": "regulation of plant-type hypersensitive response",
           "namespace": "biological_process",
-          "def": "Any process that modulates the frequency, rate or extent of the chemical reactions and pathways involving hydrogen peroxide.",
+          "def": "Any endogenous process that modulates the frequency, rate or extent of the plant hypersensitive response.",
           "subset": null
         },
         {
@@ -564,55 +353,20 @@
           "subset": null
         },
         {
-          "id": "GO:0000165",
-          "name": "MAPK cascade",
+          "id": "GO:0009738",
+          "name": "abscisic acid-activated signaling pathway",
           "namespace": "biological_process",
-          "def": "An intracellular protein kinase cascade containing at least a MAPK, a MAPKK and a MAP3K. The cascade can also contain two additional tiers: the upstream MAP4K and the downstream MAP Kinase-activated kinase (MAPKAPK). The kinases in each tier phosphorylate and activate the kinases in the downstream tier to transmit a signal within a cell.",
+          "def": "A series of molecular signals generated by the binding of the plant hormone abscisic acid (ABA) to a receptor, and ending with modulation of a cellular process, e.g. transcription.",
           "subset": null
         },
         {
-          "id": "GO:0010200",
-          "name": "response to chitin",
+          "id": "GO:0009409",
+          "name": "response to cold",
           "namespace": "biological_process",
-          "def": "A process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a chitin stimulus.",
-          "subset": null
-        },
-        {
-          "id": "GO:0009697",
-          "name": "salicylic acid biosynthetic process",
-          "namespace": "biological_process",
-          "def": "The chemical reactions and pathways resulting in the formation of salicylic acid (2-hydroxybenzoic acid), a derivative of benzoic acid.",
+          "def": "Any process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a cold stimulus, a temperature stimulus below the optimal temperature for that organism.",
           "subset": [
             "gosubset_prok"
           ]
-        },
-        {
-          "id": "GO:0002679",
-          "name": "respiratory burst involved in defense response",
-          "namespace": "biological_process",
-          "def": "A phase of elevated metabolic activity, during which oxygen consumption increases made as part of a defense response ; this leads to the production, by an NADH dependent system, of hydrogen peroxide (H2O2), superoxide anions and hydroxyl radicals.",
-          "subset": null
-        },
-        {
-          "id": "GO:0043069",
-          "name": "negative regulation of programmed cell death",
-          "namespace": "biological_process",
-          "def": "Any process that stops, prevents, or reduces the frequency, rate or extent of programmed cell death, cell death resulting from activation of endogenous cellular processes.",
-          "subset": null
-        },
-        {
-          "id": "GO:0050832",
-          "name": "defense response to fungus",
-          "namespace": "biological_process",
-          "def": "Reactions triggered in response to the presence of a fungus that act to protect the cell or organism.",
-          "subset": null
-        },
-        {
-          "id": "GO:0010363",
-          "name": "regulation of plant-type hypersensitive response",
-          "namespace": "biological_process",
-          "def": "Any endogenous process that modulates the frequency, rate or extent of the plant hypersensitive response.",
-          "subset": null
         },
         {
           "id": "GO:0006612",
@@ -622,42 +376,18 @@
           "subset": null
         },
         {
-          "id": "GO:0030968",
-          "name": "endoplasmic reticulum unfolded protein response",
+          "id": "GO:0002679",
+          "name": "respiratory burst involved in defense response",
           "namespace": "biological_process",
-          "def": "The series of molecular signals generated as a consequence of the presence of unfolded proteins in the endoplasmic reticulum (ER) or other ER-related stress; results in changes in the regulation of transcription and translation.",
+          "def": "A phase of elevated metabolic activity, during which oxygen consumption increases made as part of a defense response ; this leads to the production, by an NADH dependent system, of hydrogen peroxide (H2O2), superoxide anions and hydroxyl radicals.",
           "subset": null
         },
         {
-          "id": "GO:0004806",
-          "name": "triglyceride lipase activity",
-          "namespace": "molecular_function",
-          "def": "Catalysis of the reaction: triacylglycerol + H2O = diacylglycerol + a carboxylate.",
-          "subset": [
-            "goslim_chembl",
-            "gosubset_prok"
-          ]
-        },
-        {
-          "id": "GO:0009738",
-          "name": "abscisic acid-activated signaling pathway",
+          "id": "GO:0000165",
+          "name": "MAPK cascade",
           "namespace": "biological_process",
-          "def": "A series of molecular signals generated by the binding of the plant hormone abscisic acid (ABA) to a receptor, and ending with modulation of a cellular process, e.g. transcription.",
+          "def": "An intracellular protein kinase cascade containing at least a MAPK, a MAPKK and a MAP3K. The cascade can also contain two additional tiers: the upstream MAP4K and the downstream MAP Kinase-activated kinase (MAPKAPK). The kinases in each tier phosphorylate and activate the kinases in the downstream tier to transmit a signal within a cell.",
           "subset": null
-        },
-        {
-          "id": "GO:0005515",
-          "name": "protein binding",
-          "namespace": "molecular_function",
-          "def": "Interacting selectively and non-covalently with any protein or protein complex (a complex of two or more proteins that may include other nonprotein molecules).",
-          "subset": [
-            "goslim_aspergillus",
-            "goslim_candida",
-            "goslim_chembl",
-            "goslim_pir",
-            "goslim_plant",
-            "gosubset_prok"
-          ]
         },
         {
           "id": "GO:0006355",
@@ -668,20 +398,6 @@
             "goslim_pombe",
             "gosubset_prok"
           ]
-        },
-        {
-          "id": "GO:1900426",
-          "name": "positive regulation of defense response to bacterium",
-          "namespace": "biological_process",
-          "def": "Any process that activates or increases the frequency, rate or extent of defense response to bacterium.",
-          "subset": null
-        },
-        {
-          "id": "GO:0080142",
-          "name": "regulation of salicylic acid biosynthetic process",
-          "namespace": "biological_process",
-          "def": "Any process that modulates the frequency, rate or extent of the chemical reactions and pathways resulting in the formation of salicylic acid.",
-          "subset": null
         },
         {
           "id": "GO:0005634",
@@ -700,124 +416,25 @@
           ]
         },
         {
-          "id": "GO:0010105",
-          "name": "negative regulation of ethylene-activated signaling pathway",
-          "namespace": "biological_process",
-          "def": "Any process that stops or prevents ethylene (ethene) signal transduction.",
-          "subset": null
-        },
-        {
-          "id": "GO:2000022",
-          "name": "regulation of jasmonic acid mediated signaling pathway",
-          "namespace": "biological_process",
-          "def": "Any process that modulates the frequency, rate or extent of jasmonic acid mediated signaling pathway.",
-          "subset": null
-        },
-        {
-          "id": "GO:0016740",
-          "name": "transferase activity",
+          "id": "GO:0005515",
+          "name": "protein binding",
           "namespace": "molecular_function",
-          "def": "Catalysis of the transfer of a group, e.g. a methyl group, glycosyl group, acyl group, phosphorus-containing, or other groups, from one compound (generally regarded as the donor) to another compound (generally regarded as the acceptor). Transferase is the systematic name for any enzyme of EC class 2.",
+          "def": "Interacting selectively and non-covalently with any protein or protein complex (a complex of two or more proteins that may include other nonprotein molecules).",
           "subset": [
             "goslim_aspergillus",
             "goslim_candida",
             "goslim_chembl",
-            "goslim_metagenomics",
             "goslim_pir",
             "goslim_plant",
-            "goslim_yeast",
             "gosubset_prok"
           ]
-        },
-        {
-          "id": "GO:0005737",
-          "name": "cytoplasm",
-          "namespace": "cellular_component",
-          "def": "All of the contents of a cell excluding the plasma membrane and nucleus, but including other subcellular structures.",
-          "subset": [
-            "goslim_candida",
-            "goslim_chembl",
-            "goslim_generic",
-            "goslim_metagenomics",
-            "goslim_plant",
-            "goslim_yeast",
-            "gosubset_prok"
-          ]
-        },
-        {
-          "id": "GO:0009626",
-          "name": "plant-type hypersensitive response",
-          "namespace": "biological_process",
-          "def": "The rapid, localized death of plant cells in response to invasion by a pathogen.",
-          "subset": null
-        },
-        {
-          "id": "GO:0016042",
-          "name": "lipid catabolic process",
-          "namespace": "biological_process",
-          "def": "The chemical reactions and pathways resulting in the breakdown of lipids, compounds soluble in an organic solvent but not, or sparingly, in an aqueous solvent.",
-          "subset": [
-            "gosubset_prok"
-          ]
-        },
-        {
-          "id": "GO:0010225",
-          "name": "response to UV-C",
-          "namespace": "biological_process",
-          "def": "Any process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a UV-C radiation stimulus. UV-C radiation (UV-C light) spans the wavelengths 100 to 280 nm.",
-          "subset": null
-        },
-        {
-          "id": "GO:0080151",
-          "name": "positive regulation of salicylic acid mediated signaling pathway",
-          "namespace": "biological_process",
-          "def": "Any process that activates or increases the frequency, rate or extent of salicylic acid mediated signal transduction.",
-          "subset": null
-        },
-        {
-          "id": "GO:1900367",
-          "name": "positive regulation of defense response to insect",
-          "namespace": "biological_process",
-          "def": "Any process that activates or increases the frequency, rate or extent of defense response to insect.",
-          "subset": null
-        },
-        {
-          "id": "GO:1901183",
-          "name": "positive regulation of camalexin biosynthetic process",
-          "namespace": "biological_process",
-          "def": "Any process that activates or increases the frequency, rate or extent of camalexin biosynthetic process.",
-          "subset": null
-        },
-        {
-          "id": "GO:0009873",
-          "name": "ethylene-activated signaling pathway",
-          "namespace": "biological_process",
-          "def": "A series of molecular signals generated by the reception of ethylene (ethene, C2H4) by a receptor and ending with modulation of a cellular process, e.g. transcription.",
-          "subset": null
-        },
-        {
-          "id": "GO:0098588",
-          "name": "bounding membrane of organelle",
-          "namespace": "cellular_component",
-          "def": "The lipid bilayer that forms the outer-most layer of an organelle.",
-          "subset": null
-        },
-        {
-          "id": "GO:0071327",
-          "name": "cellular response to trehalose stimulus",
-          "namespace": "biological_process",
-          "def": "Any process that results in a change in state or activity of a cell (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a trehalose stimulus.",
-          "subset": null
         }
       ],
       "ancestors": [
-        160,
         1101,
         2252,
         2376,
         2682,
-        2831,
-        2833,
         3674,
         3824,
         5488,
@@ -828,7 +445,6 @@
         6464,
         6468,
         6605,
-        6629,
         6725,
         6793,
         6796,
@@ -845,13 +461,8 @@
         8104,
         8150,
         8152,
-        8219,
-        9056,
         9058,
         9266,
-        9314,
-        9411,
-        9416,
         9605,
         9607,
         9617,
@@ -862,42 +473,25 @@
         9653,
         9696,
         9719,
-        9723,
         9725,
         9737,
-        9743,
         9751,
         9753,
         9755,
         9814,
         9863,
         9889,
-        9891,
-        9893,
-        9966,
-        9967,
-        9968,
         9987,
         10033,
-        10104,
         10243,
         10260,
-        10337,
-        10353,
         10468,
         10556,
-        10565,
-        10646,
-        10647,
-        10648,
         10941,
-        12501,
         14070,
         15031,
-        16020,
         16043,
         16053,
-        16265,
         16298,
         16310,
         16787,
@@ -910,20 +504,11 @@
         19538,
         19752,
         23014,
-        23051,
         23052,
-        23056,
-        23057,
-        31090,
         31323,
-        31325,
         31326,
-        31328,
         31347,
-        31349,
         31399,
-        32101,
-        32103,
         32268,
         32501,
         32502,
@@ -932,8 +517,6 @@
         33036,
         33554,
         33993,
-        34050,
-        34285,
         34613,
         34620,
         34976,
@@ -946,7 +529,6 @@
         42221,
         42537,
         42742,
-        42762,
         43067,
         43170,
         43207,
@@ -956,9 +538,6 @@
         43231,
         43412,
         43436,
-        43455,
-        43900,
-        43902,
         44237,
         44238,
         44249,
@@ -966,7 +545,6 @@
         44267,
         44281,
         44283,
-        44422,
         44424,
         44464,
         44699,
@@ -974,7 +552,6 @@
         44707,
         44710,
         44711,
-        44712,
         44763,
         44765,
         44767,
@@ -994,7 +571,6 @@
         48522,
         48523,
         48583,
-        48584,
         48585,
         48646,
         48731,
@@ -1005,9 +581,7 @@
         50794,
         50896,
         51171,
-        51173,
         51174,
-        51176,
         51179,
         51234,
         51246,
@@ -1018,26 +592,17 @@
         51704,
         51707,
         51716,
-        52318,
-        52319,
-        52320,
-        52322,
         52689,
         60255,
         60548,
         61024,
         65007,
-        70297,
-        70298,
         70482,
         70727,
         70887,
         71215,
         71229,
         71310,
-        71322,
-        71324,
-        71369,
         71395,
         71396,
         71407,
@@ -1056,355 +621,28 @@
         97306,
         98542,
         99402,
-        1900376,
-        1900378,
-        1900424,
-        1901182,
         1901360,
         1901362,
-        1901575,
         1901576,
         1901615,
         1901617,
         1901698,
         1901700,
         1901701,
-        1902531,
-        1902532,
         1902578,
         1902580,
         1902582,
         1903506,
-        2000031,
-        2000068,
         2000112,
         2000377,
         2001141
       ]
     },
-    "PO": {
-      "entries": [
-        {
-          "id": "PO:0001054",
-          "name": "vascular leaf senescent stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "A vascular leaf development stage (PO:0025570) that begins with the formation of a abscission zone at the base of a vascular leaf (PO:0009025) and ends with leaf separation and death.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007098",
-          "name": "LP.02 two leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at two nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007611",
-          "name": "petal differentiation and expansion stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "Stage of corolla development defined by differentiation and expansion of petal.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007616",
-          "name": "flowering stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "A flower development stage (PO:0007615) that begins when pollen (PO:0025281) is released by anther dehiscence (GO:0009901) and/or the stigma (PO:0009073) is receptive and ends with the process of pollination (GO:0009856) and/or floral organ senescence (GO:0080187).",
-          "subset": [
-            "Angiosperm",
-            "Arabidopsis",
-            "Citrus",
-            "Gymnosperms",
-            "Maize",
-            "Musa",
-            "Poaceae",
-            "Potato",
-            "Rice",
-            "Tomato"
-          ]
-        },
-        {
-          "id": "PO:0001078",
-          "name": "plant embryo cotyledonary stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "A plant embryo development stage (PO:0007631) that occurs during the interval between the beginning of rapid elongation of the plant embryo axis (PO:0019018) and plant embryo cotyledons (PO:0025470), and the onset of a plant embryo true leaf formation stage (PO:0001095), when present, or a mature plant embryo stage (PO:0001081).",
-          "subset": [
-            "Angiosperm",
-            "Arabidopsis",
-            "Tomato"
-          ]
-        },
-        {
-          "id": "PO:0004507",
-          "name": "plant embryo bilateral stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "A plant embryo development stage (PO:0007631) that occurs during the interval between the transition from radial to bilateral symmetry in a plant embryo proper (PO:0000001) and the onset of either the plant embryo cotyledonary stage (PO:0001078) or the plant embryo coleoptilar stage (PO:0001094).",
-          "subset": [
-            "Angiosperm",
-            "Arabidopsis",
-            "Maize",
-            "Poaceae",
-            "Rice"
-          ]
-        },
-        {
-          "id": "PO:0001081",
-          "name": "mature plant embryo stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "A plant embryo development stage (PO:0007631) during the interval between when a plant embryo (PO:0009009) has stopped developmental growth involved in morphogenesis (GO:0060560) and one of the following: the beginning of the seed germination stage (PO:0007057) in seed plants, formation of the first vascular leaf (PO:0009025) in pteridophytes, the beginning of development of a sporangium (PO:0025094) in bryophytes, or the beginning of the formation of a plant organ (PO:0009008) such as a root (PO:0009005), shoot axis (PO:0025029), or vascular leaf (PO:0009025) in a cultured plant embryo (PO:0000010).",
-          "subset": [
-            "Angiosperm",
-            "Arabidopsis",
-            "Maize",
-            "Poaceae",
-            "Rice"
-          ]
-        },
-        {
-          "id": "PO:0007064",
-          "name": "LP.12 twelve leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at twelve nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007095",
-          "name": "LP.08 eight leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at eight nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007103",
-          "name": "LP.10 ten leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at ten nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007115",
-          "name": "LP.04 four leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at four nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0007123",
-          "name": "LP.06 six leaves visible stage",
-          "namespace": "plant_structure_development_stage",
-          "def": "The stage at which leaves at six nodes, other than the cotyledonary node, are visible above ground.",
-          "subset": null
-        },
-        {
-          "id": "PO:0009010",
-          "name": "seed",
-          "namespace": "plant_anatomy",
-          "def": "A multi-tissue plant structure (PO:0025496) that develops from a plant ovule (PO:0020003) and has as parts a plant embryo (PO:0009009) enclosed in a seed coat (PO:0009088).",
-          "subset": [
-            "Angiosperm",
-            "Arabidopsis",
-            "Citrus",
-            "Gymnosperms",
-            "Maize",
-            "Poaceae",
-            "Rice",
-            "Tomato",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0009009",
-          "name": "plant embryo",
-          "namespace": "plant_anatomy",
-          "def": "A whole plant (PO:0000003) that participates in the plant embryo stage (PO:0007631).",
-          "subset": null
-        },
-        {
-          "id": "PO:0020030",
-          "name": "cotyledon",
-          "namespace": "plant_anatomy",
-          "def": "A vascular leaf (PO:0009025) formed at the first shoot node (PO:0005004) of a plant embryo (PO:0009009) or a seedling (PO:0000003).",
-          "subset": [
-            "reference",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0009005",
-          "name": "root",
-          "namespace": "plant_anatomy",
-          "def": "A plant axis (PO:0025004) that lacks shoot axis nodes (PO:0005004), grows indeterminately, and is usually positively geotropic.",
-          "subset": [
-            "Angiosperm",
-            "Gymnosperms",
-            "Maize",
-            "Musa",
-            "Potato",
-            "reference",
-            "Rice",
-            "Tomato",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0009029",
-          "name": "stamen",
-          "namespace": "plant_anatomy",
-          "def": "A microsporophyll bearing one or more microsporangia.",
-          "subset": [
-            "reference",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0009031",
-          "name": "sepal",
-          "namespace": "plant_anatomy",
-          "def": "A phyllome (PO:0006001) that is usually green, and is part of the calyx (PO:0009060).",
-          "subset": [
-            "reference",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0009032",
-          "name": "petal",
-          "namespace": "plant_anatomy",
-          "def": "A phyllome (PO:0006001) that is part of the corolla (PO:0009059), and is usually colored (not green).",
-          "subset": [
-            "Angiosperm",
-            "reference",
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0020038",
-          "name": "petiole",
-          "namespace": "plant_anatomy",
-          "def": "A stalk of a leaf.",
-          "subset": [
-            "TraitNet"
-          ]
-        },
-        {
-          "id": "PO:0000013",
-          "name": "cauline leaf",
-          "namespace": "plant_anatomy",
-          "def": "A vascular leaf (PO:0009025), borne on the stem (PO:0009047).",
-          "subset": null
-        },
-        {
-          "id": "PO:0000037",
-          "name": "shoot apex",
-          "namespace": "plant_anatomy",
-          "def": "A shoot axis (PO:0025029) that is the most distal part of a shoot system (PO:0009006) and has as parts a shoot apical meristem (PO:0020148) and the youngest primordia (PO:0025127).",
-          "subset": [
-            "reference"
-          ]
-        },
-        {
-          "id": "PO:0000230",
-          "name": "inflorescence meristem",
-          "namespace": "plant_anatomy",
-          "def": "A meristem that gives rise to an inflorescence.",
-          "subset": null
-        },
-        {
-          "id": "PO:0020100",
-          "name": "hypocotyl",
-          "namespace": "plant_anatomy",
-          "def": "A stem internode (PO:0020142) below the cotyledonary node (PO:0025321) and transitional to a root (PO:0009005) of a plant embryo (PO:0009009) or a seedling (PO:0000003).",
-          "subset": null
-        },
-        {
-          "id": "PO:0008019",
-          "name": "leaf lamina base",
-          "namespace": "plant_anatomy",
-          "def": "The region of the leaf lamina proximal to the stem and usually connected to it by means of a petiole.",
-          "subset": null
-        },
-        {
-          "id": "PO:0020137",
-          "name": "leaf apex",
-          "namespace": "plant_anatomy",
-          "def": "A phyllome apex (PO:0025139) that is part of a leaf (PO:0025034).",
-          "subset": null
-        },
-        {
-          "id": "PO:0025022",
-          "name": "collective leaf structure",
-          "namespace": "plant_anatomy",
-          "def": "A collective phyllome structure (PO:0025023) composed of two or more leaves (PO:0025034).",
-          "subset": null
-        }
-      ],
-      "ancestors": [
-        3,
-        1050,
-        5005,
-        6001,
-        7033,
-        7112,
-        7133,
-        7134,
-        7600,
-        7604,
-        7615,
-        7631,
-        9006,
-        9007,
-        9008,
-        9011,
-        9012,
-        9013,
-        9025,
-        9026,
-        9028,
-        9046,
-        9047,
-        9049,
-        9058,
-        9059,
-        9060,
-        9061,
-        20039,
-        20142,
-        25001,
-        25004,
-        25007,
-        25023,
-        25025,
-        25029,
-        25034,
-        25060,
-        25066,
-        25082,
-        25131,
-        25139,
-        25337,
-        25338,
-        25339,
-        25395,
-        25396,
-        25496,
-        25497,
-        25498,
-        25513,
-        25527,
-        25530,
-        25570,
-        25571,
-        25578,
-        25579,
-        25585,
-        28002
-      ]
-    },
     "taxonomy": {
       "entries": [
         {
-          "_id": 3702,
-          "name": "Arabidopsis thaliana"
+          "_id": 81972,
+          "name": "Arabidopsis lyrata subsp. lyrata"
         }
       ],
       "ancestors": [
@@ -1419,6 +657,7 @@
         35493,
         58023,
         58024,
+        59689,
         71240,
         71275,
         78536,
@@ -1436,16 +675,19 @@
     "gene_tree": {
       "id": "EPlGT00140000001539",
       "root_taxon_id": 58023,
-      "root_taxon_name": "Tracheophyta"
-    },
-    "pan_tree": {
-      "id": "EGGT00050000018973",
-      "root_taxon_id": 58023,
-      "root_taxon_name": "Tracheophyta"
+      "root_taxon_name": "Tracheophyta",
+      "representative": {
+        "model": {
+          "id": "AT3G52430",
+          "taxon_id": 3702,
+          "name": "PAD4",
+          "description": "Lipase-like PAD4"
+        }
+      }
     },
     "homologous_genes": {
       "ortholog_one2one": [
-        "scaffold_502313.1",
+        "AT3G52430",
         "PRUPE_ppa025554mg",
         "VIT_07s0031g02390",
         "Solyc02g032850.2",
@@ -1496,9 +738,8 @@
         "GRMZM2G014071"
       ],
       "within_species_paralog": [
-        "AT3G48090",
-        "AT3G48080",
-        "AT5G14930"
+        "fgenesh2_kg.5__1161__AT3G48090.1",
+        "fgenesh2_kg.6__1471__AT5G14930.2"
       ],
       "ortholog_many2many": [
         "SELMODRAFT_72950",
@@ -1508,14 +749,14 @@
     }
   },
   "bins": {
-    "fixed_100": 258,
-    "fixed_200": 516,
-    "fixed_500": 1291,
-    "fixed_1000": 2581,
-    "uniform_1Mb": 797,
-    "uniform_2Mb": 409,
-    "uniform_5Mb": 174,
-    "uniform_10Mb": 97
+    "fixed_100": 2466,
+    "fixed_200": 4927,
+    "fixed_500": 12306,
+    "fixed_1000": 24606,
+    "uniform_1Mb": 16374,
+    "uniform_2Mb": 8274,
+    "uniform_5Mb": 3418,
+    "uniform_10Mb": 1795
   },
-  "species_idx": 1
+  "species_idx": 81972
 }
