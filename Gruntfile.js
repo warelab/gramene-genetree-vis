@@ -25,14 +25,26 @@ module.exports = function (grunt) {
       }
     },
 
+    less: {
+      dev: {
+        files: {
+          "build/styles.css": "styles/tree.less"
+        }
+      }
+    },
+
     watch: {
       browserify: {
-        files: ['<%= browserify.dev.src %>', 'src/**/*.js', 'src/**/*.jsx', 'styles/**/*.less'],
+        files: ['<%= browserify.dev.src %>', 'src/**/*.js', 'src/**/*.jsx'],
         tasks: ['browserify:dev']
+      },
+      styles: {
+        files: ['**/*.less'],
+        tasks: ['less:dev']
       }
     }
   });
 
-  grunt.registerTask('default', ['browserify:dev', 'watch']);
+  grunt.registerTask('default', ['less:dev', 'browserify:dev', 'watch']);
   grunt.registerTask('package', ['browserify:production']);
 };
