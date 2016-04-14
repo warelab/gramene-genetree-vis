@@ -13,6 +13,8 @@ var calculateSvgHeight = require('../utils/calculateSvgHeight');
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
+const MAX_TREE_WIDTH = 300;
+const MIN_ALIGN_WIDTH = 200;
 
 var TreeVis = React.createClass({
   propTypes: {
@@ -39,8 +41,13 @@ var TreeVis = React.createClass({
     this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
     this.w = this.props.width - this.labelWidth - (2 * this.margin);
 
-    this.treeWidth =  this.w / 2;
-    this.alignmentsWidth = this.w / 2;
+    this.treeWidth =  this.w / 2 > MAX_TREE_WIDTH ? MAX_TREE_WIDTH : this.w / 2;
+    this.alignmentsWidth = this.w - this.treeWidth;
+    this.displayAlignments = true;
+    if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
+      this.displayAlignments = false;
+      this.treeWidth += this.alignmentsWidth;
+    }
 
     this.transformTree = 'translate(' + this.margin + ', ' + this.margin + ')';
     var alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
@@ -124,14 +131,15 @@ var TreeVis = React.createClass({
                   taxonomy={this.props.taxonomy} />
       );
       
-      alignments = this.state.visibleNodes.map(function(node) {
-        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
-          return (
-            <PositionedAlignment node={node} />
-          )
-        }
-      });
-      
+      if (this.displayAlignments) {
+        alignments = this.state.visibleNodes.map(function(node) {
+          if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+            return (
+              <PositionedAlignment node={node} />
+            )
+          }
+        });
+      }
     }
 
     return (

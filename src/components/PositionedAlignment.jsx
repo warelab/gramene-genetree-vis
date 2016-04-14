@@ -19,10 +19,10 @@ var PositionedAlignment = React.createClass({
 
     px = isStyle ? 'px' : '';
 
-    x = this.props.node.x - 6;
-    y =0;
+    x = 0;
+    y = this.props.node.x - 6;
 
-    return 'translate(' + y + px + ', ' + x + px + ')';
+    return 'translate(' + x + px + ', ' + y + px + ')';
   },
 
   render: function () {
