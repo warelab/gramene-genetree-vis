@@ -5,12 +5,14 @@ var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 
 var GeneTree = require('./GeneTree.jsx');
+var PositionedAlignment = require('./PositionedAlignment.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
 
 const DEFAULT_MARGIN = 10;
+const DEFAULT_LABEL_WIDTH = 200;
 
 var TreeVis = React.createClass({
   propTypes: {
@@ -34,9 +36,15 @@ var TreeVis = React.createClass({
   },
   initHeightAndMargin: function () {
     this.margin = this.props.margin || DEFAULT_MARGIN;
-    this.w = this.props.width - (2 * this.margin);
+    this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
+    this.w = this.props.width - this.labelWidth - (2 * this.margin);
 
-    this.transform = 'translate(' + this.margin + ', ' + this.margin + ')';
+    this.treeWidth =  this.w / 2;
+    this.alignmentsWidth = this.w / 2;
+
+    this.transformTree = 'translate(' + this.margin + ', ' + this.margin + ')';
+    var alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
+    this.transformAlignments = 'translate(' + alignmentOrigin + ', ' + this.margin + ')';
   },
   reinitHeight: function() {
     this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
@@ -51,7 +59,7 @@ var TreeVis = React.createClass({
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
 
     relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
-    visibleNodes = layoutTree(genetree, geneOfInterest, this.w / 2, this.state.additionalVisibleNodes);
+    visibleNodes = layoutTree(genetree, geneOfInterest, this.treeWidth, this.state.additionalVisibleNodes);
 
     this.setState({
       geneOfInterest: geneOfInterest,
@@ -81,7 +89,7 @@ var TreeVis = React.createClass({
     allVisibleNodes = layoutTree(
       this.genetree,
       this.state.geneOfInterest,
-      this.w / 2,
+      this.treeWidth,
       additionalVisibleNodes
     );
 
@@ -102,7 +110,7 @@ var TreeVis = React.createClass({
     this.setState({hoveredNode: node});
   },
   render: function () {
-    var genetree, height;
+    var genetree, alignments, height;
 
     height = this.h + (2 * this.margin);
 
@@ -115,13 +123,25 @@ var TreeVis = React.createClass({
                   onNodeUnhover={this.handleNodeUnhover}
                   taxonomy={this.props.taxonomy} />
       );
+      
+      alignments = this.state.visibleNodes.map(function(node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+          return (
+            <PositionedAlignment node={node} />
+          )
+        }
+      });
+      
     }
 
     return (
       <div className="genetree-vis">
         <svg width={this.props.width} height={height}>
-          <g className="tree-wrapper" transform={this.transform}>
+          <g className="tree-wrapper" transform={this.transformTree}>
             {genetree}
+          </g>
+          <g className="alignments-wrapper" transform={this.transformAlignments}>
+            {alignments}
           </g>
         </svg>
       </div>
