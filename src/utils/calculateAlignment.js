@@ -38,14 +38,14 @@ module.exports = function calculateAlignment(node) {
     });
     node.alignment = { hist: [], size: node.children[0].alignment.size, nSeqs: totalSeqs };
     var depth = 0;
-    var offsets = Object.keys(positions); // Here is the magical part. Is this guaranteed to be sorted properly?
+    var offsets = Object.keys(positions).map(function(i) { return +i }).sort(function(a,b){return a - b});
     for (var i = 0; i<offsets.length - 1; i++) {
-      var p = +offsets[i];
-      depth += positions[p];
+      if (offsets[i] > offsets[i+1]) throw new Error("nope, Object.keys(array) didn't return sorted numbers");
+      depth += positions[offsets[i]];
       if (depth > 0) {
         node.alignment.hist.push({
-          start: +offsets[i],
-          end: +offsets[i+1],
+          start: offsets[i],
+          end: offsets[i+1],
           score: depth
         });
       }
