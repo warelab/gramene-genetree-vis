@@ -132,10 +132,11 @@ var TreeVis = React.createClass({
       );
       
       if (this.displayAlignments) {
+        var width = this.alignmentsWidth;
         alignments = this.state.visibleNodes.map(function(node) {
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
             return (
-              <PositionedAlignment node={node} />
+              <PositionedAlignment node={node} width={width} />
             )
           }
         });

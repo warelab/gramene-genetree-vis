@@ -16,7 +16,7 @@ ReactDOM.render(
   <TreeVis genetree={exampleGenetree}
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
-           width={900}
+           width={1200}
            allowGeneSelection={true}/>,
   document.getElementById('tree')
 );

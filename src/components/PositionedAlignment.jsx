@@ -7,7 +7,8 @@ var Alignment = require('./Alignment.jsx');
 var PositionedAlignment = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired
+    node: React.PropTypes.object.isRequired,
+    width: React.PropTypes.number.isRequired
   },
   
   getInitialState: function () {
@@ -36,7 +37,7 @@ var PositionedAlignment = React.createClass({
 
     return (
       <g {...props}>
-        <Alignment node={this.props.node} />
+        <Alignment width={this.props.width} node={this.props.node} />
       </g>
     )
   }
