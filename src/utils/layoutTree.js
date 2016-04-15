@@ -24,8 +24,10 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
       displayInfo.expandedBecause = pathIds[nodeId];
     }
     else if(!!additionalVisibleIds[nodeId]) {
-      displayInfo.expanded = true;
-      displayInfo.expandedBecause = 'selected';
+      if (node.parent.displayInfo.expanded) {
+        displayInfo.expanded = true;
+        displayInfo.expandedBecause = 'selected';
+      }
     }
     else {
       parentNodeId = node.parent.model.node_id;
