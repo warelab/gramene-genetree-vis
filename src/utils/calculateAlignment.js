@@ -1,7 +1,3 @@
-var scale = require('d3').scale.linear;
-var _ = require('lodash');
-
-
 function cigarToHistogram(cigar) {
   var histogram = [];
   var pieces = cigar.split(/([DM])/);

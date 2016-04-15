@@ -1,4 +1,5 @@
 'use strict';
+var scale = require('d3').scale.linear;
 
 var React = require('react');
 
@@ -22,17 +23,26 @@ var Alignment = React.createClass({
 
   render: function () {
     var alignment = this.props.node.alignment;
+    var colorScale = scale()
+      .domain([0, alignment.nSeqs])
+      .range(['lightgreen','darkgreen']);
     var bins = alignment.hist.map(function(bin) {
       var w = bin.end - bin.start+1;
+
+      var color = colorScale(bin.score);
+      var style = {fill: color, stroke: color};
+
       return (
-        <rect width={w} height="12" x={bin.start} />
+        <rect width={w} height="12" x={bin.start} style={style} />
       )
     });
     var sf = this.props.width / alignment.size;
     var transform = 'scale('+ sf +' 1)';
+    var border = {'fill-opacity':0, stroke:'darkgreen'};
     return (
       <g className="alignment" transform={transform}>
         {bins}
+        <rect width={alignment.size} height="12" style={border} />
       </g>
     );
   }
