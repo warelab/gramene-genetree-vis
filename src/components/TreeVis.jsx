@@ -136,7 +136,7 @@ var TreeVis = React.createClass({
         alignments = this.state.visibleNodes.map(function(node) {
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
             return (
-              <PositionedAlignment node={node} width={width} />
+              <PositionedAlignment key={node.model.node_id} node={node} width={width} />
             )
           }
         });

@@ -22,23 +22,26 @@ var Alignment = React.createClass({
   },
 
   render: function () {
-    var alignment = this.props.node.alignment;
+    var node = this.props.node;
+    var alignment = node.alignment;
     var colorScale = scale()
       .domain([0, alignment.nSeqs])
       .range(['lightgreen','darkgreen']);
+
+    var k=0;
     var bins = alignment.hist.map(function(bin) {
       var w = bin.end - bin.start+1;
 
       var color = colorScale(bin.score);
       var style = {fill: color, stroke: color};
-
+      k++;
       return (
-        <rect width={w} height="12" x={bin.start} style={style} />
+        <rect key={k} width={w} height="12" x={bin.start} style={style} />
       )
     });
     var sf = this.props.width / alignment.size;
     var transform = 'scale('+ sf +' 1)';
-    var border = {'fill-opacity':0, stroke:'darkgreen'};
+    var border = {'fillOpacity':0, stroke:'darkgreen'};
     return (
       <g className="alignment" transform={transform}>
         {bins}
