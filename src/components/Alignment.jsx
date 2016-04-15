@@ -13,17 +13,14 @@ var Alignment = React.createClass({
   },
   
   getInitialState: function () {
-    return {};
-  },
-
-  componentWillMount: function () {
-    var node = this.props.node;
-    calculateAlignment(node);
+    return {
+      alignment : calculateAlignment(this.props.node)
+    };
   },
 
   render: function () {
     var node = this.props.node;
-    var alignment = node.alignment;
+    var alignment = this.state.alignment;
     var colorScale = scale()
       .domain([0, alignment.nSeqs])
       .range(['lightgreen','darkgreen']);

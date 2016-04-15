@@ -1,3 +1,5 @@
+var alignments = {};
+
 function cigarToHistogram(cigar) {
   var histogram = [];
   var pieces = cigar.split(/([DM])/);
@@ -18,16 +20,19 @@ function cigarToHistogram(cigar) {
 }
 
 module.exports = function calculateAlignment(node) {
-  if (node.alignment) return;
-  if (node.model.alignment) node.alignment = node.model.alignment; // future proof if this gets calculated at build time instead
-  else if (node.model.cigar) node.alignment = cigarToHistogram(node.model.cigar);
+  var nodeId = node.model.node_id;
+  if (alignments[nodeId]) return alignments[nodeId];
+
+  if (node.model.cigar) alignments[nodeId] = cigarToHistogram(node.model.cigar);
   else {
     var positions = []; // Thanks for the sparse arrays JavaScript! Merging histograms is easy
     var totalSeqs = 0;
+    var size;
     node.children.forEach(function(childNode) { // I know these are binary trees, but this works for k-ary trees
-      calculateAlignment(childNode); // recursive call to be sure that we have an alignment for the childNode
-      totalSeqs += childNode.alignment.nSeqs;
-      childNode.alignment.hist.forEach(function(region) {
+      var childAlignment = calculateAlignment(childNode); // recursive call to be sure that we have an alignment for the childNode
+      size = childAlignment.size;
+      totalSeqs += childAlignment.nSeqs;
+      childAlignment.hist.forEach(function(region) {
         function updatePosition(positions, offset, value) {
           if (!positions[offset]) positions[offset] = value;
           else                    positions[offset] += value;
@@ -36,14 +41,14 @@ module.exports = function calculateAlignment(node) {
         updatePosition(positions, region.end, -region.score);
       });
     });
-    node.alignment = { hist: [], size: node.children[0].alignment.size, nSeqs: totalSeqs };
+    var histogram = [];
+    alignments[nodeId] = { hist: histogram, size: size, nSeqs: totalSeqs };
     var depth = 0;
     var offsets = Object.keys(positions).map(function(i) { return +i }).sort(function(a,b){return a - b});
     for (var i = 0; i<offsets.length - 1; i++) {
-      if (offsets[i] > offsets[i+1]) throw new Error("nope, Object.keys(array) didn't return sorted numbers");
       depth += positions[offsets[i]];
       if (depth > 0) {
-        node.alignment.hist.push({
+        histogram.push({
           start: offsets[i],
           end: offsets[i+1],
           score: depth
@@ -51,4 +56,5 @@ module.exports = function calculateAlignment(node) {
       }
     }
   }
+  return alignments[nodeId];
 };
