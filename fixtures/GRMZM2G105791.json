@@ -1,0 +1,549 @@
+{
+	"_id": "GRMZM2G105791",
+	"name": "GRMZM2G105791",
+	"description": "Starch synthase IIb-2  [Source:UniProtKB/TrEMBL;Acc:A4ZVH9]",
+	"biotype": "protein_coding",
+	"taxon_id": 4577,
+	"system_name": "zea_mays",
+	"db_type": "core",
+	"gene_idx": 23192,
+	"location": {
+		"region": "5",
+		"start": 206900641,
+		"end": 206905640,
+		"strand": -1,
+		"map": "GCA_000005005.5"
+	},
+	"xrefs": [
+		{
+			"db": "UniParc",
+			"ids": [
+				"UPI00022103F2"
+			]
+		},
+		{
+			"db": "Uniprot/SPTREMBL",
+			"ids": [
+				"A0A096RP08"
+			]
+		},
+		{
+			"db": "KEGG_Enzyme",
+			"ids": [
+				"00500+2.4.1.21"
+			]
+		},
+		{
+			"db": "UniPathway",
+			"ids": [
+				"UPA00164"
+			]
+		},
+		{
+			"db": "MetaCyc",
+			"ids": [
+				"PWY-622"
+			]
+		},
+		{
+			"db": "UniGene",
+			"ids": [
+				"Zm.62296"
+			]
+		}
+	],
+	"gene_structure": {
+		"exons": [
+			{
+				"id": "GRMZM2G105791_T01.exon1",
+				"start": 1,
+				"end": 546
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon2",
+				"start": 970,
+				"end": 1378
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon3",
+				"start": 1446,
+				"end": 1510
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon4",
+				"start": 1777,
+				"end": 1854
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon5",
+				"start": 1947,
+				"end": 2057
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon6",
+				"start": 2162,
+				"end": 2206
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon7",
+				"start": 2545,
+				"end": 2718
+			},
+			{
+				"id": "GRMZM2G105791_T01.exon8",
+				"start": 3647,
+				"end": 4773
+			},
+			{
+				"id": "GRMZM2G105791_T02.exon1",
+				"start": 192,
+				"end": 546
+			},
+			{
+				"id": "GRMZM2G105791_T02.exon2",
+				"start": 976,
+				"end": 1378
+			},
+			{
+				"id": "GRMZM2G105791_T02.exon8",
+				"start": 3647,
+				"end": 5000
+			}
+		],
+		"transcripts": [
+			{
+				"exons": [
+					"GRMZM2G105791_T01.exon1",
+					"GRMZM2G105791_T01.exon2",
+					"GRMZM2G105791_T01.exon3",
+					"GRMZM2G105791_T01.exon4",
+					"GRMZM2G105791_T01.exon5",
+					"GRMZM2G105791_T01.exon6",
+					"GRMZM2G105791_T01.exon7",
+					"GRMZM2G105791_T01.exon8"
+				],
+				"length": 2555,
+				"exon_junctions": [
+					546,
+					955,
+					1020,
+					1098,
+					1209,
+					1254,
+					1428
+				],
+				"cds": {
+					"start": 265,
+					"end": 2385
+				},
+				"translation": {
+					"id": "GRMZM2G105791_P01",
+					"length": 706,
+					"features": {
+						"domain": {
+							"entries": [
+								{
+									"name": "PF00534",
+									"description": "Glycosyl transferase, family 1",
+									"db": "Pfam",
+									"interpro": "IPR001296",
+									"start": 517,
+									"end": 662
+								},
+								{
+									"name": "PF08323",
+									"description": "Starch synthase, catalytic domain",
+									"db": "Pfam",
+									"interpro": "IPR013534",
+									"start": 216,
+									"end": 458
+								}
+							],
+							"architecture": [
+								{
+									"root": "13534",
+									"start": 216,
+									"end": 458,
+									"interpro": "IPR013534",
+									"name": "Starch_synth_cat_dom",
+									"description": "Starch synthase, catalytic domain"
+								},
+								{
+									"root": "1296",
+									"start": 517,
+									"end": 662,
+									"interpro": "IPR001296",
+									"name": "Glyco_trans_1",
+									"description": "Glycosyl transferase, family 1"
+								}
+							],
+							"roots": "13534 1296"
+						},
+						"family": {
+							"entries": [
+								{
+									"name": "MF_00484",
+									"description": "Bacterial/plant glycogen synthase",
+									"db": "HAMAP",
+									"interpro": "IPR011835",
+									"start": 215,
+									"end": 702
+								},
+								{
+									"name": "TIGR02095",
+									"description": "Bacterial/plant glycogen synthase",
+									"db": "TIGRfam",
+									"interpro": "IPR011835",
+									"start": 215,
+									"end": 700
+								}
+							]
+						}
+					}
+				},
+				"id": "GRMZM2G105791_T01"
+			},
+			{
+				"exons": [
+					"GRMZM2G105791_T02.exon1",
+					"GRMZM2G105791_T02.exon2",
+					"GRMZM2G105791_T01.exon3",
+					"GRMZM2G105791_T01.exon4",
+					"GRMZM2G105791_T01.exon5",
+					"GRMZM2G105791_T01.exon6",
+					"GRMZM2G105791_T01.exon7",
+					"GRMZM2G105791_T02.exon8"
+				],
+				"length": 2585,
+				"exon_junctions": [
+					355,
+					758,
+					823,
+					901,
+					1012,
+					1057,
+					1231
+				],
+				"cds": {
+					"start": 74,
+					"end": 2188
+				},
+				"translation": {
+					"id": "GRMZM2G105791_P02",
+					"length": 704,
+					"features": {
+						"domain": {
+							"entries": [
+								{
+									"name": "PF00534",
+									"description": "Glycosyl transferase, family 1",
+									"db": "Pfam",
+									"interpro": "IPR001296",
+									"start": 515,
+									"end": 660
+								},
+								{
+									"name": "PF08323",
+									"description": "Starch synthase, catalytic domain",
+									"db": "Pfam",
+									"interpro": "IPR013534",
+									"start": 214,
+									"end": 456
+								}
+							],
+							"architecture": [
+								{
+									"root": "13534",
+									"start": 214,
+									"end": 456,
+									"interpro": "IPR013534",
+									"name": "Starch_synth_cat_dom",
+									"description": "Starch synthase, catalytic domain"
+								},
+								{
+									"root": "1296",
+									"start": 515,
+									"end": 660,
+									"interpro": "IPR001296",
+									"name": "Glyco_trans_1",
+									"description": "Glycosyl transferase, family 1"
+								}
+							],
+							"roots": "13534 1296"
+						},
+						"family": {
+							"entries": [
+								{
+									"name": "MF_00484",
+									"description": "Bacterial/plant glycogen synthase",
+									"db": "HAMAP",
+									"interpro": "IPR011835",
+									"start": 213,
+									"end": 700
+								},
+								{
+									"name": "TIGR02095",
+									"description": "Bacterial/plant glycogen synthase",
+									"db": "TIGRfam",
+									"interpro": "IPR011835",
+									"start": 213,
+									"end": 698
+								}
+							]
+						}
+					}
+				},
+				"id": "GRMZM2G105791_T02"
+			}
+		],
+		"canonical_transcript": "GRMZM2G105791_T01"
+	},
+	"annotations": {
+		"domains": {
+			"entries": [
+				{
+					"id": "IPR001296",
+					"name": "Glyco_trans_1",
+					"description": "Glycosyl transferase, family 1"
+				},
+				{
+					"id": "IPR011835",
+					"name": "GS/SS",
+					"description": "Bacterial/plant glycogen synthase"
+				},
+				{
+					"id": "IPR013534",
+					"name": "Starch_synth_cat_dom",
+					"description": "Starch synthase, catalytic domain"
+				}
+			]
+		},
+		"GO": {
+			"entries": [
+				{
+					"id": "GO:0019252",
+					"name": "starch biosynthetic process",
+					"namespace": "biological_process",
+					"def": "The chemical reactions and pathways resulting in the formation of starch, the most important reserve polysaccharide in plants.",
+					"subset": [
+						"gosubset_prok"
+					],
+					"evidence_code": "IEA"
+				},
+				{
+					"id": "GO:0009507",
+					"name": "chloroplast",
+					"namespace": "cellular_component",
+					"def": "A chlorophyll-containing plastid with thylakoids organized into grana and frets, or stroma thylakoids, and embedded in a stroma.",
+					"subset": null,
+					"evidence_code": "IEA"
+				},
+				{
+					"id": "GO:0009501",
+					"name": "amyloplast",
+					"namespace": "cellular_component",
+					"def": "A plastid whose main function is to synthesize and store starch.",
+					"subset": null,
+					"evidence_code": "IEA"
+				},
+				{
+					"id": "GO:0009011",
+					"name": "starch synthase activity",
+					"namespace": "molecular_function",
+					"def": "Catalysis of the reaction: ADP-glucose + (1,4)-alpha-D-glucosyl(n) = ADP + (1,4)-alpha-D-glucosyl(n+1).",
+					"subset": [
+						"gosubset_prok"
+					],
+					"evidence_code": "IEA"
+				},
+				{
+					"id": "GO:0004373",
+					"name": "glycogen (starch) synthase activity",
+					"namespace": "molecular_function",
+					"def": "Catalysis of the reaction: UDP-glucose + (1,4)-alpha-D-glucosyl(n) = UDP + (1,4)-alpha-D-glucosyl(n+1).",
+					"subset": [
+						"gosubset_prok"
+					],
+					"evidence_code": "IEA"
+				}
+			],
+			"ancestors": [
+				271,
+				3674,
+				3824,
+				5575,
+				5622,
+				5623,
+				5737,
+				5975,
+				5976,
+				5982,
+				6073,
+				8150,
+				8152,
+				8194,
+				9058,
+				9059,
+				9250,
+				9536,
+				9987,
+				16051,
+				16740,
+				16757,
+				16758,
+				33692,
+				34637,
+				34645,
+				35251,
+				43170,
+				43226,
+				43227,
+				43229,
+				43231,
+				44042,
+				44237,
+				44238,
+				44249,
+				44260,
+				44262,
+				44264,
+				44424,
+				44444,
+				44464,
+				44699,
+				44710,
+				44711,
+				44723,
+				44763,
+				46527,
+				71704,
+				1901576
+			]
+		},
+		"taxonomy": {
+			"entries": [
+				{
+					"_id": 4577,
+					"name": "Zea mays"
+				}
+			],
+			"ancestors": [
+				1,
+				2759,
+				3193,
+				3398,
+				4447,
+				4479,
+				4575,
+				4734,
+				33090,
+				35493,
+				38820,
+				58023,
+				58024,
+				78536,
+				131221,
+				131567,
+				147369,
+				147370,
+				147429,
+				1437183,
+				1437197,
+				1648029,
+				1648033
+			]
+		}
+	},
+	"homology": {
+		"gene_tree": {
+			"id": "EPlGT00820000103641",
+			"root_taxon_id": 2759,
+			"root_taxon_name": "Eukaryota",
+			"representative": {
+				"model": {
+					"id": "AT3G01180",
+					"taxon_id": 3702,
+					"name": "SS2",
+					"description": "Starch synthase 2, chloroplastic/amyloplastic"
+				}
+			}
+		},
+		"homologous_genes": {
+			"ortholog_one2one": [
+				"Sb04g028060",
+				"Si016492m.g",
+				"Traes_6AL_AE01DC0EA",
+				"Traes_6DL_19F1042C7",
+				"F775_16707",
+				"MLOC_15538",
+				"OPUNC02G29850",
+				"ONIVA06G04720",
+				"OGLUM02G32940",
+				"KN539373.1_FG011",
+				"BGIOSGA005631",
+				"BRADI3G59440",
+				"LPERR02G26450",
+				"OB02G39280",
+				"Traes_6BL_61D83E262",
+				"OBART02G32300",
+				"OS02G0744700",
+				"ORGLA02G0278400",
+				"ORUFI02G33990"
+			],
+			"within_species_paralog": [
+				"GRMZM2G348551",
+				"GRMZM2G126988",
+				"GRMZM2G129451",
+				"GRMZM2G008263",
+				"GRMZM2G024993",
+				"GRMZM2G141399",
+				"GRMZM5G897776",
+				"GRMZM2G044744",
+				"GRMZM2G121612",
+				"GRMZM2G130043"
+			],
+			"ortholog_one2many": [
+				"MTR_6g012380",
+				"fgenesh2_kg.3__112__AT3G01180.1",
+				"PRUPE_ppa001734mg",
+				"VIT_14s0108g00940",
+				"AT3G01180",
+				"Solyc02g088000.2",
+				"PGSC0003DMG400001328",
+				"POPTR_0017s12040",
+				"AMTR_s00010p00263000",
+				"SELMODRAFT_445270",
+				"CMM317C"
+			],
+			"ortholog_many2many": [
+				"Bo5g156370",
+				"TCM_018567",
+				"Bra021487",
+				"GLYMA13G05441",
+				"Bra039138",
+				"Bra021486",
+				"Bo1g157700",
+				"GLYMA18G49480",
+				"GLYMA19G02690",
+				"Bo1g157650",
+				"TCM_018569",
+				"PP1S27_365V6",
+				"PP1S234_74V6",
+				"PP1S12_341V6",
+				"CHLREDRAFT_183277",
+				"CHLREDRAFT_109372"
+			]
+		}
+	},
+	"bins": {
+		"fixed_100": 1561,
+		"fixed_200": 3121,
+		"fixed_500": 7798,
+		"fixed_1000": 15594,
+		"uniform_1Mb": 12701,
+		"uniform_2Mb": 6411,
+		"uniform_5Mb": 2637,
+		"uniform_10Mb": 1373
+	},
+	"species_idx": 3
+}

@@ -6,6 +6,7 @@ var GrameneClient = require('gramene-search-client').client;
 
 var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
+var PositionedDomains = require('./PositionedDomains.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
@@ -136,7 +137,10 @@ var TreeVis = React.createClass({
         alignments = this.state.visibleNodes.map(function(node) {
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
             return (
-              <PositionedAlignment key={node.model.node_id} node={node} width={width} />
+              <g key={node.model.node_id} >
+                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} />
+                <PositionedAlignment key={node.model.node_id + 'a'} node={node} width={width} />
+              </g>
             )
           }
         });

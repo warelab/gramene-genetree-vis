@@ -1,23 +1,5 @@
 var alignments = {};
 
-function xcigarToHistogram(cigar) {
-  var histogram = [];
-  var pieces = cigar.split(/([DM])/);
-  var size = 0;
-  for(var i=0;i<pieces.length;i+=2) {
-    var stretch = +pieces[i];
-    var isMatch = (pieces[i+1] === "M");
-    if (isMatch) {
-      histogram.push({
-        start: size + 1,
-        end: size + stretch,
-        score: 1
-      });
-    }
-    size += stretch;
-  }
-  return {hist: histogram, size: size, nSeqs: 1};
-}
 function cigarToHistogram(cigar) {
   var histogram = [];
   var pieces = cigar.split(/([DM])/);
@@ -44,17 +26,47 @@ function cigarToHistogram(cigar) {
   return {hist: histogram, size: size, nSeqs: 1};
 }
 
-module.exports = function calculateAlignment(node) {
+function remap(seqPos,bins) {
+  var posInSeq = 0;
+  for(var b=0;b<bins.length;b++) {
+    var bin = bins[b];
+    var binLength = bin.end - bin.start + 1;
+    if (seqPos <= posInSeq + binLength) {
+      return bin.start + (seqPos - posInSeq);
+    }
+    posInSeq += binLength;
+  }
+  return 0;
+}
+
+module.exports = function positionDomains(node) {
   var nodeId = node.model.node_id;
   if (alignments[nodeId]) return alignments[nodeId];
 
-  if (node.model.cigar) alignments[nodeId] = cigarToHistogram(node.model.cigar);
+  if (node.model.cigar) {
+    var cigarHist = cigarToHistogram(node.model.cigar);
+    if (node.model.domains) {
+      // map start and end positions in domains to positions in cigar space
+      var domainsHist = node.model.domains.map(function(d) {
+        return {
+          start: remap(d.start, cigarHist.hist),
+          end: remap(d.end, cigarHist.hist),
+          score: 1
+        }
+      });
+      alignments[nodeId] = {hist: domainsHist, size: cigarHist.size, nSeqs: 1}
+    }
+    else {
+      // no domains on this gene, return an empty histogram
+      alignments[nodeId] = {hist: [], size: cigarHist.size, nSeqs: 0};
+    }
+  }
   else {
     var positions = []; // Thanks for the sparse arrays JavaScript! Merging histograms is easy
     var totalSeqs = 0;
     var size;
     node.children.forEach(function(childNode) { // I know these are binary trees, but this works for k-ary trees
-      var childAlignment = calculateAlignment(childNode); // recursive call to be sure that we have an alignment for the childNode
+      var childAlignment = positionDomains(childNode); // recursive call to be sure that we have an alignment for the childNode
       size = childAlignment.size;
       totalSeqs += childAlignment.nSeqs;
       childAlignment.hist.forEach(function(region) {
