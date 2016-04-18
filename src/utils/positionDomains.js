@@ -9,7 +9,7 @@ function cigarToHistogram(cigar) {
   pieces.forEach(function(piece) {
     if (piece === "M") {
       histogram.push({
-        start: size + 1,
+        start: size,
         end: size + stretch,
         score: 1
       });
