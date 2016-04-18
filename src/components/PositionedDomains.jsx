@@ -2,9 +2,9 @@
 
 var React = require('react');
 var microsoftBrowser = require('../utils/microsoftBrowser');
-var Alignment = require('./Alignment.jsx');
+var Domains = require('./Domains.jsx');
 
-var PositionedAlignment = React.createClass({
+var PositionedDomains = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
@@ -21,7 +21,7 @@ var PositionedAlignment = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 4;
+    y = this.props.node.x - 9.5;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },
@@ -37,10 +37,10 @@ var PositionedAlignment = React.createClass({
 
     return (
       <g {...props}>
-        <Alignment width={this.props.width} node={this.props.node} />
+        <Domains width={this.props.width} node={this.props.node} />
       </g>
     )
   }
 });
 
-module.exports = PositionedAlignment;
+module.exports = PositionedDomains;

@@ -1,6 +1,6 @@
 var alignments = {};
 
-function cigarToHistogram(cigar) {
+function xcigarToHistogram(cigar) {
   var histogram = [];
   var pieces = cigar.split(/([DM])/);
   var size = 0;
@@ -16,6 +16,31 @@ function cigarToHistogram(cigar) {
     }
     size += stretch;
   }
+  return {hist: histogram, size: size, nSeqs: 1};
+}
+function cigarToHistogram(cigar) {
+  var histogram = [];
+  var pieces = cigar.split(/([DM])/);
+  var size = 0;
+  var stretch = 1;
+  pieces.forEach(function(piece) {
+    if (piece === "M") {
+      histogram.push({
+        start: size + 1,
+        end: size + stretch,
+        score: 1
+      });
+      size += stretch;
+      stretch = 1;
+    }
+    else if (piece === "D") {
+      size += stretch;
+      stretch = 1;
+    }
+    else if (!!piece) {
+      stretch = +piece;
+    }
+  });
   return {hist: histogram, size: size, nSeqs: 1};
 }
 

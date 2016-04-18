@@ -33,7 +33,7 @@ var Alignment = React.createClass({
       var style = {fill: color, stroke: color};
       k++;
       return (
-        <rect key={k} width={w} height="12" x={bin.start} style={style} />
+        <rect key={k} width={w} height="8" x={bin.start} style={style} />
       )
     });
     var sf = this.props.width / alignment.size;
@@ -42,7 +42,7 @@ var Alignment = React.createClass({
     return (
       <g className="alignment" transform={transform}>
         {bins}
-        <rect width={alignment.size} height="12" style={border} />
+        <rect width={alignment.size} height="8" style={border} />
       </g>
     );
   }
