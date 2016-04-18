@@ -38,11 +38,12 @@ var Alignment = React.createClass({
     });
     var sf = this.props.width / alignment.size;
     var transform = 'scale('+ sf +' 1)';
-    var border = {'fillOpacity':0, stroke:'darkgreen'};
+    var border = {stroke:'green'};
     return (
       <g className="alignment" transform={transform}>
         {bins}
-        <rect width={alignment.size} height="8" style={border} />
+        <rect width={alignment.size} y="0" height="0.01" style={border} />
+        <rect width={alignment.size} y="8" height="0.01" style={border} />
       </g>
     );
   }
