@@ -138,8 +138,8 @@ var TreeVis = React.createClass({
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
             return (
               <g key={node.model.node_id} >
-                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} />
                 <PositionedAlignment key={node.model.node_id + 'a'} node={node} width={width} />
+                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} />
               </g>
             )
           }

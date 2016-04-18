@@ -21,7 +21,7 @@ var PositionedAlignment = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 6;
+    y = this.props.node.x - 4;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },

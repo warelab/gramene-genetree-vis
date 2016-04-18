@@ -1,4 +1,5 @@
-var alignments = {};
+const WIGGLE_ROOM = 10;
+var domains = {};
 
 function cigarToHistogram(cigar) {
   var histogram = [];
@@ -41,57 +42,54 @@ function remap(seqPos,bins) {
 
 module.exports = function positionDomains(node) {
   var nodeId = node.model.node_id;
-  if (alignments[nodeId]) return alignments[nodeId];
+  if (domains[nodeId]) return domains[nodeId];
 
   if (node.model.cigar) {
-    var cigarHist = cigarToHistogram(node.model.cigar);
+    var alignment = cigarToHistogram(node.model.cigar);
     if (node.model.domains) {
       // map start and end positions in domains to positions in cigar space
-      var domainsHist = node.model.domains.map(function(d) {
+      var domainsList = node.model.domains.map(function(d) {
         return {
-          start: remap(d.start, cigarHist.hist),
-          end: remap(d.end, cigarHist.hist),
-          score: 1
+          start: remap(d.start, alignment.hist),
+          end: remap(d.end, alignment.hist),
+          root: d.root,
+          name: d.name,
+          description: d.description,
+          nSeqs: 1
         }
       });
-      alignments[nodeId] = {hist: domainsHist, size: cigarHist.size, nSeqs: 1}
+      domains[nodeId] = {list: domainsList, size: alignment.size}
     }
     else {
-      // no domains on this gene, return an empty histogram
-      alignments[nodeId] = {hist: [], size: cigarHist.size, nSeqs: 0};
+      // no domains on this gene, return an empty list
+      domains[nodeId] = {list: [], size: alignment.size};
     }
   }
   else {
-    var positions = []; // Thanks for the sparse arrays JavaScript! Merging histograms is easy
-    var totalSeqs = 0;
     var size;
-    node.children.forEach(function(childNode) { // I know these are binary trees, but this works for k-ary trees
-      var childAlignment = positionDomains(childNode); // recursive call to be sure that we have an alignment for the childNode
-      size = childAlignment.size;
-      totalSeqs += childAlignment.nSeqs;
-      childAlignment.hist.forEach(function(region) {
-        function updatePosition(positions, offset, value) {
-          if (!positions[offset]) positions[offset] = value;
-          else                    positions[offset] += value;
+    var domainList = [];
+    node.children.forEach(function(childNode) {
+      var childDomains = positionDomains(childNode);
+      size = size || childDomains.size;
+      childDomains.list.forEach(function(cd) {
+        var found=false;
+        for(var i=0;i<domainList.length && !found;i++) {
+          var pd = domainList[i];
+          if (pd.root === cd.root
+            && Math.abs(pd.start - cd.start) < WIGGLE_ROOM
+            && Math.abs(pd.end - cd.end) < WIGGLE_ROOM) {
+            if (cd.start < pd.start) pd.start = cd.start;
+            if (cd.end > pd.end) pd.end = cd.end;
+            pd.nSeqs += cd.nSeqs;
+            found=true;
+          }
         }
-        updatePosition(positions, region.start, region.score);
-        updatePosition(positions, region.end, -region.score);
+        if (!found) {
+          domainList.push(cd);
+        }
       });
     });
-    var histogram = [];
-    alignments[nodeId] = { hist: histogram, size: size, nSeqs: totalSeqs };
-    var depth = 0;
-    var offsets = Object.keys(positions).map(function(i) { return +i }).sort(function(a,b){return a - b});
-    for (var i = 0; i<offsets.length - 1; i++) {
-      depth += positions[offsets[i]];
-      if (depth > 0) {
-        histogram.push({
-          start: offsets[i],
-          end: offsets[i+1],
-          score: depth
-        });
-      }
-    }
+    domains[nodeId] = { list: domainList, size: size };
   }
-  return alignments[nodeId];
+  return domains[nodeId];
 };

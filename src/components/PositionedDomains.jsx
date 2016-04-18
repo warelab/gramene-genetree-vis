@@ -21,7 +21,7 @@ var PositionedDomains = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 9;
+    y = this.props.node.x - 9.5;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },

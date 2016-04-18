@@ -1,5 +1,5 @@
 'use strict';
-var scale = require('d3').scale.linear;
+var colors = require('d3').scale.category10().range();
 
 var React = require('react');
 
@@ -23,14 +23,15 @@ var Domains = React.createClass({
     var domains = this.state.domains;
 
     var k=0;
-    var bins = domains.hist.map(function(bin) {
-      var w = bin.end - bin.start+1;
+    var bins = domains.list.map(function(domain) {
+      var w = domain.end - domain.start + 1;
 
-      var color = 'orange';
-      var style = {fill: color, stroke: color, fillOpacity: 0.5, strokeOpacity: 0.5};
+      var color = colors[domain.root % colors.length];
+      var opacity = 0.5/domain.nSeqs;
+      var style = {fill: color, stroke: false, fillOpacity: opacity};
       k++;
       return (
-        <rect key={k} width={w} height="18" x={bin.start} style={style} />
+        <rect key={k} width={w} height="5" x={domain.start} style={style} />
       )
     });
     var sf = this.props.width / domains.size;
