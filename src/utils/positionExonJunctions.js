@@ -1,31 +1,8 @@
 const WIGGLE_ROOM = 0;
 var exonJunctions = {};
 
-function cigarToHistogram(cigar) {
-  var histogram = [];
-  var pieces = cigar.split(/([DM])/);
-  var size = 0;
-  var stretch = 1;
-  pieces.forEach(function(piece) {
-    if (piece === "M") {
-      histogram.push({
-        start: size,
-        end: size + stretch,
-        score: 1
-      });
-      size += stretch;
-      stretch = 1;
-    }
-    else if (piece === "D") {
-      size += stretch;
-      stretch = 1;
-    }
-    else if (!!piece) {
-      stretch = +piece;
-    }
-  });
-  return {hist: histogram, size: size, nSeqs: 1};
-}
+var calculateAlignment = require('./calculateAlignment');
+
 
 function remap(seqPos,bins) {
   var posInSeq = 0;
@@ -45,7 +22,7 @@ module.exports = function positionExonJunctions(node) {
   if (exonJunctions[nodeId]) return exonJunctions[nodeId];
 
   if (node.model.cigar) {
-    var alignment = cigarToHistogram(node.model.cigar);
+    var alignment = calculateAlignment(node);
     if (node.model.exon_junctions) {
       exonJunctions[nodeId] = {
         list: node.model.exon_junctions.map(function(ej) {

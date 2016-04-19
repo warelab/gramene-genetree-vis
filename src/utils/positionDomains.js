@@ -1,31 +1,6 @@
 const WIGGLE_ROOM = 10;
 var domains = {};
-
-function cigarToHistogram(cigar) {
-  var histogram = [];
-  var pieces = cigar.split(/([DM])/);
-  var size = 0;
-  var stretch = 1;
-  pieces.forEach(function(piece) {
-    if (piece === "M") {
-      histogram.push({
-        start: size,
-        end: size + stretch,
-        score: 1
-      });
-      size += stretch;
-      stretch = 1;
-    }
-    else if (piece === "D") {
-      size += stretch;
-      stretch = 1;
-    }
-    else if (!!piece) {
-      stretch = +piece;
-    }
-  });
-  return {hist: histogram, size: size, nSeqs: 1};
-}
+var calculateAlignment = require('./calculateAlignment');
 
 function remap(seqPos,bins) {
   var posInSeq = 0;
@@ -45,7 +20,7 @@ module.exports = function positionDomains(node) {
   if (domains[nodeId]) return domains[nodeId];
 
   if (node.model.cigar) {
-    var alignment = cigarToHistogram(node.model.cigar);
+    var alignment = calculateAlignment(node);
     if (node.model.domains) {
       // map start and end positions in domains to positions in cigar space
       var domainsList = node.model.domains.map(function(d) {
