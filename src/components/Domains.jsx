@@ -9,7 +9,8 @@ var Domains = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired
+    width: React.PropTypes.number.isRequired,
+    highlight: React.PropTypes.bool.isRequired
   },
   
   getInitialState: function () {
@@ -36,8 +37,16 @@ var Domains = React.createClass({
     });
     var sf = this.props.width / domains.size;
     var transform = 'scale('+ sf +' 1)';
+    var hl;
+    if (this.props.highlight) {
+      var hlStyle = {fill: '#ffffcc', stroke: false};
+      hl = (
+        <rect key='highlight' width={domains.size} height="18" style={hlStyle} /> 
+      );
+    }
     return (
       <g className="domains" transform={transform}>
+        {hl}
         {bins}
       </g>
     );

@@ -30,7 +30,8 @@ var TreeVis = React.createClass({
   },
   getInitialState: function () {
     return {
-      additionalVisibleNodes: {}
+      additionalVisibleNodes: {},
+      hoveredNode: undefined
     };
   },
   componentWillMount: function () {
@@ -110,12 +111,12 @@ var TreeVis = React.createClass({
       visibleNodes: allVisibleNodes
     });
   },
-  handleNodeHover: function (node) {
+  handleNodeUnhover: function (node) {
     if (this.state.hoveredNode === node) {
       this.setState({hoveredNode: undefined});
     }
   },
-  handleNodeUnhover: function (node) {
+  handleNodeHover: function (node) {
     this.setState({hoveredNode: node});
   },
   render: function () {
@@ -134,13 +135,15 @@ var TreeVis = React.createClass({
       );
       
       if (this.displayAlignments) {
+        var hoveredNode = this.state.hoveredNode;
         var width = this.alignmentsWidth;
         alignments = this.state.visibleNodes.map(function(node) {
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+            var hl = (hoveredNode && _.indexOf(node.getPath(),hoveredNode) >= 0) ? true : false;
             return (
               <g key={node.model.node_id} >
+                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} highlight={hl} />
                 <PositionedAlignment key={node.model.node_id + 'a'} node={node} width={width} />
-                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} />
                 <PositionedExonJunctions key={node.model.node_id + 'x'} node={node} width={width} />
               </g>
             )
