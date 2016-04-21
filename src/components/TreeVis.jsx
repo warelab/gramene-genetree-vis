@@ -106,7 +106,6 @@ var TreeVis = React.createClass({
     this.reinitHeight();
 
     this.setState({
-      selectedInternalNode: node,
       additionalVisibleNodes: additionalVisibleNodes,
       visibleNodes: allVisibleNodes
     });
@@ -118,6 +117,35 @@ var TreeVis = React.createClass({
   },
   handleNodeHover: function (node) {
     this.setState({hoveredNode: node});
+  },
+  handleNodeShowParalogs: function (node) {
+    function expanded(n) {
+      return !n.parent || n.parent.displayInfo.expanded;
+    }
+    if (!!node.displayInfo.paralogs) {
+      var genetree = this.genetree;
+      var additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
+      node.displayInfo.paralogs.forEach(function(paralog) {
+        var parentNode = paralog.parent;
+        while (!parentNode.displayInfo.expanded) {
+          parentNode.displayInfo.expanded = true;
+          parentNode.displayInfo.expandedBecause = 'selected'; // this happens again in layoutTree()
+          additionalVisibleNodes[parentNode.model.node_id] = parentNode;
+          parentNode = parentNode.parent
+        }
+      });
+      var allVisibleNodes = layoutTree(
+        this.genetree,
+        this.state.geneOfInterest,
+        this.treeWidth,
+        additionalVisibleNodes
+      );
+      this.reinitHeight();
+      this.setState({
+        additionalVisibleNodes: additionalVisibleNodes,
+        visibleNodes: allVisibleNodes
+      });
+    }
   },
   render: function () {
     var genetree, alignments, height;
@@ -137,9 +165,16 @@ var TreeVis = React.createClass({
       if (this.displayAlignments) {
         var hoveredNode = this.state.hoveredNode;
         var width = this.alignmentsWidth;
+        var geneOfInterest = this.state.geneOfInterest;
         alignments = this.state.visibleNodes.map(function(node) {
           if (node.model.gene_stable_id || !node.displayInfo.expanded) {
-            var hl = (hoveredNode && _.indexOf(node.getPath(),hoveredNode) >= 0) ? true : false;
+            var hl = (hoveredNode && _.indexOf(node.getPath(),hoveredNode) >= 0) ? '#ffffcc' : '';
+            if (geneOfInterest._id === node.model.gene_stable_id) {
+              hl = '#ffddaa';
+            }
+            if (geneOfInterest.homology.gene_tree.representative.model.id === node.model.gene_stable_id) {
+              hl = '#ccffaa';
+            }
             return (
               <g key={node.model.node_id} >
                 <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} highlight={hl} />

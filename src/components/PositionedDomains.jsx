@@ -9,7 +9,7 @@ var PositionedDomains = React.createClass({
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
-    highlight: React.PropTypes.bool.isRequired
+    highlight: React.PropTypes.string.isRequired
   },
   
   getInitialState: function () {
