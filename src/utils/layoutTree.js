@@ -49,8 +49,9 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
 
     // get node_ids of representatives and gene of interest.
     // repIds = _.values(geneOfInterest.representative).map(function (rep) { return rep.id; });
-    repId = geneOfInterest.homology.gene_tree.representative.model.id;
-    nodesToExpand = _.map([repId], idToNode);
+    repId = geneOfInterest.homology.gene_tree.representative ? 
+      geneOfInterest.homology.gene_tree.representative.model.id : '';
+    nodesToExpand = repId ? _.map([repId], idToNode) : [];
     nodesToExpand.push(idToNode(geneOfInterest._id));
 
     // get and index all node_ids in the paths for those nodes.
