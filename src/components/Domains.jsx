@@ -12,44 +12,52 @@ var Domains = React.createClass({
     width: React.PropTypes.number.isRequired,
     highlight: React.PropTypes.string.isRequired
   },
-  
+
   getInitialState: function () {
     return {
-      domains : positionDomains(this.props.node)
+      domains: positionDomains(this.props.node)
     };
   },
 
   render: function () {
-    var node = this.props.node;
-    var domains = this.state.domains;
+    var sf = this.props.width / this.state.domains.size;
+    var transform = 'scale(' + sf + ' 1)';
+    return (
+      <g className="domains" transform={transform}>
+        {this.renderHighlight()}
+        {this.renderDomains()}
+      </g>
+    );
+  },
 
-    var k=0;
-    var bins = domains.list.map(function(domain) {
+  renderHighlight: function () {
+    if (this.props.highlight) {
+      var hlStyle = {fill: this.props.highlight, stroke: false};
+      return (
+        <rect key='highlight'
+              width={this.state.domains.size}
+              height="18"
+              style={hlStyle}/>
+      );
+    }
+  },
+
+  renderDomains: function () {
+    return this.state.domains.list.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
 
       var color = colors[domain.root % colors.length];
-      var opacity = 0.5/domain.nSeqs;
+      var opacity = 0.5 / domain.nSeqs;
       var style = {fill: color, stroke: false, fillOpacity: opacity};
-      k++;
       return (
-        <rect key={k} width={w} height="5" x={domain.start} style={style} />
+        <rect key={idx}
+              width={w}
+              height="5"
+              x={domain.start}
+              style={style}
+              onMouseOver={()=>console.log("rect", domain)}/>
       )
     });
-    var sf = this.props.width / domains.size;
-    var transform = 'scale('+ sf +' 1)';
-    var hl;
-    if (this.props.highlight) {
-      var hlStyle = {fill: this.props.highlight, stroke: false};
-      hl = (
-        <rect key='highlight' width={domains.size} height="18" style={hlStyle} /> 
-      );
-    }
-    return (
-      <g className="domains" transform={transform}>
-        {hl}
-        {bins}
-      </g>
-    );
   }
 });
 
