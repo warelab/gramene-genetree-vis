@@ -3,6 +3,8 @@ var colors = require('d3').scale.category10().range();
 
 var React = require('react');
 
+import {OverlayTrigger, Popover} from 'react-bootstrap'
+
 var positionDomains = require('../utils/positionDomains');
 
 var Domains = React.createClass({
@@ -49,15 +51,23 @@ var Domains = React.createClass({
       var color = colors[domain.root % colors.length];
       var opacity = 0.5 / domain.nSeqs;
       var style = {fill: color, stroke: false, fillOpacity: opacity};
+
       return (
-        <rect key={idx}
-              width={w}
-              height="5"
-              x={domain.start}
-              style={style}
-              onMouseOver={()=>console.log("rect", domain)}/>
+        <OverlayTrigger trigger="click" rootClose
+                        placement="bottom"
+                        overlay={this.renderPopover(domain)}>
+          <rect key={idx}
+                width={w}
+                height="5"
+                x={domain.start}
+                style={style} />
+        </OverlayTrigger>
       )
-    });
+    }.bind(this));
+  },
+
+  renderPopover: function(domain) {
+    return <Popover title={domain.description}>Hi.</Popover>;
   }
 });
 
