@@ -213,8 +213,9 @@ var TreeVis = React.createClass({
             if (geneOfInterest._id === node.model.gene_stable_id) {
               hl = '#ffddaa';
             }
-            if (geneOfInterest.homology.gene_tree.representative
-              && geneOfInterest.homology.gene_tree.representative.model.id === node.model.gene_stable_id) {
+            if (!node.hasChildren() &&
+              ( _.get(geneOfInterest, 'homology.gene_tree.representative.model.id') === node.model.gene_stable_id ||
+                _.get(geneOfInterest, 'homology.gene_tree.representative.closest.id') === node.model.gene_stable_id) ) {
               hl = '#ccffaa';
             }
             return (
@@ -231,7 +232,7 @@ var TreeVis = React.createClass({
 
     return (
       <div className="genetree-vis">
-        <svg width={this.props.width} height={height}>
+        <svg width={this.width} height={height}>
           <g className="tree-wrapper" transform={this.transformTree}>
             {genetree}
           </g>
