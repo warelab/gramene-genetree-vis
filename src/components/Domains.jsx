@@ -126,13 +126,13 @@ function createStatement(stats, whatIsThis) {
   var statement;
 
   if (geneCount === totalGenes) {
-    statement = `Shared by all ${totalGenes} in this ${whatIsThis}.`;
+    statement = `Shared by all ${totalGenes} genes in this ${whatIsThis}.`;
   }
   else if (geneCount === 1) {
     statement = `This is the only gene in the ${whatIsThis} with this domain.`;
   }
   else {
-    statement = `Shared by ${geneCount} of ${totalGenes} (${proportion}) genes in this  ${whatIsThis}.`;
+    statement = `Shared by ${geneCount} of ${totalGenes} (${proportion}) genes in this ${whatIsThis}.`;
   }
 
   return statement;
