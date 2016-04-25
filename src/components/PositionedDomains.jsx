@@ -9,6 +9,7 @@ var PositionedDomains = React.createClass({
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
+    stats: React.PropTypes.object.isRequired,
     highlight: React.PropTypes.string.isRequired
   },
   
@@ -38,7 +39,7 @@ var PositionedDomains = React.createClass({
 
     return (
       <g {...props}>
-        <Domains width={this.props.width} node={this.props.node} highlight={this.props.highlight} />
+        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} highlight={this.props.highlight} />
       </g>
     )
   }

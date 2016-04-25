@@ -28,6 +28,7 @@ module.exports = function positionDomains(node) {
           start: remap(d.start, alignment.hist),
           end: remap(d.end, alignment.hist),
           root: d.root,
+          id: d.id,
           name: d.name,
           description: d.description,
           nSeqs: 1

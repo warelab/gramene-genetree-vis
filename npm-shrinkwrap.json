@@ -635,6 +635,11 @@
       "from": "cipher-base@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/cipher-base/-/cipher-base-1.0.2.tgz"
     },
+    "classnames": {
+      "version": "2.2.3",
+      "from": "classnames@>=2.2.3 <3.0.0",
+      "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.3.tgz"
+    },
     "coffee-script": {
       "version": "1.3.3",
       "from": "coffee-script@>=1.3.3 <1.4.0",
@@ -835,6 +840,11 @@
       "version": "5.0.2",
       "from": "diffie-hellman@>=5.0.0 <6.0.0",
       "resolved": "https://registry.npmjs.org/diffie-hellman/-/diffie-hellman-5.0.2.tgz"
+    },
+    "dom-helpers": {
+      "version": "2.4.0",
+      "from": "dom-helpers@>=2.4.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/dom-helpers/-/dom-helpers-2.4.0.tgz"
     },
     "domain-browser": {
       "version": "1.1.7",
@@ -1719,6 +1729,11 @@
       "from": "jstransform@>=10.0.1 <11.0.0",
       "resolved": "https://registry.npmjs.org/jstransform/-/jstransform-10.1.0.tgz"
     },
+    "keycode": {
+      "version": "2.1.1",
+      "from": "keycode@>=2.1.1 <3.0.0",
+      "resolved": "https://registry.npmjs.org/keycode/-/keycode-2.1.1.tgz"
+    },
     "kind-of": {
       "version": "3.0.2",
       "from": "kind-of@>=3.0.2 <4.0.0",
@@ -1971,6 +1986,11 @@
       "from": "number-is-nan@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.0.tgz"
     },
+    "numeral": {
+      "version": "1.5.3",
+      "from": "numeral@latest",
+      "resolved": "https://registry.npmjs.org/numeral/-/numeral-1.5.3.tgz"
+    },
     "oauth-sign": {
       "version": "0.8.1",
       "from": "oauth-sign@>=0.8.0 <0.9.0",
@@ -2168,10 +2188,44 @@
       "from": "react@>=0.14.7 <0.15.0",
       "resolved": "https://registry.npmjs.org/react/-/react-0.14.7.tgz"
     },
+    "react-bootstrap": {
+      "version": "0.29.2",
+      "from": "react-bootstrap@latest",
+      "resolved": "https://registry.npmjs.org/react-bootstrap/-/react-bootstrap-0.29.2.tgz",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "5.8.38",
+          "from": "babel-runtime@>=5.8.38 <6.0.0",
+          "resolved": "https://registry.npmjs.org/babel-runtime/-/babel-runtime-5.8.38.tgz"
+        },
+        "invariant": {
+          "version": "2.2.1",
+          "from": "invariant@>=2.2.1 <3.0.0",
+          "resolved": "https://registry.npmjs.org/invariant/-/invariant-2.2.1.tgz"
+        }
+      }
+    },
     "react-dom": {
       "version": "0.14.7",
       "from": "react-dom@>=0.14.7 <0.15.0",
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-0.14.7.tgz"
+    },
+    "react-overlays": {
+      "version": "0.6.3",
+      "from": "react-overlays@>=0.6.3 <0.7.0",
+      "resolved": "https://registry.npmjs.org/react-overlays/-/react-overlays-0.6.3.tgz",
+      "dependencies": {
+        "react-prop-types": {
+          "version": "0.2.2",
+          "from": "react-prop-types@>=0.2.1 <0.3.0",
+          "resolved": "https://registry.npmjs.org/react-prop-types/-/react-prop-types-0.2.2.tgz"
+        }
+      }
+    },
+    "react-prop-types": {
+      "version": "0.3.0",
+      "from": "react-prop-types@>=0.3.0 <0.4.0",
+      "resolved": "https://registry.npmjs.org/react-prop-types/-/react-prop-types-0.3.0.tgz"
     },
     "read-only-stream": {
       "version": "1.1.1",
@@ -2530,11 +2584,13 @@
       "dependencies": {
         "glob": {
           "version": "7.0.0",
-          "from": "glob@>=7.0.0 <8.0.0"
+          "from": "glob@7.0.0",
+          "resolved": "https://registry.npmjs.org/glob/-/glob-7.0.0.tgz"
         },
         "rimraf": {
           "version": "2.5.2",
-          "from": "rimraf@>=2.5.1 <2.6.0"
+          "from": "rimraf@2.5.2",
+          "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.5.2.tgz"
         }
       }
     },
@@ -2632,6 +2688,11 @@
       "from": "umd@>=3.0.0 <4.0.0",
       "resolved": "https://registry.npmjs.org/umd/-/umd-3.0.1.tgz"
     },
+    "uncontrollable": {
+      "version": "3.2.4",
+      "from": "uncontrollable@>=3.2.3 <4.0.0",
+      "resolved": "https://registry.npmjs.org/uncontrollable/-/uncontrollable-3.2.4.tgz"
+    },
     "underscore": {
       "version": "1.7.0",
       "from": "underscore@>=1.7.0 <1.8.0",
@@ -2678,6 +2739,11 @@
       "version": "0.0.4",
       "from": "vm-browserify@>=0.0.1 <0.1.0",
       "resolved": "https://registry.npmjs.org/vm-browserify/-/vm-browserify-0.0.4.tgz"
+    },
+    "warning": {
+      "version": "2.1.0",
+      "from": "warning@>=2.1.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/warning/-/warning-2.1.0.tgz"
     },
     "watchify": {
       "version": "3.7.0",

@@ -13,6 +13,7 @@ var PositionedExonJunctions = require('./PositionedExonJunctions.jsx');
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
+var domainStats = require('../utils/domainsStats').domainStats;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -39,6 +40,7 @@ var TreeVis = React.createClass({
   },
   
   componentWillMount: function() {
+    this.domainStats = domainStats(this.props.genetree);
     this.resizeListener = _.debounce(
       this.updateAvailableWidth,
       windowResizeDebounceMs
@@ -217,13 +219,13 @@ var TreeVis = React.createClass({
             }
             return (
               <g key={node.model.node_id} >
-                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} highlight={hl} />
-                <PositionedAlignment key={node.model.node_id + 'a'} node={node} width={width} />
-                <PositionedExonJunctions key={node.model.node_id + 'x'} node={node} width={width} />
+                <PositionedDomains node={node} width={width} highlight={hl} stats={this.domainStats} />
+                <PositionedAlignment node={node} width={width} />
+                <PositionedExonJunctions node={node} width={width} />
               </g>
             )
           }
-        });
+        }.bind(this));
       }
     }
 
