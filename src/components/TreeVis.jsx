@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 
@@ -12,15 +13,17 @@ var PositionedExonJunctions = require('./PositionedExonJunctions.jsx');
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
+var domainStats = require('../utils/domainsStats').domainStats;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
-const MAX_TREE_WIDTH = 300;
+const MAX_TREE_WIDTH = 200;
 const MIN_ALIGN_WIDTH = 200;
+const windowResizeDebounceMs = 250;
 
 var TreeVis = React.createClass({
   propTypes: {
-    width: React.PropTypes.number.isRequired,
+    // width: React.PropTypes.number.isRequired,
     //height: React.PropTypes.number.isRequired,
     margin: React.PropTypes.number,
     genetree: React.PropTypes.object.isRequired,
@@ -28,21 +31,55 @@ var TreeVis = React.createClass({
     taxonomy: React.PropTypes.object,
     allowGeneSelection: React.PropTypes.bool
   },
+  
   getInitialState: function () {
     return {
       additionalVisibleNodes: {},
       hoveredNode: undefined
     };
   },
-  componentWillMount: function () {
-    this.initHeightAndMargin();
-    this.initNodes();
-    this.reinitHeight();
+  
+  componentWillMount: function() {
+    this.domainStats = domainStats(this.props.genetree);
+    this.resizeListener = _.debounce(
+      this.updateAvailableWidth,
+      windowResizeDebounceMs
+    );
+
+    if(!_.isUndefined(global.addEventListener)) {
+      global.addEventListener('resize', this.resizeListener);
+    }
   },
+  
+  componentDidMount: function() {
+    this.updateAvailableWidth();
+  },
+
+  componentWillUnmount: function() {
+    if(this.resizeListener) {
+      global.removeEventListener('resize', this.resizeListener);
+    }
+  },
+
+  updateAvailableWidth: function() {
+    const parentWidth = ReactDOM.findDOMNode(this).parentNode.clientWidth;
+    if(this.width !== parentWidth) {
+      console.log('width is now', parentWidth);
+      this.width = parentWidth;
+      this.initHeightAndMargin();
+      this.initNodes();
+      this.reinitHeight();
+    }
+  },
+  // componentWillMount: function () {
+  //   this.initHeightAndMargin();
+  //   this.initNodes();
+  //   this.reinitHeight();
+  // },
   initHeightAndMargin: function () {
     this.margin = this.props.margin || DEFAULT_MARGIN;
     this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
-    this.w = this.props.width - this.labelWidth - (2 * this.margin);
+    this.w = this.width - this.labelWidth - (2 * this.margin);
 
     this.treeWidth =  this.w / 2 > MAX_TREE_WIDTH ? MAX_TREE_WIDTH : this.w / 2;
     this.alignmentsWidth = this.w - this.treeWidth;
@@ -150,6 +187,10 @@ var TreeVis = React.createClass({
   render: function () {
     var genetree, alignments, height;
 
+    if(!this.width) {
+      return <div></div>;
+    }
+
     height = this.h + (2 * this.margin);
 
     if (this.state.visibleNodes) {
@@ -178,13 +219,13 @@ var TreeVis = React.createClass({
             }
             return (
               <g key={node.model.node_id} >
-                <PositionedDomains key={node.model.node_id + 'd'} node={node} width={width} highlight={hl} />
-                <PositionedAlignment key={node.model.node_id + 'a'} node={node} width={width} />
-                <PositionedExonJunctions key={node.model.node_id + 'x'} node={node} width={width} />
+                <PositionedDomains node={node} width={width} highlight={hl} stats={this.domainStats} />
+                <PositionedAlignment node={node} width={width} />
+                <PositionedExonJunctions node={node} width={width} />
               </g>
             )
           }
-        });
+        }.bind(this));
       }
     }
 
