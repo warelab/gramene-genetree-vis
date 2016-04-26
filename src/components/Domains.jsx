@@ -45,8 +45,9 @@ var Domains = React.createClass({
       var hlStyle = {fill: this.props.highlight, stroke: false};
       return (
         <rect key='highlight'
-              width={this.state.domains.size}
-              height="18"
+              x="-7"
+              width="7"
+              height="14"
               style={hlStyle}/>
       );
     }

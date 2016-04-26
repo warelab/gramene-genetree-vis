@@ -64,7 +64,6 @@ var TreeVis = React.createClass({
   updateAvailableWidth: function() {
     const parentWidth = ReactDOM.findDOMNode(this).parentNode.clientWidth;
     if(this.width !== parentWidth) {
-      console.log('width is now', parentWidth);
       this.width = parentWidth;
       this.initHeightAndMargin();
       this.initNodes();
@@ -220,8 +219,8 @@ var TreeVis = React.createClass({
             }
             return (
               <g key={node.model.node_id} >
-                <PositionedDomains node={node} width={width} highlight={hl} stats={this.domainStats} />
                 <PositionedAlignment node={node} width={width} />
+                <PositionedDomains node={node} width={width} stats={this.domainStats} />
                 <PositionedExonJunctions node={node} width={width} />
               </g>
             )

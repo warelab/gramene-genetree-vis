@@ -27,6 +27,18 @@ var PositionedDomains = React.createClass({
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },
+  renderHighlight: function () {
+    if (this.props.highlight) {
+      var hlStyle = {fill: this.props.highlight, stroke: false};
+      return (
+        <rect key='highlight'
+              x="-7"
+              width="7"
+              height="18"
+              style={hlStyle}/>
+      );
+    }
+  },
 
   render: function () {
     var props = {};
@@ -39,7 +51,8 @@ var PositionedDomains = React.createClass({
 
     return (
       <g {...props}>
-        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} highlight={this.props.highlight} />
+        {this.renderHighlight()}
+        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} />
       </g>
     )
   }
