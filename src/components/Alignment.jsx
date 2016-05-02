@@ -3,47 +3,45 @@ var scale = require('d3').scale.linear;
 
 var React = require('react');
 
-var calculateAlignment = require('../utils/calculateAlignment');
-
 var Alignment = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired
+    width: React.PropTypes.number.isRequired,
+    alignment: React.PropTypes.object.isRequred
   },
   
-  getInitialState: function () {
-    return {
-      alignment : calculateAlignment(this.props.node)
-    };
-  },
-
   render: function () {
     var node = this.props.node;
-    var alignment = this.state.alignment;
+    var alignment = this.props.alignment;
+
     var colorScale = scale()
       .domain([0, alignment.nSeqs])
       .range(['lightgreen','darkgreen']);
 
     var k=0;
-    var bins = alignment.hist.map(function(bin) {
-      var w = bin.end - bin.start+1;
-
-      var color = colorScale(bin.score);
-      var style = {fill: color, stroke: color};
-      k++;
-      return (
-        <rect key={k} width={w} height="8" x={bin.start} style={style} />
-      )
-    });
+    var bins = [];
+    var offsets = Object.keys(alignment.hist).map(function(i) { return +i }).sort(function(a,b){return a - b});
+    var depth=0;
+    for(var i=0; i<offsets.length - 1; i++) {
+      depth += alignment.hist[offsets[i]];
+      if (depth > 0) {
+        var w = offsets[i+1] - offsets[i] + 1;
+        var color = colorScale(depth);
+        var style = {fill: color, stroke: false};
+        var s = offsets[i];
+        k++;
+        var rect = (
+          <rect key={k} width={w} height="14" x={s} style={style} />
+        );
+        bins.push(rect);
+      }
+    }
     var sf = this.props.width / alignment.size;
     var transform = 'scale('+ sf +' 1)';
-    var border = {stroke:'green'};
     return (
       <g className="alignment" transform={transform}>
         {bins}
-        <rect width={alignment.size} y="0" height="0.01" style={border} />
-        <rect width={alignment.size} y="8" height="0.01" style={border} />
       </g>
     );
   }

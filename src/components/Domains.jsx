@@ -14,7 +14,8 @@ var Domains = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
-    highlight: React.PropTypes.string.isRequired
+    highlight: React.PropTypes.string.isRequired,
+    alignment: React.PropTypes.object.isRequred
   },
 
   getInitialState: function () {
@@ -30,7 +31,7 @@ var Domains = React.createClass({
   },
 
   render: function () {
-    var sf = this.props.width / this.state.domains.size;
+    var sf = this.props.width / this.props.alignment.size;
     var transform = 'scale(' + sf + ' 1)';
     return (
       <g className="domains" transform={transform}>
@@ -53,12 +54,12 @@ var Domains = React.createClass({
   },
 
   renderDomains: function () {
-    return this.state.domains.list.map(function (domain, idx) {
+    return this.state.domains.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
       var stats = this.props.stats[domain.id];
 
       var color = stats.color;
-      var opacity = 0.5 / domain.nSeqs;
+      var opacity = 0.2;
       var style = {fill: color, stroke: false, fillOpacity: opacity};
 
       return (
@@ -68,7 +69,7 @@ var Domains = React.createClass({
                         overlay={this.renderPopover(domain)}>
           <rect
             width={w}
-            height="5"
+            height="18"
             x={domain.start}
             style={style}/>
         </OverlayTrigger>

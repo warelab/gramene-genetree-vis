@@ -1,17 +1,19 @@
 var alignments = {};
 
 function cigarToHistogram(cigar) {
-  var histogram = [];
+  var blocks = [];
+  var positions = [];
   var pieces = cigar.split(/([DM])/);
   var size = 0;
   var stretch = 1;
   pieces.forEach(function(piece) {
     if (piece === "M") {
-      histogram.push({
+      blocks.push({
         start: size,
-        end: size + stretch,
-        score: 1
+        end: size+stretch
       });
+      positions[size] = 1;
+      positions[size + stretch] = -1;
       size += stretch;
       stretch = 1;
     }
@@ -23,7 +25,7 @@ function cigarToHistogram(cigar) {
       stretch = +piece;
     }
   });
-  return {hist: histogram, size: size, nSeqs: 1};
+  return {hist: positions, size: size, nSeqs: 1, blocks: blocks};
 }
 
 module.exports = function calculateAlignment(node) {
@@ -39,29 +41,16 @@ module.exports = function calculateAlignment(node) {
       var childAlignment = calculateAlignment(childNode); // recursive call to be sure that we have an alignment for the childNode
       size = childAlignment.size;
       totalSeqs += childAlignment.nSeqs;
-      childAlignment.hist.forEach(function(region) {
-        function updatePosition(positions, offset, value) {
-          if (!positions[offset]) positions[offset] = value;
-          else                    positions[offset] += value;
+      Object.keys(childAlignment.hist).forEach(function(offset) {
+        if (positions[offset]) {
+          positions[offset] += childAlignment.hist[offset];
         }
-        updatePosition(positions, region.start, region.score);
-        updatePosition(positions, region.end, -region.score);
+        else {
+          positions[offset] = childAlignment.hist[offset];
+        }
       });
     });
-    var histogram = [];
-    alignments[nodeId] = { hist: histogram, size: size, nSeqs: totalSeqs };
-    var depth = 0;
-    var offsets = Object.keys(positions).map(function(i) { return +i }).sort(function(a,b){return a - b});
-    for (var i = 0; i<offsets.length - 1; i++) {
-      depth += positions[offsets[i]];
-      if (depth > 0) {
-        histogram.push({
-          start: offsets[i],
-          end: offsets[i+1],
-          score: depth
-        });
-      }
-    }
+    alignments[nodeId] = { hist: positions, size: size, nSeqs: totalSeqs };
   }
   return alignments[nodeId];
 };
