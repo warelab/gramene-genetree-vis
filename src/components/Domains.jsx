@@ -59,7 +59,7 @@ var Domains = React.createClass({
       var stats = this.props.stats[domain.id];
 
       var color = stats.color;
-      var opacity = 0;
+      var opacity = 0.1;
       var style = {fill: color, stroke: color, fillOpacity: opacity};
 
       return (
