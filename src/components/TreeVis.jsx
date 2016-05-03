@@ -15,6 +15,7 @@ var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
 var calculateAlignment = require('../utils/calculateAlignment');
+var positionDomains = require('../utils/positionDomains');
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -43,6 +44,7 @@ var TreeVis = React.createClass({
   componentWillMount: function() {
     this.domainStats = domainStats(this.props.genetree);
     this.multipleAlignment = calculateAlignment(this.props.genetree);
+    this.domainHist = positionDomains(this.props.genetree);
     this.resizeListener = _.debounce(
       this.updateAvailableWidth,
       windowResizeDebounceMs
@@ -230,7 +232,7 @@ var TreeVis = React.createClass({
             return (
               <g key={node.model.node_id} >
                 {pej}
-                <PositionedAlignment node={node} width={width} alignment={alignment} />
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} alignment={alignment} />
                 <PositionedDomains node={node} width={width} stats={this.domainStats} alignment={alignment} />
               </g>
             )

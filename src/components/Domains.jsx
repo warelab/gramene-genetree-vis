@@ -59,8 +59,8 @@ var Domains = React.createClass({
       var stats = this.props.stats[domain.id];
 
       var color = stats.color;
-      var opacity = 0.2;
-      var style = {fill: color, stroke: false, fillOpacity: opacity};
+      var opacity = 0;
+      var style = {fill: color, stroke: color, fillOpacity: opacity};
 
       return (
         <OverlayTrigger key={idx}

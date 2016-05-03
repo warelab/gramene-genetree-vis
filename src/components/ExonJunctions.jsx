@@ -35,7 +35,7 @@ var ExonJunctions = React.createClass({
       var bl = top-2.0;
       var br = top+2.0;
       var d = 'M'+top+',0 '+bl+',+3 '+br+',+3 '+top+',0';
-      var style = {fill: "darkred", stroke: false};
+      var style = {fill: "red", stroke: false};
       k++;
       return (
         <rect key={k} width="1" height="18" x={top} style={style} />
