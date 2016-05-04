@@ -14,7 +14,6 @@ var Domains = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
-    highlight: React.PropTypes.string.isRequired,
     alignment: React.PropTypes.object.isRequred
   },
 
@@ -35,23 +34,11 @@ var Domains = React.createClass({
     var transform = 'scale(' + sf + ' 1)';
     return (
       <g className="domains" transform={transform}>
-        {this.renderHighlight()}
         {this.renderDomains()}
       </g>
     );
   },
 
-  renderHighlight: function () {
-    if (this.props.highlight) {
-      var hlStyle = {fill: this.props.highlight, stroke: false};
-      return (
-        <rect key='highlight'
-              width={this.state.domains.size}
-              height="18"
-              style={hlStyle}/>
-      );
-    }
-  },
 
   renderDomains: function () {
     return this.state.domains.map(function (domain, idx) {

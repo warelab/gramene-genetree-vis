@@ -10,6 +10,7 @@ var Alignment = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
+    highlight: React.PropTypes.string.isRequired,
     alignment: React.PropTypes.object.isRequred
   },
 
@@ -50,6 +51,22 @@ var Alignment = React.createClass({
       })
     }
     return regionColor;
+  },
+  
+  renderHighlight: function () {
+    if (this.props.highlight) {
+      var hlStyle = {fill: this.props.highlight, stroke: false};
+      var u = this.props.alignment.size / this.props.width;
+      var w = 4 * u;
+      var s = -w -u;
+      return (
+        <rect key='highlight'
+              x={s}
+              width={w}
+              height="18"
+              style={hlStyle}/>
+      );
+    }
   },
   
   render: function () {
@@ -106,6 +123,7 @@ var Alignment = React.createClass({
     var transform = 'scale('+ sf +' 1)';
     return (
       <g className="alignment" transform={transform}>
+        {this.renderHighlight()}
         {bins}
       </g>
     );

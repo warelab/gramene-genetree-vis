@@ -10,6 +10,7 @@ var PositionedAlignment = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
+    highlight: React.PropTypes.string.isRequired,
     alignment: React.PropTypes.object.isRequired
   },
   
@@ -39,7 +40,7 @@ var PositionedAlignment = React.createClass({
 
     return (
       <g {...props}>
-        <Alignment width={this.props.width} node={this.props.node} stats={this.props.stats} alignment={this.props.alignment} />
+        <Alignment width={this.props.width} node={this.props.node} highlight={this.props.highlight} stats={this.props.stats} alignment={this.props.alignment} />
       </g>
     )
   }

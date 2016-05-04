@@ -188,6 +188,25 @@ var TreeVis = React.createClass({
       });
     }
   },
+  
+  renderBackground: function () {
+    if (this.displayAlignments) {
+      var bgStyle = {fill: '#f7f7f7', stroke: false};
+      var h = this.h + (2 * this.margin);
+      var y = -this.margin
+      var x = -this.margin/2
+      var w = this.alignmentsWidth + this.margin;
+      return (
+        <rect key='bg'
+              width={w}
+              height={h}
+              x={x}
+              y={y}
+              style={bgStyle}/>
+      );
+    }
+  },
+  
   render: function () {
     var genetree, alignments, height;
 
@@ -232,7 +251,7 @@ var TreeVis = React.createClass({
             return (
               <g key={node.model.node_id} >
                 {pej}
-                <PositionedAlignment node={node} width={width} stats={this.domainStats} alignment={alignment} />
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} highlight={false} alignment={alignment} />
                 <PositionedDomains node={node} width={width} stats={this.domainStats} alignment={alignment} />
               </g>
             )
@@ -248,6 +267,7 @@ var TreeVis = React.createClass({
             {genetree}
           </g>
           <g className="alignments-wrapper" transform={this.transformAlignments}>
+            {this.renderBackground()}
             {alignments}
           </g>
         </svg>
