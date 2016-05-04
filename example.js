@@ -12,10 +12,17 @@ var GrameneTrees = require('gramene-trees-client');
 var exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/waxytree.json'));
 var taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
+var genomesOfInterest = {
+  3702 : taxonomy.indices.id[3702],
+  4577 : taxonomy.indices.id[4577],
+  4558 : taxonomy.indices.id[4558]
+};
+
 ReactDOM.render(
   <TreeVis genetree={exampleGenetree}
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
+           genomesOfInterest={genomesOfInterest}
            width={1200}
            allowGeneSelection={true}/>,
   document.getElementById('tree')

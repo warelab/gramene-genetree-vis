@@ -92,7 +92,8 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
     // take an array of nodes, return an object with
     // key: pathNodeId
     // value: array of actual nodes (not the ones in the path).
-
+    if(!node) return acc;
+    
     var paralogPairs, paralogLUT;
     paralogPairs = _.map(node.getPath(), function (n) {
       return [n.model.node_id, node];
@@ -110,14 +111,25 @@ function calculateXIndex(genetree) {
 
   function calcXIndexFor(node) {
     var leftExtrema, rightExtrema;
-    if (node.displayInfo.expanded && node.children.length===2) {
-      leftExtrema = calcXIndexFor(node.children[0]); // left child
-      rightExtrema = calcXIndexFor(node.children[1]); // right child
-      node.xindex = (rightExtrema.min + leftExtrema.max) / 2; // midpoint
-      return {
-        min: leftExtrema.min,
-        max: rightExtrema.max
-      };
+    if (node.displayInfo.expanded && node.children.length > 0) {
+
+      if (node.children.length === 2) {
+        leftExtrema = calcXIndexFor(node.children[0]); // left child
+        rightExtrema = calcXIndexFor(node.children[1]); // right child
+        node.xindex = (rightExtrema.min + leftExtrema.max) / 2; // midpoint
+        return {
+          min: leftExtrema.min,
+          max: rightExtrema.max
+        };
+      }
+      else {
+        var childExtrema = calcXIndexFor(node.children[0]);
+        node.xindex = (childExtrema.min + childExtrema.max) / 2;
+        return {
+          min: childExtrema.min,
+          max: childExtrema.max
+        };
+      }
     }
     else {
       visibleUnexpanded.push(node);

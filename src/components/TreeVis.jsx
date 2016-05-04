@@ -16,6 +16,7 @@ var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
 var calculateAlignment = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
+var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -30,6 +31,7 @@ var TreeVis = React.createClass({
     margin: React.PropTypes.number,
     genetree: React.PropTypes.object.isRequired,
     initialGeneOfInterest: React.PropTypes.object,
+    genomesOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object,
     allowGeneSelection: React.PropTypes.bool
   },
@@ -42,9 +44,8 @@ var TreeVis = React.createClass({
   },
   
   componentWillMount: function() {
-    this.domainStats = domainStats(this.props.genetree);
-    this.multipleAlignment = calculateAlignment(this.props.genetree);
-    this.domainHist = positionDomains(this.props.genetree);
+    this.genetree = _.cloneDeep(this.props.genetree);
+
     this.resizeListener = _.debounce(
       this.updateAvailableWidth,
       windowResizeDebounceMs
@@ -75,6 +76,24 @@ var TreeVis = React.createClass({
       this.reinitHeight();
     }
   },
+
+  initializeAlignments: function() {
+    this.domainStats = domainStats(this.genetree); // do this to all genomes
+    if (this.props.genomesOfInterest) {
+      var origCount = this.genetree.geneCount;
+      this.genetree = pruneTree(this.genetree, this.props.genomesOfInterest);
+      this.genetree.geneCount = origCount;
+
+    }
+    this.multipleAlignment = calculateAlignment(this.genetree); // not necessarily all genomes
+    // find gaps in multiple alignment
+    
+    // remove gaps from alignments
+
+    this.domainHist = positionDomains(this.genetree);
+    this.initializedAlignments = true;
+  },
+  
   // componentWillMount: function () {
   //   this.initHeightAndMargin();
   //   this.initNodes();
@@ -101,16 +120,16 @@ var TreeVis = React.createClass({
     this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
   },
   initNodes: function (geneOfInterest) {
-    var genetree, visibleNodes;
-    genetree = this.genetree;
+    var visibleNodes;
 
-    if (!genetree) {
-      genetree = this.genetree = _.cloneDeep(this.props.genetree);
-    }
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
+    
+    if (this.displayAlignments && !this.initializedAlignments) {
+      this.initializeAlignments()
+    }
 
-    relateGeneToTree(genetree, geneOfInterest, this.props.taxonomy);
-    visibleNodes = layoutTree(genetree, geneOfInterest, this.treeWidth, this.state.additionalVisibleNodes);
+    relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
+    visibleNodes = layoutTree(this.genetree, geneOfInterest, this.treeWidth, this.state.additionalVisibleNodes);
 
     this.setState({
       geneOfInterest: geneOfInterest,
