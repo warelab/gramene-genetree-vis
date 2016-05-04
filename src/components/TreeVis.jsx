@@ -14,6 +14,8 @@ var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
+var calculateAlignment = require('../utils/calculateAlignment');
+var positionDomains = require('../utils/positionDomains');
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -41,6 +43,8 @@ var TreeVis = React.createClass({
   
   componentWillMount: function() {
     this.domainStats = domainStats(this.props.genetree);
+    this.multipleAlignment = calculateAlignment(this.props.genetree);
+    this.domainHist = positionDomains(this.props.genetree);
     this.resizeListener = _.debounce(
       this.updateAvailableWidth,
       windowResizeDebounceMs
@@ -184,6 +188,25 @@ var TreeVis = React.createClass({
       });
     }
   },
+  
+  renderBackground: function () {
+    if (this.displayAlignments) {
+      var bgStyle = {fill: '#f7f7f7', stroke: false};
+      var h = this.h + (2 * this.margin);
+      var y = -this.margin
+      var x = -this.margin/2
+      var w = this.alignmentsWidth + this.margin;
+      return (
+        <rect key='bg'
+              width={w}
+              height={h}
+              x={x}
+              y={y}
+              style={bgStyle}/>
+      );
+    }
+  },
+  
   render: function () {
     var genetree, alignments, height;
 
@@ -218,11 +241,18 @@ var TreeVis = React.createClass({
                 _.get(geneOfInterest, 'homology.gene_tree.representative.closest.id') === node.model.gene_stable_id) ) {
               hl = '#ccffaa';
             }
+            var alignment = calculateAlignment(node);
+            var pej;
+            if (node.model.exon_junctions) {
+              pej = (
+                <PositionedExonJunctions node={node} width={width} alignment={alignment} />
+              )
+            }
             return (
               <g key={node.model.node_id} >
-                <PositionedDomains node={node} width={width} highlight={hl} stats={this.domainStats} />
-                <PositionedAlignment node={node} width={width} />
-                <PositionedExonJunctions node={node} width={width} />
+                {pej}
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} highlight={false} alignment={alignment} />
+                <PositionedDomains node={node} width={width} stats={this.domainStats} alignment={alignment} />
               </g>
             )
           }
@@ -237,6 +267,7 @@ var TreeVis = React.createClass({
             {genetree}
           </g>
           <g className="alignments-wrapper" transform={this.transformAlignments}>
+            {this.renderBackground()}
             {alignments}
           </g>
         </svg>

@@ -8,7 +8,8 @@ var PositionedExonJunctions = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired
+    width: React.PropTypes.number.isRequired,
+    alignment: React.PropTypes.object.isRequired
   },
   
   getInitialState: function () {
@@ -21,7 +22,7 @@ var PositionedExonJunctions = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x + 4.5;
+    y = this.props.node.x - 9;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },
@@ -37,7 +38,7 @@ var PositionedExonJunctions = React.createClass({
 
     return (
       <g {...props}>
-        <ExonJunctions width={this.props.width} node={this.props.node} />
+        <ExonJunctions width={this.props.width} node={this.props.node} alignment={this.props.alignment} />
       </g>
     )
   }

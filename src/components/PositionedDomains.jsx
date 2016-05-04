@@ -10,7 +10,7 @@ var PositionedDomains = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
-    highlight: React.PropTypes.string.isRequired
+    alignment: React.PropTypes.object.isRequired
   },
   
   getInitialState: function () {
@@ -23,7 +23,7 @@ var PositionedDomains = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 9.5;
+    y = this.props.node.x - 9;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },
@@ -39,7 +39,7 @@ var PositionedDomains = React.createClass({
 
     return (
       <g {...props}>
-        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} highlight={this.props.highlight} />
+        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} alignment={this.props.alignment} />
       </g>
     )
   }
