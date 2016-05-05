@@ -1,14 +1,14 @@
 const WIGGLE_ROOM = 0;
 var exonJunctions = {};
 
-var calculateAlignment = require('./calculateAlignment');
+var calculateAlignment = require('./calculateAlignment').calculateAlignment;
 
 
 function remap(seqPos,bins) {
   var posInSeq = 0;
   for(var b=0;b<bins.length;b++) {
     var bin = bins[b];
-    var binLength = bin.end - bin.start + 1;
+    var binLength = bin.end - bin.start;
     if (seqPos <= posInSeq + binLength) {
       return bin.start + (seqPos - posInSeq);
     }
