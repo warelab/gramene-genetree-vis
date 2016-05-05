@@ -15,7 +15,7 @@ var taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 var genomesOfInterest = {
   3702 : taxonomy.indices.id[3702],
   4577 : taxonomy.indices.id[4577],
-  4558 : taxonomy.indices.id[4558]
+  39947 : taxonomy.indices.id[39947]
 };
 
 ReactDOM.render(

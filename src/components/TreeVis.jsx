@@ -156,6 +156,11 @@ var TreeVis = React.createClass({
       delete additionalVisibleNodes[nodeId];
     } else {
       additionalVisibleNodes[nodeId] = node;
+      while (node.children.length === 1) {
+        node = node.children[0];
+        nodeId = node.model.node_id;
+        additionalVisibleNodes[nodeId] = node;
+      }
     }
 
     allVisibleNodes = layoutTree(

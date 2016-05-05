@@ -23,7 +23,7 @@ var Alignment = React.createClass({
   
   getColorMap: function(alignment, stats) {
     var regionColor = [];
-    var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#222222']);
+    var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
     if (this.state.domains.length > 0) {
       this.state.domains.forEach(function(d) {
