@@ -14,7 +14,7 @@ var relateGeneToTree = require('../utils/relateGeneToTree');
 var layoutTree = require('../utils/layoutTree');
 var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
-var calculateAlignment = require('../utils/calculateAlignment');
+var alignmentTools = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 
@@ -85,11 +85,13 @@ var TreeVis = React.createClass({
       this.genetree.geneCount = origCount;
 
     }
-    this.multipleAlignment = calculateAlignment(this.genetree); // not necessarily all genomes
-    // find gaps in multiple alignment
-    
-    // remove gaps from alignments
-
+    this.multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
+    if (this.props.genomesOfInterest) {
+      // find gaps in multiple alignment
+      var gaps = alignmentTools.findGaps(this.multipleAlignment);
+      // remove gaps from alignments
+      this.multipleAlignment = alignmentTools.removeGaps(gaps, this.genetree);
+    }
     this.domainHist = positionDomains(this.genetree);
     this.initializedAlignments = true;
   },
@@ -260,7 +262,7 @@ var TreeVis = React.createClass({
                 _.get(geneOfInterest, 'homology.gene_tree.representative.closest.id') === node.model.gene_stable_id) ) {
               hl = '#ccffaa';
             }
-            var alignment = calculateAlignment(node);
+            var alignment = alignmentTools.calculateAlignment(node);
             var pej;
             if (node.model.exon_junctions) {
               pej = (

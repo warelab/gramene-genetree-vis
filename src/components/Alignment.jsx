@@ -1,8 +1,9 @@
 'use strict';
 var scale = require('d3').scale.linear;
-
+var _ = require('lodash');
 var React = require('react');
 var positionDomains = require('../utils/positionDomains');
+var alignmentTools = require('../utils/calculateAlignment');
 
 var Alignment = React.createClass({
   props: {
@@ -20,16 +21,16 @@ var Alignment = React.createClass({
     };
   },
   
-  getColorMap: function(alignment,stats) {
+  getColorMap: function(alignment, stats) {
     var regionColor = [];
     var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#222222']);
     var prevEnd=0;
     if (this.state.domains.length > 0) {
       this.state.domains.forEach(function(d) {
-        if (d.start > prevEnd+1) {
+        if (d.start > prevEnd) {
           regionColor.push({
-            start: prevEnd+1,
-            end: d.start-1,
+            start: prevEnd,
+            end: d.start,
             color: grayScale
           });
         }
@@ -45,7 +46,7 @@ var Alignment = React.createClass({
     }
     if (prevEnd < alignment.size) {
       regionColor.push({
-        start: prevEnd+1,
+        start: prevEnd,
         end: alignment.size,
         color: grayScale
       })
@@ -71,12 +72,12 @@ var Alignment = React.createClass({
   
   render: function () {
     var node = this.props.node;
-    var alignment = this.props.alignment;
-    var regionColor = this.getColorMap(alignment,this.props.stats);
+    var alignment = _.cloneDeep(this.props.alignment);
+    var regionColor = this.getColorMap(alignment, this.props.stats);
 
     var k=0;
     var bins = [];
-    var offsets = Object.keys(alignment.hist).map(function(i) { return +i }).sort(function(a,b){return a - b});
+    var offsets = alignmentTools.getOffsets(alignment.hist);
     var depth=0;
     var regionIdx=0;
     for(var i=0; i<offsets.length - 1; i++) {
@@ -85,7 +86,7 @@ var Alignment = React.createClass({
         function renderBlock(block) {
           var style = {fill: block.color, stroke: false};
           var s = block.start;
-          var w = block.end - block.start + 1;
+          var w = block.end - block.start;
           k++;
           var rect = (
             <rect key={k} width={w} height="14" x={s} style={style} />
@@ -93,20 +94,20 @@ var Alignment = React.createClass({
           return rect;
         }
         // find the region containing the start of this alignment block
-        while (offsets[i] > regionColor[regionIdx].end) {
+        while (offsets[i] >= regionColor[regionIdx].end) {
           regionIdx++;
         }
         var color = regionColor[regionIdx].color(depth);
         // does the alignment block extend beyond the end of the region?
-        if (offsets[i+1] > regionColor[regionIdx].end+1) {
+        if (offsets[i+1] > regionColor[regionIdx].end) {
           bins.push(renderBlock({
             start: offsets[i],
             end: regionColor[regionIdx].end,
             color: color
           }));
-          offsets[i] = regionColor[regionIdx].end+1;
+          offsets[i] = regionColor[regionIdx].end;
           if (!alignment.hist.hasOwnProperty(offsets[i])) {
-            alignment.hist[offsets[i]] = 0
+            alignment.hist[offsets[i]] = 0;
           }
           i--;
         }

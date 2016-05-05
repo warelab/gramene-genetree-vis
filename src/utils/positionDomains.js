@@ -1,12 +1,12 @@
 var domains = {};
-var calculateAlignment = require('./calculateAlignment');
+var calculateAlignment = require('./calculateAlignment').calculateAlignment;
 
 
 function remap(seqPos, blocks) {
   var posInSeq = 0;
   for(var b=0;b<blocks.length;b++) {
     var block = blocks[b];
-    var blockLength = block.end - block.start + 1;
+    var blockLength = block.end - block.start;
     if (seqPos <= posInSeq + blockLength) {
       return block.start + (seqPos - posInSeq);
     }
@@ -25,7 +25,7 @@ module.exports = function positionDomains(node) {
       // map start and end positions in domains to positions in cigar space
       var domainsList = node.model.domains.map(function(d) {
         return {
-          start: remap(d.start, alignment.blocks),
+          start: remap(d.start-1, alignment.blocks),
           end: remap(d.end, alignment.blocks),
           root: d.root,
           id: d.id,
@@ -40,6 +40,9 @@ module.exports = function positionDomains(node) {
       // no domains on this gene, return an empty list
       domains[nodeId] = [];
     }
+  }
+  else if (node.children.length === 1) {
+    domains[nodeId] = positionDomains(node.children[0]);
   }
   else {
     var domainList = [];
@@ -65,7 +68,7 @@ module.exports = function positionDomains(node) {
           }
           else {
             if (d.end > prev.end) {
-              d.start = prev.end + 1;
+              d.start = prev.end;
               merged.push(prev);
               prev = d;
             }
