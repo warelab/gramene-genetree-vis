@@ -77,11 +77,22 @@ var TreeVis = React.createClass({
     }
   },
 
+  keepNode: function(node) {
+    if (this.props.genomesOfInterest.hasOwnProperty(node.model.taxon_id)) return true;
+    if (node.model.gene_stable_id &&
+      _.has(this.props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
+      if (node.model.gene_stable_id === this.props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
+        return true;
+      }
+    }
+    return false;
+  },
+
   initializeAlignments: function() {
     this.domainStats = domainStats(this.genetree); // do this to all genomes
     if (this.props.genomesOfInterest) {
       var origCount = this.genetree.geneCount;
-      this.genetree = pruneTree(this.genetree, this.props.genomesOfInterest);
+      this.genetree = pruneTree(this.genetree, this.keepNode);
       this.genetree.geneCount = origCount;
 
     }
