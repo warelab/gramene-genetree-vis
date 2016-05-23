@@ -38,8 +38,8 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
       }
     }
 
-    displayInfo.paralogs = paralogPathIds[nodeId];
-    displayInfo.orthologs = orthologPathIds[nodeId];
+    displayInfo.paralogs = paralogPathIds ? paralogPathIds[nodeId] : [];
+    displayInfo.orthologs = orthologPathIds ? orthologPathIds[nodeId] : [];
 
     node.displayInfo = displayInfo;
   });
