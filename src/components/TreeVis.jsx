@@ -90,14 +90,14 @@ var TreeVis = React.createClass({
 
   initializeAlignments: function() {
     this.domainStats = domainStats(this.genetree); // do this to all genomes
-    if (this.props.genomesOfInterest) {
+    if (!_.isEmpty(this.props.genomesOfInterest)) {
       var origCount = this.genetree.geneCount;
       this.genetree = pruneTree(this.genetree, this.keepNode);
       this.genetree.geneCount = origCount;
 
     }
     this.multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
-    if (this.props.genomesOfInterest) {
+    if (!_.isEmpty(this.props.genomesOfInterest)) {
       // find gaps in multiple alignment
       var gaps = alignmentTools.findGaps(this.multipleAlignment);
       // remove gaps from alignments
