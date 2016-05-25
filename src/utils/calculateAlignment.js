@@ -145,6 +145,9 @@ module.exports = {
   calculateAlignment: calculateAlignment,
   findGaps: findGaps,
   removeGaps: removeGaps,
-  getOffsets: getOffsets
+  getOffsets: getOffsets,
+  clean: function() {
+    alignments = {};
+  }
 };
 
