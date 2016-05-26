@@ -2,7 +2,6 @@
 var scale = require('d3').scale.linear;
 var _ = require('lodash');
 var React = require('react');
-var positionDomains = require('../utils/positionDomains');
 var alignmentTools = require('../utils/calculateAlignment');
 
 var Alignment = React.createClass({
@@ -11,22 +10,17 @@ var Alignment = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
+    domains: React.PropTypes.object.idRequired,
     highlight: React.PropTypes.string.isRequired,
     alignment: React.PropTypes.object.isRequred
-  },
-
-  getInitialState: function () {
-    return {
-      domains: positionDomains(this.props.node)
-    };
   },
   
   getColorMap: function(alignment, stats) {
     var regionColor = [];
     var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
-    if (this.state.domains.length > 0) {
-      this.state.domains.forEach(function(d) {
+    if (this.props.domains.length > 0) {
+      this.props.domains.forEach(function(d) {
         if (d.start > prevEnd) {
           regionColor.push({
             start: prevEnd,

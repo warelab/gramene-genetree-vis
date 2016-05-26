@@ -310,11 +310,12 @@ var TreeVis = React.createClass({
                 <PositionedExonJunctions node={node} width={width} alignment={alignment} />
               )
             }
+            var domains = positionDomains(node);
             return (
               <g key={node.model.node_id} >
                 {pej}
-                <PositionedAlignment node={node} width={width} stats={this.domainStats} highlight={false} alignment={alignment} />
-                <PositionedDomains node={node} width={width} stats={this.domainStats} alignment={alignment} />
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains} highlight={false} alignment={alignment} />
+                <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains} alignment={alignment} />
               </g>
             )
           }
