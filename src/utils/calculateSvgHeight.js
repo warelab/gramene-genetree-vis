@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-const PIXELS_PER_X_INDEX = 8;
+const PIXELS_PER_X_INDEX = 18;
 const DEFAULT_SVG_HEIGHT = 250;
 
 function calculateSvgHeight(genetree) {

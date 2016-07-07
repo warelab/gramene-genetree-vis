@@ -24,8 +24,10 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
       displayInfo.expandedBecause = pathIds[nodeId];
     }
     else if(!!additionalVisibleIds[nodeId]) {
-      displayInfo.expanded = true;
-      displayInfo.expandedBecause = 'selected';
+      if (node.parent.displayInfo.expanded) {
+        displayInfo.expanded = true;
+        displayInfo.expandedBecause = 'selected';
+      }
     }
     else {
       parentNodeId = node.parent.model.node_id;
@@ -36,18 +38,19 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
       }
     }
 
-    displayInfo.paralogs = paralogPathIds[nodeId];
-    displayInfo.orthologs = orthologPathIds[nodeId];
+    displayInfo.paralogs = paralogPathIds ? paralogPathIds[nodeId] : [];
+    displayInfo.orthologs = orthologPathIds ? orthologPathIds[nodeId] : [];
 
     node.displayInfo = displayInfo;
   });
 
   function getPathIds() {
-    var nodesToExpand, repIds;
+    var representatives, nodesToExpand;
 
-    // get node_ids of representatives and gene of interest.
-    repIds = _.values(geneOfInterest.representative).map(function (rep) { return rep.id; });
-    nodesToExpand = _.map(repIds, idToNode);
+    representatives = _.get(geneOfInterest.homology.gene_tree, 'representative');
+
+    // get nodes of representatives and gene of interest.
+    nodesToExpand = representatives ? _.map(representatives, (rep)=>idToNode(rep.id)) : [];
     nodesToExpand.push(idToNode(geneOfInterest._id));
 
     // get and index all node_ids in the paths for those nodes.
@@ -89,7 +92,8 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
     // take an array of nodes, return an object with
     // key: pathNodeId
     // value: array of actual nodes (not the ones in the path).
-
+    if(!node) return acc;
+    
     var paralogPairs, paralogLUT;
     paralogPairs = _.map(node.getPath(), function (n) {
       return [n.model.node_id, node];
@@ -103,42 +107,49 @@ function addDisplayInfo(genetree, geneOfInterest, additionalVisibleIds) {
 }
 
 function calculateXIndex(genetree) {
-  const COLLAPSED_NODE_OFFSET_MODIFIER = 0;
-  var maxXindex, minXindex;
-  maxXindex = -Infinity;
-  minXindex = Infinity;
-  function calcXIndexFor(node, offset) {
-    var offsetIncrement, correctedLeftIndex, correctedRightIndex;
-    correctedLeftIndex = node.model.left_index - offset;
-    if (node.displayInfo.expanded) {
-      offsetIncrement = 0;
-      if (_.isArray(node.children)) {
-        for (var i = 0; i < node.children.length; i++) {
-          offsetIncrement += calcXIndexFor(node.children[i], offset + offsetIncrement);
-        }
+  var visibleUnexpanded = []; // array of unexpanded nodes that are visible
+
+  function calcXIndexFor(node) {
+    var leftExtrema, rightExtrema;
+    if (node.displayInfo.expanded && node.children.length > 0) {
+
+      if (node.children.length === 2) {
+        leftExtrema = calcXIndexFor(node.children[0]); // left child
+        rightExtrema = calcXIndexFor(node.children[1]); // right child
+        node.xindex = (rightExtrema.min + leftExtrema.max) / 2; // midpoint
+        return {
+          min: leftExtrema.min,
+          max: rightExtrema.max
+        };
+      }
+      else {
+        var childExtrema = calcXIndexFor(node.children[0]);
+        node.xindex = (childExtrema.min + childExtrema.max) / 2;
+        return {
+          min: childExtrema.min,
+          max: childExtrema.max
+        };
       }
     }
     else {
-      offsetIncrement = node.model.right_index - node.model.left_index - 1;
+      visibleUnexpanded.push(node);
+      node.xindex = visibleUnexpanded.length;
+      return {
+        min: node.xindex,
+        max: node.xindex
+      };
     }
-
-    correctedRightIndex = node.model.right_index - (offset + offsetIncrement);
-
-    node.xindex = (correctedRightIndex + correctedLeftIndex) / 2;
-    maxXindex = Math.max(maxXindex, node.xindex);
-    minXindex = Math.min(minXindex, node.xindex);
-
-    return offsetIncrement;
   }
 
-  calcXIndexFor(genetree, 0);
-  genetree.maxXindex = maxXindex;
-  genetree.minXindex = minXindex;
+  var treeExtrema = calcXIndexFor(genetree);
+  genetree.maxXindex = treeExtrema.max;
+  genetree.minXindex = treeExtrema.min;
 }
+
 
 // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
 function layoutNodes(genetree, w) {
-  const MIN_DIST = 0.02;
+  const MIN_DIST = 0.05;
   var rootDists, xscale, yscale, h;
 
   h = calculateSvgHeight(genetree);
