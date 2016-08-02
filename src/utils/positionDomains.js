@@ -15,7 +15,10 @@ function remap(seqPos, blocks) {
   return 0;
 }
 
-module.exports = function positionDomains(node) {
+module.exports = function positionDomains(node,reset) {
+  if (reset) {
+    domains = {};
+  }
   var nodeId = node.model.node_id;
   if (domains[nodeId]) return domains[nodeId];
 

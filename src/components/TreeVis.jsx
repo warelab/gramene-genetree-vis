@@ -46,6 +46,8 @@ var TreeVis = React.createClass({
   componentWillMount: function() {
     this.genetree = _.cloneDeep(this.props.genetree);
 
+    this.domainStats = domainStats(this.genetree); // do this to all genomes
+
     this.resizeListener = _.debounce(
       this.updateAvailableWidth,
       windowResizeDebounceMs
@@ -54,6 +56,12 @@ var TreeVis = React.createClass({
     if(!_.isUndefined(global.addEventListener)) {
       global.addEventListener('resize', this.resizeListener);
     }
+    
+    if (!_.isEmpty(this.props.genomesOfInterest)) {
+      this.genetree = pruneTree(this.props.genetree, this.keepNode());
+      this.genetree.geneCount = this.props.genetree.geneCount;
+    }
+    
   },
   
   componentDidMount: function() {
@@ -66,34 +74,66 @@ var TreeVis = React.createClass({
     }
   },
 
+  componentWillUpdate: function(nextProps, nextState) {
+    function haveSameKeys(a,b) {
+      return _.size(a) === _.size(b)
+      && _.every(b, (val, key) => !!a[key])
+    }
+    if (!haveSameKeys(nextProps.genomesOfInterest, this.props.genomesOfInterest)) {
+      if (_.isEmpty(nextProps.genomesOfInterest)) {
+        this.genetree = _.cloneDeep(nextProps.genetree);
+      }
+      else {
+        this.genetree = pruneTree(nextProps.genetree, this.keepNode(nextProps));
+        this.genetree.geneCount = nextProps.genetree.geneCount;
+      }
+      this.initializedAlignments = false;
+      this.initializeAlignments(nextProps)();
+      this.initNodes();
+      this.reinitHeight();
+    }
+  },
+
   updateAvailableWidth: function() {
     const parentWidth = ReactDOM.findDOMNode(this).parentNode.clientWidth;
     if(this.width !== parentWidth) {
       console.log('width is now', parentWidth);
       this.width = parentWidth;
       this.initHeightAndMargin();
+      this.initializeAlignments()();
       this.initNodes();
       this.reinitHeight();
     }
   },
 
-  initializeAlignments: function() {
-    this.domainStats = domainStats(this.genetree); // do this to all genomes
-    if (this.props.genomesOfInterest) {
-      var origCount = this.genetree.geneCount;
-      this.genetree = pruneTree(this.genetree, this.props.genomesOfInterest);
-      this.genetree.geneCount = origCount;
+  keepNode: function(props = this.props) {
+    return function _keepNode(node) {
+      if (props.genomesOfInterest.hasOwnProperty(node.model.taxon_id)) return true;
+      if (node.model.gene_stable_id &&
+        _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
+        if (node.model.gene_stable_id === props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
+          return true;
+        }
+      }
+      return false;
+    }
+  },
 
-    }
-    this.multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
-    if (this.props.genomesOfInterest) {
-      // find gaps in multiple alignment
-      var gaps = alignmentTools.findGaps(this.multipleAlignment);
-      // remove gaps from alignments
-      this.multipleAlignment = alignmentTools.removeGaps(gaps, this.genetree);
-    }
-    this.domainHist = positionDomains(this.genetree);
-    this.initializedAlignments = true;
+  initializeAlignments: function(props = this.props) {
+    return function _initializeAlignments() {
+      if (!this.initializedAlignments) {
+        alignmentTools.clean();
+        var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
+        if (!_.isEmpty(props.genomesOfInterest)) {
+          // find gaps in multiple alignment
+          var gaps = alignmentTools.findGaps(multipleAlignment);
+          // remove gaps from alignments
+          alignmentTools.removeGaps(gaps, this.genetree);
+        }
+        this.domainHist = positionDomains(this.genetree,true);
+        // this.initializedAlignments = true;
+      }
+    }.bind(this);
   },
   
   // componentWillMount: function () {
@@ -125,10 +165,6 @@ var TreeVis = React.createClass({
     var visibleNodes;
 
     geneOfInterest = geneOfInterest || this.props.initialGeneOfInterest;
-    
-    if (this.displayAlignments && !this.initializedAlignments) {
-      this.initializeAlignments()
-    }
 
     relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
     visibleNodes = layoutTree(this.genetree, geneOfInterest, this.treeWidth, this.state.additionalVisibleNodes);
@@ -274,11 +310,12 @@ var TreeVis = React.createClass({
                 <PositionedExonJunctions node={node} width={width} alignment={alignment} />
               )
             }
+            var domains = positionDomains(node);
             return (
               <g key={node.model.node_id} >
                 {pej}
-                <PositionedAlignment node={node} width={width} stats={this.domainStats} highlight={false} alignment={alignment} />
-                <PositionedDomains node={node} width={width} stats={this.domainStats} alignment={alignment} />
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains} highlight={false} alignment={alignment} />
+                <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains} alignment={alignment} />
               </g>
             )
           }

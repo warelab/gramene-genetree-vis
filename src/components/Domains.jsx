@@ -5,7 +5,6 @@ import {OverlayTrigger, Popover} from "react-bootstrap";
 
 var colors = require('d3').scale.category10().range();
 
-var positionDomains = require('../utils/positionDomains');
 var domainStats = require('../utils/domainsStats').domainStats;
 
 var Domains = React.createClass({
@@ -14,13 +13,8 @@ var Domains = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
+    domains: React.PropTypes.object.isRequired,
     alignment: React.PropTypes.object.isRequred
-  },
-
-  getInitialState: function () {
-    return {
-      domains: positionDomains(this.props.node)
-    };
   },
 
   componentWillMount: function () {
@@ -41,7 +35,7 @@ var Domains = React.createClass({
 
 
   renderDomains: function () {
-    return this.state.domains.map(function (domain, idx) {
+    return this.props.domains.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
       var stats = this.props.stats[domain.id];
 

@@ -10,6 +10,7 @@ var PositionedDomains = React.createClass({
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
+    domains: React.PropTypes.object.isRequired,
     alignment: React.PropTypes.object.isRequired
   },
   
@@ -28,7 +29,7 @@ var PositionedDomains = React.createClass({
   render: function () {
     return (
       <g transform={this.transform()}>
-        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} alignment={this.props.alignment} />
+        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} domains={this.props.domains} alignment={this.props.alignment} />
       </g>
     )
   }
