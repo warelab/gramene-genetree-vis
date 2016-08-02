@@ -83,7 +83,7 @@ var Alignment = React.createClass({
     for(var i=0; i<offsets.length - 1; i++) {
       depth += alignment.hist[offsets[i]];
       if (depth > 0) {
-        function renderBlock(block) {
+        var renderBlock = function (block) {
           var style = {fill: block.color, stroke: false};
           var s = block.start;
           var w = block.end - block.start;
@@ -92,7 +92,7 @@ var Alignment = React.createClass({
             <rect key={k} width={w} height="14" x={s} style={style} />
           );
           return rect;
-        }
+        };
         // find the region containing the start of this alignment block
         while (offsets[i] >= regionColor[regionIdx].end) {
           regionIdx++;
