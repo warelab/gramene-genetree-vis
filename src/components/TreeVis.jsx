@@ -221,42 +221,13 @@ var TreeVis = React.createClass({
   handleNodeHover: function (node) {
     this.setState({hoveredNode: node});
   },
-  handleNodeShowParalogs: function (node) {
-    function expanded(n) {
-      return !n.parent || n.parent.displayInfo.expanded;
-    }
-    if (!!node.displayInfo.paralogs) {
-      var genetree = this.genetree;
-      var additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
-      node.displayInfo.paralogs.forEach(function(paralog) {
-        var parentNode = paralog.parent;
-        while (!parentNode.displayInfo.expanded) {
-          parentNode.displayInfo.expanded = true;
-          parentNode.displayInfo.expandedBecause = 'selected'; // this happens again in layoutTree()
-          additionalVisibleNodes[parentNode.model.node_id] = parentNode;
-          parentNode = parentNode.parent
-        }
-      });
-      var allVisibleNodes = layoutTree(
-        this.genetree,
-        this.state.geneOfInterest,
-        this.treeWidth,
-        additionalVisibleNodes
-      );
-      this.reinitHeight();
-      this.setState({
-        additionalVisibleNodes: additionalVisibleNodes,
-        visibleNodes: allVisibleNodes
-      });
-    }
-  },
   
   renderBackground: function () {
     if (this.displayAlignments) {
       var bgStyle = {fill: '#f7f7f7', stroke: false};
       var h = this.h + (2 * this.margin);
-      var y = -this.margin
-      var x = -this.margin/2
+      var y = -this.margin;
+      var x = -this.margin/2;
       var w = this.alignmentsWidth + this.margin;
       return (
         <rect key='bg'
