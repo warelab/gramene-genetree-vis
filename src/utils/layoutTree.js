@@ -124,7 +124,7 @@ function calculateXIndex(genetree) {
       }
       else {
         var childExtrema = calcXIndexFor(node.children[0]);
-        node.xindex = (childExtrema.min + childExtrema.max) / 2;
+        node.xindex = node.children[0].xindex;
         return {
           min: childExtrema.min,
           max: childExtrema.max

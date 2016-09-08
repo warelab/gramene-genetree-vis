@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var _ = require('lodash');
 
 var microsoftBrowser = require('../utils/microsoftBrowser');
 var taxonomyColor = require('../utils/taxonomyColor');
@@ -18,24 +19,36 @@ var Edge = React.createClass({
   },
 
   pathCoords: function () {
-    var source, target, shouldAdjust, xAdjust, adjustedTargetX;
+    var source, target, shouldAdjust, adjust, adjustedTarget, yDoesntChange, path;
     source = this.props.source;
     target = this.props.target;
     shouldAdjust = this.props.cladeHovered && !this.props.thisCladeHovered;
+    yDoesntChange = _.get(target, 'model.children.length') == 1;
 
     // stop drawing the egde before it overlaps the parent node
     // (the child edge is always drawn after the parent node)
-    xAdjust = shouldAdjust ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
-    adjustedTargetX = source.x > target.x ? target.x - xAdjust : target.x + xAdjust;
+    adjust = shouldAdjust ? defaultXAdjust * HOVER_SCALE_FACTOR : defaultXAdjust;
 
-    return [
-      [0, 0],
-      [target.y - source.y, 0],
-      [target.y - source.y, adjustedTargetX - source.x]
-    ];
+    if (yDoesntChange) {
+      adjustedTarget = target.y - adjust;
+      path = [
+        [0, 0],
+        [adjustedTarget - source.y, 0]
+      ];
+    }
+    else {
+      adjustedTarget = source.x > target.x ? target.x - adjust : target.x + adjust;
+      path = [
+        [0, 0],
+        [target.y - source.y, 0],
+        [target.y - source.y, adjustedTarget - source.x]
+      ];
+    }
+
+    return path;
   },
 
-  transform: function(c1, c2, size, isStyle) {
+  transform: function (c1, c2, size, isStyle) {
     var px, offset, transform, x1, x2, y1, y2, shouldScaleX;
     px = isStyle ? 'px' : '';
     size = size || 1;
@@ -50,17 +63,17 @@ var Edge = React.createClass({
     // will differ.
 
     // if x coords differ, scaleX
-    if(shouldScaleX) {
+    if (shouldScaleX) {
       transform = 'translate(' + (x2 - offset) + px + ', '
-        + (y2 - offset) + px + ') '
-        + 'scale(' + (x1 - x2 + offset) + ', ' + size +  ') ';
+          + (y2 - offset) + px + ') '
+          + 'scale(' + (x1 - x2 + offset) + ', ' + size + ') ';
     }
     // otherwise, scaleY
     else {
       transform = 'translate('
-        + (x2 - offset) + px + ', '
-        + y2 + px + ') '
-        + 'scale(' + size + ', ' +  (y1 - y2) + ')';
+          + (x2 - offset) + px + ', '
+          + y2 + px + ') '
+          + 'scale(' + size + ', ' + (y1 - y2) + ')';
     }
 
     return transform;
@@ -68,6 +81,11 @@ var Edge = React.createClass({
 
   rect: function (c1, c2, className, size) {
     var t, props;
+
+    // if either coordinate is missing, don't draw the rectangle.
+    if(!c1 || !c2) {
+      return;
+    }
 
     t = this.transform(c1, c2, size);
 
@@ -82,7 +100,7 @@ var Edge = React.createClass({
       height: 1
     };
 
-    if(microsoftBrowser) {
+    if (microsoftBrowser) {
       props.transform = this.transform(c1, c2, size, false);
     }
     else {
@@ -90,22 +108,22 @@ var Edge = React.createClass({
     }
 
     return (
-      <rect {...props} />
+        <rect {...props} />
     );
   },
 
-  edge: function() {
+  edge: function () {
     const coords = this.pathCoords();
     const className = 'edge-rect';
     const size = this.props.cladeHovered ?
-                    Edge.width.hovered :
-                    Edge.width.edge;
+        Edge.width.hovered :
+        Edge.width.edge;
 
     return (
-      <g>
-        {this.rect(coords[0], coords[1], className, size)}
-        {this.rect(coords[1], coords[2], className, size)}
-      </g>
+        <g>
+          {this.rect(coords[0], coords[1], className, size)}
+          {this.rect(coords[1], coords[2], className, size)}
+        </g>
     );
   },
 
@@ -115,19 +133,19 @@ var Edge = React.createClass({
     const size = Edge.width.helper;
 
     return (
-      <g className="interaction-helper">
-        {this.rect(coords[0], coords[1], className, size)}
-        {this.rect(coords[1], coords[2], className, size)}
-      </g>
+        <g className="interaction-helper">
+          {this.rect(coords[0], coords[1], className, size)}
+          {this.rect(coords[1], coords[2], className, size)}
+        </g>
     );
   },
 
   render: function () {
     return (
-      <g className="edge">
-        {this.interactionHelper()}
-        {this.edge()}
-      </g>
+        <g className="edge">
+          {this.interactionHelper()}
+          {this.edge()}
+        </g>
     );
   }
 });
