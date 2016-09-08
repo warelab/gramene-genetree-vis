@@ -5,6 +5,10 @@ var _ = require('lodash');
 
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
+import PureRenderMixin from "react-addons-pure-render-mixin";
+import {OverlayTrigger, Popover} from "react-bootstrap";
+
+
 var Edge = require('./Edge.jsx');
 var Node = require('./Node.jsx');
 
@@ -31,6 +35,8 @@ var GeneTree = React.createClass({
         yOffset: React.PropTypes.number.isRequired
       },
 
+      shouldComponentUpdate: PureRenderMixin.shouldComponentUpdate.bind(this),
+
       getInitialState: function () {
         return {};
       },
@@ -47,7 +53,7 @@ var GeneTree = React.createClass({
       handleClick: function (e) {
         e.stopPropagation();
         //noinspection JSPotentiallyInvalidUsageOfThis
-        this.onSelect(this.props.node);
+        // this.onSelect(this.props.node);
 
         // it's confusing if a newly expanded clade is hovered.
         // and besides, I haven't worked out how to get the
@@ -120,9 +126,9 @@ var GeneTree = React.createClass({
         node = this.props.node;
 
         return (
-          <Node node={node}
-                onSelect={this.onSelect}
-                taxonomy={geneTreeProps.taxonomy}/>
+            <Node node={node}
+                  onSelect={this.onSelect}
+                  taxonomy={geneTreeProps.taxonomy}/>
         );
       },
 
@@ -138,12 +144,20 @@ var GeneTree = React.createClass({
         if (parent) {
           //noinspection JSPotentiallyInvalidUsageOfThis
           return (
-            <Edge source={node}
-                  target={parent}
-                  cladeHovered={cladeHovered}
-                  thisCladeHovered={!!this.state.hovered}/>
+              <Edge source={node}
+                    target={parent}
+                    cladeHovered={cladeHovered}
+                    thisCladeHovered={!!this.state.hovered}/>
           );
         }
+      },
+
+      overlay: function (node) {
+        return (
+            <Popover id={node.model.node_id + 'popover'} title="TEST">
+              <strong>Foo</strong><p>Bar.</p>
+            </Popover>
+        );
       },
 
       render: function () {
@@ -154,19 +168,27 @@ var GeneTree = React.createClass({
           onClick: this.handleClick
         };
 
-        if(microsoftBrowser) {
+        if (microsoftBrowser) {
           props.transform = this.transform(false);
         }
         else {
-          props.style = { transform: this.transform(true) };
+          props.style = {transform: this.transform(true)};
         }
 
         return (
-          <g {...props}>
-            {this.renderEdge()}
-            {this.renderNode()}
-            {this.renderSubClades()}
-          </g>
+            <g {...props}>
+              <OverlayTrigger
+                  rootClose
+                  placement="bottom"
+                  trigger="click"
+                  overlay={this.overlay(this.props.node)}>
+                <g>
+                {this.renderEdge()}
+                {this.renderNode()}
+                </g>
+              </OverlayTrigger>
+              {this.renderSubClades()}
+            </g>
         );
       }
     });
@@ -189,9 +211,9 @@ var GeneTree = React.createClass({
     var Clade = this.Clade;
 
     return (
-      <g className="genetree">
-        <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0}/>
-      </g>
+        <g className="genetree">
+          <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0}/>
+        </g>
     )
   }
 });
