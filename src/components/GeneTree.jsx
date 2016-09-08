@@ -18,8 +18,9 @@ var GeneTree = React.createClass({
   },
 
   componentWillMount: function () {
-    var Clade, geneTreeProps;
-    geneTreeProps = this.props;
+    var Clade, geneTreeProps, geneTreeCtx;
+    geneTreeCtx = this;
+    geneTreeProps = geneTreeCtx.props;
 
     //noinspection JSUnusedAssignment
     Clade = this.Clade = React.createClass({
@@ -36,7 +37,7 @@ var GeneTree = React.createClass({
 
       componentWillMount: function () {
         //noinspection JSPotentiallyInvalidUsageOfThis
-        this.onSelect = this.props.node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
+        this.onSelect = geneTreeCtx.nodeSelectHandler(this.props.node);
       },
 
       componentDidMount: function () {
@@ -167,29 +168,16 @@ var GeneTree = React.createClass({
             {this.renderSubClades()}
           </g>
         );
-        //return (
-        //  <g className="clade"
-        //     onMouseOver={this.hover}
-        //     onMouseOut={this.unhover}
-        //     onClick={this.handleClick}
-        //     transform={this.transform()}
-        //     style={{transform: this.transform()}}>
-        //
-        //    {this.renderEdge()}
-        //    {this.renderNode()}
-        //    {this.renderSubClades()}
-        //  </g>
-        //);
       }
     });
   },
 
-  handleNodeSelect: function (node) {
+  nodeSelectHandler: function (node) {
     if (node.model.gene_stable_id) {
-      this.props.onGeneSelect(node);
+      return this.props.onGeneSelect;
     }
     else {
-      this.props.onInternalNodeSelect(node);
+      return this.props.onInternalNodeSelect;
     }
   },
 
