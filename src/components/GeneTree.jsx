@@ -8,6 +8,7 @@ var microsoftBrowser = require('../utils/microsoftBrowser');
 import PureRenderMixin from "react-addons-pure-render-mixin";
 import {OverlayTrigger, Popover} from "react-bootstrap";
 
+import NodePopover from './NodePopover.jsx';
 
 var Edge = require('./Edge.jsx');
 var Node = require('./Node.jsx');
@@ -153,9 +154,17 @@ var GeneTree = React.createClass({
       },
 
       overlay: function (node) {
+        const model = node.model;
+        const title = model.gene_display_label
+            ? `${model.taxon_name} – ${model.gene_display_label}`
+            : `${model.taxon_name} – ${model.node_type}`;
+        const id = `nodepopover${model.node_id}`;
+
+        console.log('changeCladeVisibility', geneTreeProps.onInternalNodeSelect);
         return (
-            <Popover id={node.model.node_id + 'popover'} title="TEST">
-              <strong>Foo</strong><p>Bar.</p>
+            <Popover id={id} title={title}>
+              <NodePopover node={node}
+                           changeCladeVisibility={geneTreeProps.onInternalNodeSelect} />
             </Popover>
         );
       },

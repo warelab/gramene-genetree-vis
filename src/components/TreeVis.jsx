@@ -63,6 +63,7 @@ var TreeVis = React.createClass({
       this.genetree.geneCount = this.props.genetree.geneCount;
     }
 
+    relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
 
   },
