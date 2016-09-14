@@ -164,7 +164,9 @@ var GeneTree = React.createClass({
         return (
             <Popover id={id} title={title}>
               <NodePopover node={node}
-                           changeCladeVisibility={geneTreeProps.onInternalNodeSelect} />
+                           changeCladeVisibility={geneTreeProps.onInternalNodeSelect}
+                           showParalogs={geneTreeProps.onInternalNodeSelect2}
+              />
             </Popover>
         );
       },

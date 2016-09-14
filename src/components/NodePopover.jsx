@@ -17,14 +17,16 @@ function buttons(props) {
       : internalNodeButtons(props);
 }
 
-function internalNodeButtons({node, changeCladeVisibility}) {
+function internalNodeButtons({node, changeCladeVisibility, showParalogs}) {
   const cladeButton = node.displayInfo.expanded
       ? btn("Collapse", () => changeCladeVisibility(node), "warning")
       : btn("Expand", () => changeCladeVisibility(node), "success");
 
+  const paralogsButton = btn("Paralogs", () => showParalogs(node), "success");
   return (
       <ButtonGroup style={{marginBottom: 3}}>
         {cladeButton}
+        {paralogsButton}
       </ButtonGroup>
   )
 }
@@ -90,7 +92,8 @@ function prop(name, value) {
 
 NodePopover.propTypes = {
   node: React.PropTypes.object.isRequired,
-  changeCladeVisibility: React.PropTypes.func.isRequired
+  changeCladeVisibility: React.PropTypes.func.isRequired,
+  showParalogs: React.PropTypes.func.isRequired
 };
 
 export default NodePopover;

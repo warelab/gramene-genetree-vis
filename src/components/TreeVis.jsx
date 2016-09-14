@@ -220,31 +220,21 @@ var TreeVis = React.createClass({
   },
 
   handleNodeShowParalogs: function (node) {
-    function expanded(n) {
-      return !n.parent || n.parent.displayInfo.expanded;
-    }
     if (!!node.displayInfo.paralogs) {
-      var genetree = this.genetree;
-      var additionalVisibleNodes = _.clone(this.state.additionalVisibleNodes);
       node.displayInfo.paralogs.forEach(function(paralog) {
         var parentNode = paralog.parent;
         while (!parentNode.displayInfo.expanded) {
           parentNode.displayInfo.expanded = true;
-          parentNode.displayInfo.expandedBecause = 'selected'; // this happens again in layoutTree()
-          additionalVisibleNodes[parentNode.model.node_id] = parentNode;
           parentNode = parentNode.parent
         }
       });
-      var allVisibleNodes = layoutTree(
+      const newVisibleNodes = nodeCoordinates(
         this.genetree,
-        this.state.geneOfInterest,
-        this.treeWidth,
-        additionalVisibleNodes
+        this.treeWidth
       );
       this.reinitHeight();
       this.setState({
-        additionalVisibleNodes: additionalVisibleNodes,
-        visibleNodes: allVisibleNodes
+        visibleNodes: newVisibleNodes
       });
     }
   },
@@ -281,6 +271,7 @@ var TreeVis = React.createClass({
           <GeneTree nodes={this.state.visibleNodes}
                     onGeneSelect={this.handleGeneSelect}
                     onInternalNodeSelect={this.handleInternalNodeSelect}
+                    onInternalNodeSelect2={this.handleNodeShowParalogs}
                     onNodeHover={this.handleNodeHover}
                     onNodeUnhover={this.handleNodeUnhover}
                     taxonomy={this.props.taxonomy}/>
