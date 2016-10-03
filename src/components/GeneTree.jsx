@@ -1,9 +1,15 @@
 'use strict';
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 var _ = require('lodash');
 
 var microsoftBrowser = require('../utils/microsoftBrowser');
+
+// import PureRenderMixin from "react-addons-pure-render-mixin";
+import {Overlay, Popover} from "react-bootstrap";
+
+import NodePopover from './NodePopover.jsx';
 
 var Edge = require('./Edge.jsx');
 var Node = require('./Node.jsx');
@@ -18,8 +24,9 @@ var GeneTree = React.createClass({
   },
 
   componentWillMount: function () {
-    var Clade, geneTreeProps;
-    geneTreeProps = this.props;
+    var Clade, geneTreeProps, geneTreeCtx;
+    geneTreeCtx = this;
+    geneTreeProps = geneTreeCtx.props;
 
     //noinspection JSUnusedAssignment
     Clade = this.Clade = React.createClass({
@@ -30,13 +37,17 @@ var GeneTree = React.createClass({
         yOffset: React.PropTypes.number.isRequired
       },
 
+      // shouldComponentUpdate: PureRenderMixin.shouldComponentUpdate.bind(this),
+
       getInitialState: function () {
-        return {};
+        return {
+          popoverVisible: false
+        };
       },
 
       componentWillMount: function () {
         //noinspection JSPotentiallyInvalidUsageOfThis
-        this.onSelect = this.props.node.model.gene_stable_id ? geneTreeProps.onGeneSelect : geneTreeProps.onInternalNodeSelect;
+        this.onSelect = geneTreeCtx.nodeSelectHandler(this.props.node);
       },
 
       componentDidMount: function () {
@@ -46,7 +57,7 @@ var GeneTree = React.createClass({
       handleClick: function (e) {
         e.stopPropagation();
         //noinspection JSPotentiallyInvalidUsageOfThis
-        this.onSelect(this.props.node);
+        // this.onSelect(this.props.node);
 
         // it's confusing if a newly expanded clade is hovered.
         // and besides, I haven't worked out how to get the
@@ -69,6 +80,27 @@ var GeneTree = React.createClass({
         //noinspection JSPotentiallyInvalidUsageOfThis
         geneTreeProps.onNodeUnhover(this.props.node);
         this.setState({hovered: false});
+      },
+
+      togglePopoverVisibility: function() {
+        this.setState({
+          popoverVisible: !this.state.popoverVisible
+        });
+      },
+
+      changeCladeVisibility: function(node) {
+        this.setState({ popoverVisible: false });
+        geneTreeProps.onInternalNodeSelect(node,true);
+      },
+
+      changeParalogVisibility: function(node) {
+        this.setState({ popoverVisible: false });
+        geneTreeProps.onInternalNodeSelect2(node);
+      },
+
+      changeGeneOfInterest: function(node) {
+        this.setState({ popoverVisible: false });
+        geneTreeProps.onGeneSelect(node);
       },
 
       transform: function (isStyle) {
@@ -119,9 +151,9 @@ var GeneTree = React.createClass({
         node = this.props.node;
 
         return (
-          <Node node={node}
-                onSelect={this.onSelect}
-                taxonomy={geneTreeProps.taxonomy}/>
+            <Node node={node}
+                  onSelect={this.onSelect}
+                  taxonomy={geneTreeProps.taxonomy}/>
         );
       },
 
@@ -137,59 +169,91 @@ var GeneTree = React.createClass({
         if (parent) {
           //noinspection JSPotentiallyInvalidUsageOfThis
           return (
-            <Edge source={node}
-                  target={parent}
-                  cladeHovered={cladeHovered}
-                  thisCladeHovered={!!this.state.hovered}/>
+              <Edge source={node}
+                    target={parent}
+                    cladeHovered={cladeHovered}
+                    thisCladeHovered={!!this.state.hovered}/>
           );
         }
       },
 
-      render: function () {
-        var props = {
+      overlay: function (node) {
+        const model = node.model;
+        const title = model.gene_display_label
+            ? `${model.taxon_name} – ${model.gene_display_label}`
+            : `${model.taxon_name} – ${model.node_type}`;
+        const id = `nodepopover${model.node_id}`;
+
+        return (
+            <Overlay show={this.state.popoverVisible}
+                     container={geneTreeProps.overlaysContainer}
+                     target={() => ReactDOM.findDOMNode(this.refs.clickable)}>
+              <Popover id={id} title={title}>
+                <NodePopover node={node}
+                             changeCladeVisibility={this.changeCladeVisibility}
+                             changeParalogVisibility={this.changeParalogVisibility}
+                             changeGeneOfInterest={this.changeGeneOfInterest}
+                />
+              </Popover>
+            </Overlay>
+        );
+      },
+
+      cladeProps: function() {
+        const props = {
           className: 'clade',
-          onMouseOver: this.hover,
-          onMouseOut: this.unhover,
+          // onMouseOver: this.hover,
+          // onMouseOut: this.unhover,
           onClick: this.handleClick
         };
 
-        if(microsoftBrowser) {
+        if (microsoftBrowser) {
           props.transform = this.transform(false);
         }
         else {
-          props.style = { transform: this.transform(true) };
+          props.style = {transform: this.transform(true)};
         }
 
+        return props;
+      },
+
+      render: function () {
         return (
-          <g {...props}>
-            {this.renderEdge()}
-            {this.renderNode()}
-            {this.renderSubClades()}
-          </g>
+            <g {...this.cladeProps()}>
+              <g ref="clickable" onClick={this.togglePopoverVisibility}>
+                {this.renderEdge()}
+                {this.renderNode()}
+              </g>
+              {this.overlay(this.props.node)}
+
+              {this.renderSubClades()}
+            </g>
         );
-        //return (
-        //  <g className="clade"
-        //     onMouseOver={this.hover}
-        //     onMouseOut={this.unhover}
-        //     onClick={this.handleClick}
-        //     transform={this.transform()}
-        //     style={{transform: this.transform()}}>
-        //
-        //    {this.renderEdge()}
-        //    {this.renderNode()}
-        //    {this.renderSubClades()}
-        //  </g>
-        //);
+        // return (
+        //     <g {...this.cladeProps()}>
+        //       <OverlayTrigger
+        //           rootClose
+        //           placement="bottom"
+        //           trigger="click"
+        //           overlay={this.overlay(this.props.node)}>
+        //         <g>
+        //         {this.renderEdge()}
+        //         {this.renderNode()}
+        //         </g>
+        //       </OverlayTrigger>
+        //       {this.renderSubClades()}
+        //     </g>
+        // );
       }
     });
   },
 
-  handleNodeSelect: function (node) {
+  nodeSelectHandler: function (node) {
     if (node.model.gene_stable_id) {
-      this.props.onGeneSelect(node);
+      return this.props.onGeneSelect;
     }
     else {
-      this.props.onInternalNodeSelect(node);
+      return this.props.onInternalNodeSelect;
     }
   },
 
@@ -201,9 +265,9 @@ var GeneTree = React.createClass({
     var Clade = this.Clade;
 
     return (
-      <g className="genetree">
-        <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0}/>
-      </g>
+        <g className="genetree">
+          <Clade node={this.props.nodes[0]} xOffset={0} yOffset={0}/>
+        </g>
     )
   }
 });

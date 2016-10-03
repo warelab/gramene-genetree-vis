@@ -12,22 +12,27 @@ var Node = React.createClass({
     node: React.PropTypes.object.isRequired,
     taxonomy: React.PropTypes.object.isRequired
   },
-  
-  getNodeComponent: function () {
-    var node, nodeTypeComponent;
-    node = this.props.node;
+
+  getNodeType: function() {
+    var node = this.props.node;
 
     if (node.model.gene_stable_id) {
-      nodeTypeComponent = Gene;
+      return 'Gene';
     }
     else if (!node.displayInfo.expanded) {
-      nodeTypeComponent = Collapsed;
+      return 'Collapsed';
     }
     else {
-      nodeTypeComponent = Internal;
+      return 'Internal';
     }
-    
-    return nodeTypeComponent;
+  },
+  
+  getNodeComponent: function () {
+    switch(this.getNodeType()) {
+      case 'Gene': return Gene;
+      case 'Collapsed': return Collapsed;
+      case 'Internal': return Internal;
+    }
   },
 
   getInitialState: function () {

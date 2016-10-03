@@ -28,19 +28,7 @@ var Gene = React.createClass({
   },
 
   text: function () {
-    var geneId, taxonId, species;
-    geneId =
-      _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id');
-
-    if(geneId.length < 8) {
-      taxonId = this.props.node.model.taxon_id;
-      species = _.get(this.props.taxonomy.indices.id[taxonId], 'model.name');
-      return species + ': ' + geneId;
-    }
-    else {
-      return geneId;
-    }
+    return  _.get(this.props.node, 'model.gene_stable_id');
   },
 
   render: function () {

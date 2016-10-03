@@ -13,7 +13,7 @@ var exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/waxytree.js
 var taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
 var genomesOfInterest = {
-  37022 : taxonomy.indices.id[3702],
+  3702 : taxonomy.indices.id[3702],
   4577 : taxonomy.indices.id[4577],
   39947 : taxonomy.indices.id[39947]
 };
