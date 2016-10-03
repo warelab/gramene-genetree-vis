@@ -6,7 +6,7 @@ var _ = require('lodash');
 
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
-import PureRenderMixin from "react-addons-pure-render-mixin";
+// import PureRenderMixin from "react-addons-pure-render-mixin";
 import {Overlay, Popover} from "react-bootstrap";
 
 import NodePopover from './NodePopover.jsx';
@@ -37,7 +37,7 @@ var GeneTree = React.createClass({
         yOffset: React.PropTypes.number.isRequired
       },
 
-      shouldComponentUpdate: PureRenderMixin.shouldComponentUpdate.bind(this),
+      // shouldComponentUpdate: PureRenderMixin.shouldComponentUpdate.bind(this),
 
       getInitialState: function () {
         return {
