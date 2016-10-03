@@ -253,7 +253,9 @@ var TreeVis = React.createClass({
                     onInternalNodeSelect={this.handleInternalNodeSelect}
                     onNodeHover={this.handleNodeHover}
                     onNodeUnhover={this.handleNodeUnhover}
-                    taxonomy={this.props.taxonomy}/>
+                    taxonomy={this.props.taxonomy}
+                    overlaysContainer={this.refs.overlaysContainer}
+          />
       );
 
       if (this.displayAlignments) {
@@ -304,6 +306,8 @@ var TreeVis = React.createClass({
               {alignments}
             </g>
           </svg>
+          <div ref="overlaysContainer"
+               className="overlays"></div>
         </div>
     );
   }
