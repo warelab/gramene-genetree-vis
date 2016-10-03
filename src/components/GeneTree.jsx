@@ -160,12 +160,12 @@ var GeneTree = React.createClass({
             : `${model.taxon_name} – ${model.node_type}`;
         const id = `nodepopover${model.node_id}`;
 
-        console.log('changeCladeVisibility', geneTreeProps.onInternalNodeSelect);
         return (
             <Popover id={id} title={title}>
               <NodePopover node={node}
                            changeCladeVisibility={geneTreeProps.onInternalNodeSelect}
-                           showParalogs={geneTreeProps.onInternalNodeSelect2}
+                           changeParalogVisibility={geneTreeProps.onInternalNodeSelect2}
+                           changeGeneOfInterest={geneTreeProps.onGeneSelect}
               />
             </Popover>
         );
@@ -174,8 +174,8 @@ var GeneTree = React.createClass({
       render: function () {
         var props = {
           className: 'clade',
-          onMouseOver: this.hover,
-          onMouseOut: this.unhover,
+          // onMouseOver: this.hover,
+          // onMouseOut: this.unhover,
           onClick: this.handleClick
         };
 

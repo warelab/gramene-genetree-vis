@@ -47,13 +47,18 @@ function calculateXIndex(genetree) {
 // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
 function layoutNodes(genetree, w) {
   const MIN_DIST = 0.05;
+  const MAX_DIST = 2;
   var rootDists, xscale, yscale, h;
 
   h = calculateSvgHeight(genetree);
 
   // Visit all nodes depth first and adjust y pos width distance metric
   genetree.walk(function (node) {
-    node.root_dist = (node.parent ? node.parent.root_dist : 0) + (Math.max(node.model.distance_to_parent, MIN_DIST) || 0);
+    var parentDist = Math.max(node.model.distance_to_parent, MIN_DIST) || 0;
+    while (parentDist > MAX_DIST) {
+      parentDist /= 10;
+    }
+    node.root_dist = (node.parent ? node.parent.root_dist : 0) + parentDist;
   });
   rootDists = genetree.all(expanded).map(function (n) { return n.root_dist; });
   yscale = scale()

@@ -17,26 +17,35 @@ function buttons(props) {
       : internalNodeButtons(props);
 }
 
-function internalNodeButtons({node, changeCladeVisibility, showParalogs}) {
+function internalNodeButtons({node, changeCladeVisibility}) {
   const cladeButton = node.displayInfo.expanded
-      ? btn("Collapse", () => changeCladeVisibility(node), "warning")
-      : btn("Expand", () => changeCladeVisibility(node), "success");
+      ? btn("Collapse clade", () => changeCladeVisibility(node,true), "warning")
+      : btn("Expand clade", () => changeCladeVisibility(node,true), "success");
 
-  const paralogsButton = btn("Paralogs", () => showParalogs(node), "success");
   return (
       <ButtonGroup style={{marginBottom: 3}}>
         {cladeButton}
-        {paralogsButton}
       </ButtonGroup>
   )
 }
 
-function geneNodeButtons({node, showParalogs}) {
-  // return (
-  //     <ButtonGroup style={{marginBottom: 3}}>
-  //       {btn("Show Paralogs", () => showParalogs(node))}
-  //     </ButtonGroup>
-  // )
+function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) {
+  var button;
+  if (node.displayInfo.isGeneOfInterest) {
+    var root = node.parent;
+    while (root.parent) {
+      root = root.parent;
+    }
+    button = btn("Show paralogs", () => changeParalogVisibility(root), "success");
+  }
+  else {
+    button = btn("Focus on this gene", () => changeGeneOfInterest(node), "success");
+  }
+  return (
+    <ButtonGroup style={{marginBottom: 3}}>
+      {button}
+    </ButtonGroup>
+  )
 }
 
 function btn(name, handler, style = "default") {
@@ -93,7 +102,7 @@ function prop(name, value) {
 NodePopover.propTypes = {
   node: React.PropTypes.object.isRequired,
   changeCladeVisibility: React.PropTypes.func.isRequired,
-  showParalogs: React.PropTypes.func.isRequired
+  changeParalogVisibility: React.PropTypes.func.isRequired
 };
 
 export default NodePopover;

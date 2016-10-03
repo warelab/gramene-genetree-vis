@@ -16,7 +16,7 @@ var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
 var alignmentTools = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
-import {setDefaultNodeDisplayInfo, makeCladeVisible, makeCladeInvisible} from "../utils/visibleNodes";
+import {setDefaultNodeDisplayInfo, makeCladeVisible, makeCladeInvisible, makeNodeVisible, makeNodeInvisible} from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 
 const DEFAULT_MARGIN = 10;
@@ -102,7 +102,6 @@ var TreeVis = React.createClass({
   updateAvailableWidth: function () {
     const parentWidth = ReactDOM.findDOMNode(this).parentNode.clientWidth;
     if (this.width !== parentWidth) {
-      console.log('width is now', parentWidth);
       this.width = parentWidth;
       this.initHeightAndMargin();
       this.initializeAlignments()();
@@ -183,6 +182,7 @@ var TreeVis = React.createClass({
       GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
         var geneOfInterest = response.docs[0];
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
+        setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
         this.setState({geneOfInterest, visibleNodes});
         this.reinitHeight();
@@ -190,13 +190,23 @@ var TreeVis = React.createClass({
     }
   },
 
-  handleInternalNodeSelect: function (node) {
+  changeCladeVisibility: function (node,recursive) {
 
     if (node.displayInfo.expanded) {
-      makeCladeInvisible(node);
+      if (recursive) {
+        makeCladeInvisible(node);
+      }
+      else {
+        makeNodeInvisible(node);
+      }
     }
     else {
-      makeCladeVisible(node);
+      if (recursive) {
+        makeCladeVisible(node);
+      }
+      else {
+        makeNodeVisible(node)
+      }
     }
 
     const newVisibleNodes = nodeCoordinates(
@@ -219,24 +229,41 @@ var TreeVis = React.createClass({
     this.setState({hoveredNode: node});
   },
 
-  handleNodeShowParalogs: function (node) {
-    if (!!node.displayInfo.paralogs) {
-      node.displayInfo.paralogs.forEach(function(paralog) {
+  changeParalogVisibility: function (node) {
+    if (node.displayInfo.expandedParalogs) {
+      // hide these paralogs
+      node.displayInfo.paralogs.forEach(function (paralog) {
         var parentNode = paralog.parent;
-        while (!parentNode.displayInfo.expanded) {
-          parentNode.displayInfo.expanded = true;
+        while (parentNode != node) {
+          parentNode.displayInfo.expandedParalogs = false;
+          // check if any child is expanded
+          parentNode.displayInfo.expanded = false;
+          parentNode.children.forEach((child) => {
+            if (child.displayInfo.expanded)
+              parentNode.displayInfo.expanded = true;
+          });
           parentNode = parentNode.parent
         }
       });
-      const newVisibleNodes = nodeCoordinates(
-        this.genetree,
-        this.treeWidth
-      );
-      this.reinitHeight();
-      this.setState({
-        visibleNodes: newVisibleNodes
+    }
+    else {
+      node.displayInfo.paralogs.forEach(function (paralog) {
+        var parentNode = paralog.parent;
+        while (!parentNode.displayInfo.expanded) {
+          parentNode.displayInfo.expanded = true;
+          parentNode.displayInfo.expandedParalogs = true;
+          parentNode = parentNode.parent
+        }
       });
     }
+    const newVisibleNodes = nodeCoordinates(
+      this.genetree,
+      this.treeWidth
+    );
+    this.reinitHeight();
+    this.setState({
+      visibleNodes: newVisibleNodes
+    });
   },
   
   renderBackground: function () {
@@ -270,8 +297,8 @@ var TreeVis = React.createClass({
       genetree = (
           <GeneTree nodes={this.state.visibleNodes}
                     onGeneSelect={this.handleGeneSelect}
-                    onInternalNodeSelect={this.handleInternalNodeSelect}
-                    onInternalNodeSelect2={this.handleNodeShowParalogs}
+                    onInternalNodeSelect={this.changeCladeVisibility}
+                    onInternalNodeSelect2={this.changeParalogVisibility}
                     onNodeHover={this.handleNodeHover}
                     onNodeUnhover={this.handleNodeUnhover}
                     taxonomy={this.props.taxonomy}/>

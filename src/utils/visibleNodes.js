@@ -4,12 +4,16 @@ export function makeNodeVisible(node) {
   node.displayInfo.expanded = true;
 }
 
+export function makeNodeInvisible(node) {
+  node.displayInfo.expanded = false;
+}
+
 export function makeCladeVisible(node) {
   node.walk(makeNodeVisible);
 }
 
 export function makeCladeInvisible(node) {
-  node.displayInfo.expanded = false;
+  node.walk(makeNodeInvisible);
 }
 
 export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
@@ -20,14 +24,15 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
   orthologPathIds = getOrthologPathIds();
 
   genetree.walk(function (node) {
-    var nodeId, isLeafNode, parentNodeId, displayInfo;
+    var nodeId, isLeafNode, onlyChild, parentNodeId, displayInfo;
     nodeId = node.model.node_id;
     isLeafNode = !!node.model.gene_stable_id;
+    onlyChild = (node.children && node.children.length === 1);
     displayInfo = {
       expanded: false,
-      leafNode: isLeafNode
+      leafNode: isLeafNode,
+      isGeneOfInterest: (node.model.gene_stable_id == geneOfInterest._id)
     };
-
     if (!!pathIds[nodeId]) {
       displayInfo.expanded = true;
       displayInfo.expandedBecause = pathIds[nodeId];
@@ -38,12 +43,13 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
     //     displayInfo.expandedBecause = 'selected';
     //   }
     // }
-    else {
+    else if (node.parent) {
       parentNodeId = node.parent.model.node_id;
 
-      if (isLeafNode && pathIds[parentNodeId]) {
+      if ((isLeafNode || onlyChild) && pathIds[parentNodeId]) {
         displayInfo.expanded = true;
         displayInfo.expandedBecause = pathIds[parentNodeId];
+        pathIds[node.model.node_id] = [node];
       }
     }
 
