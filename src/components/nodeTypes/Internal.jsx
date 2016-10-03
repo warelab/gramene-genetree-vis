@@ -4,6 +4,7 @@ var React = require('react');
 var _ = require('lodash');
 
 const INTERNAL_NODE_SIZE = 4;
+const ONE_CHILD_SIZE_RATIO = 0.8;
 
 var Internal = React.createClass({
   props: {
@@ -33,9 +34,13 @@ var Internal = React.createClass({
   },
 
   render: function () {
+    const hasOneChild = this.props.node.children.length == 1;
+    const xy = hasOneChild ? Internal.xy * ONE_CHILD_SIZE_RATIO : Internal.xy;
+    const wh = hasOneChild ? Internal.wh * ONE_CHILD_SIZE_RATIO : Internal.wh;
+
     return (
       <g className={this.className()}>
-        <rect x={Internal.xy} y={Internal.xy} width={Internal.wh} height={Internal.wh}/>
+        <rect x={xy} y={xy} width={wh} height={wh}/>
         <text x="10"
               dy=".35em"
               textAnchor="start">
