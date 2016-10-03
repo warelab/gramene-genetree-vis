@@ -184,8 +184,8 @@ var TreeVis = React.createClass({
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
-        this.setState({geneOfInterest, visibleNodes});
         this.reinitHeight();
+        this.setState({geneOfInterest, visibleNodes});
       }.bind(this));
     }
   },
