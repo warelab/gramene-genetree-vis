@@ -65,7 +65,7 @@ var TreeVis = React.createClass({
 
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
-
+    this.initializeAlignments(this.props)();
   },
 
   componentDidMount: function () {
@@ -85,17 +85,16 @@ var TreeVis = React.createClass({
     }
 
     if (!haveSameKeys(nextProps.genomesOfInterest, this.props.genomesOfInterest)) {
-      if (_.isEmpty(nextProps.genomesOfInterest)) {
-        this.genetree = _.cloneDeep(nextProps.genetree);
-      }
-      else {
-        this.genetree = pruneTree(nextProps.genetree, this.keepNode(nextProps));
+      this.genetree = _.cloneDeep(nextProps.genetree);
+      if (!_.isEmpty(nextProps.genomesOfInterest)) {
+        this.genetree = pruneTree(this.genetree, this.keepNode(nextProps));
         this.genetree.geneCount = nextProps.genetree.geneCount;
       }
-      this.initializedAlignments = false;
+      relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
+      setDefaultNodeDisplayInfo(this.genetree, nextProps.initialGeneOfInterest);
       this.initializeAlignments(nextProps)();
+      // this.reinitHeight();
       this.setState({visibleNodes: this.nodeCoordinates()});
-      this.reinitHeight();
     }
   },
 
@@ -104,9 +103,8 @@ var TreeVis = React.createClass({
     if (this.width !== parentWidth) {
       this.width = parentWidth;
       this.initHeightAndMargin();
-      this.initializeAlignments()();
+      // this.reinitHeight();
       this.setState({visibleNodes: this.nodeCoordinates()});
-      this.reinitHeight();
     }
   },
 
@@ -125,18 +123,15 @@ var TreeVis = React.createClass({
 
   initializeAlignments: function (props = this.props) {
     return function _initializeAlignments() {
-      if (!this.initializedAlignments) {
-        alignmentTools.clean();
-        var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
-        if (!_.isEmpty(props.genomesOfInterest)) {
-          // find gaps in multiple alignment
-          var gaps = alignmentTools.findGaps(multipleAlignment);
-          // remove gaps from alignments
-          alignmentTools.removeGaps(gaps, this.genetree);
-        }
-        this.domainHist = positionDomains(this.genetree, true);
-        // this.initializedAlignments = true;
+      alignmentTools.clean();
+      var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
+      if (!_.isEmpty(props.genomesOfInterest)) {
+        // find gaps in multiple alignment
+        var gaps = alignmentTools.findGaps(multipleAlignment);
+        // remove gaps from alignments
+        alignmentTools.removeGaps(gaps, this.genetree);
       }
+      this.domainHist = positionDomains(this.genetree, true);
     }.bind(this);
   },
 
@@ -162,9 +157,11 @@ var TreeVis = React.createClass({
     var alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
     this.transformAlignments = 'translate(' + alignmentOrigin + ', ' + this.margin + ')';
   },
+
   reinitHeight: function () {
-    this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
+    // this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
   },
+
   nodeCoordinates: function () {
     return nodeCoordinates(this.genetree, this.treeWidth);
   },
@@ -184,7 +181,7 @@ var TreeVis = React.createClass({
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
-        this.reinitHeight();
+        // this.reinitHeight();
         this.setState({geneOfInterest, visibleNodes});
       }.bind(this));
     }
@@ -214,7 +211,7 @@ var TreeVis = React.createClass({
         this.treeWidth
     );
 
-    this.reinitHeight();
+    // this.reinitHeight();
 
     this.setState({
       visibleNodes: newVisibleNodes
@@ -260,7 +257,7 @@ var TreeVis = React.createClass({
       this.genetree,
       this.treeWidth
     );
-    this.reinitHeight();
+    // this.reinitHeight();
     this.setState({
       visibleNodes: newVisibleNodes
     });
@@ -291,7 +288,7 @@ var TreeVis = React.createClass({
       return <div></div>;
     }
 
-    height = this.h + (2 * this.margin);
+    height = calculateSvgHeight(this.genetree) + (2 * this.margin);
 
     if (this.state.visibleNodes) {
       genetree = (
