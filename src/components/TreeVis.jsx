@@ -266,7 +266,7 @@ var TreeVis = React.createClass({
   renderBackground: function () {
     if (this.displayAlignments) {
       var bgStyle = {fill: '#f7f7f7', stroke: false};
-      var h = this.h + (2 * this.margin);
+      var h = calculateSvgHeight(this.genetree) + (2 * this.margin);
       var y = -this.margin;
       var x = -this.margin / 2;
       var w = this.alignmentsWidth + this.margin;

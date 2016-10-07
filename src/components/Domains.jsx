@@ -23,6 +23,12 @@ var Domains = React.createClass({
     }
   },
 
+  componentWillUpdate: function () {
+    if (this.props.node.hasChildren()) {
+      this.cladeStats = domainStats(this.props.node);
+    }
+  },
+
   render: function () {
     var sf = this.props.width / this.props.alignment.size;
     var transform = 'scale(' + sf + ' 1)';
