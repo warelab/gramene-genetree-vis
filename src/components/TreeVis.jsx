@@ -78,7 +78,7 @@ var TreeVis = React.createClass({
     }
   },
 
-  componentWillUpdate: function (nextProps, nextState) {
+  componentWillReceiveProps: function (nextProps) {
     function haveSameKeys(a, b) {
       return _.size(a) === _.size(b)
           && _.every(b, (val, key) => !!a[key])
