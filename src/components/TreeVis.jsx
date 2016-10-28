@@ -165,6 +165,7 @@ var TreeVis = React.createClass({
       };
       this.initializeAlignments(this.props)();
       this.consensusHeight = 36;
+      this.consensusLength = this.genetree.model.consensus.sequence.length;
     }
     const treeTop = this.margin + this.consensusHeight;
     const consensusTop = this.margin;
@@ -395,33 +396,41 @@ var TreeVis = React.createClass({
           />
       );
     }
-    var zoomPosition = {
-      left: this.alignmentOrigin,
-      width: this.alignmentsWidth
-    };
 
-    const CustomHandle = props => {
-      const style = { left: `${props.offset}%` };
-      return (
-        <span className="handle" style={style} />
+    var zoomer;
+    if (this.displayAlignments) {
+      var zoomPosition = {
+        left: this.alignmentOrigin,
+        width: this.alignmentsWidth
+      };
+
+      const CustomHandle = props => {
+        const style = {left: `${props.offset}%`};
+        return (
+          <span className="handle" style={style}/>
+        );
+      };
+      CustomHandle.propTypes = {
+        value: React.PropTypes.any,
+        offset: React.PropTypes.number,
+      };
+      zoomer = (
+        <div className="zoomer" style={zoomPosition}>
+          <Rcslider
+            min={0}
+            max={this.consensusLength}
+            range={true}
+            pushable={100}
+            defaultValue={[0,this.consensusLength]}
+            handle={<CustomHandle />}
+          />
+        </div>
       );
-    };
-    CustomHandle.propTypes = {
-      value: React.PropTypes.any,
-      offset: React.PropTypes.number,
-    };
+    }
+
     return (
     <div>
-      <div className="zoomer" style={zoomPosition}>
-        <Rcslider
-          min={0}
-          max={this.alignmentsWidth}
-          range={true}
-          pushable={100}
-          defaultValue={[0,this.alignmentsWidth]}
-          handle={<CustomHandle />}
-        />
-      </div>
+      {zoomer}
       <div className="genetree-vis">
         <svg width={this.width} height={height}>
           <g className="tree-wrapper" transform={this.transformTree}>
