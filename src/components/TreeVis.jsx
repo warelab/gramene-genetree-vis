@@ -2,9 +2,10 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Rcslider = require('rc-slider');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
-
+var svgPanZoom = require('svg-pan-zoom');
 var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
 var PositionedDomains = require('./PositionedDomains.jsx');
@@ -18,6 +19,7 @@ var alignmentTools = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
 import {setDefaultNodeDisplayInfo, makeCladeVisible, makeCladeInvisible, makeNodeVisible, makeNodeInvisible} from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
+var addConsensus = require('gramene-trees-client').extensions.addConsensus;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -40,6 +42,7 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
+      xPos: 0,
       geneOfInterest: this.props.initialGeneOfInterest
     };
   },
@@ -65,7 +68,7 @@ var TreeVis = React.createClass({
 
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
-    this.initializeAlignments(this.props)();
+    // this.initializeAlignments(this.props)();
   },
 
   componentDidMount: function () {
@@ -151,11 +154,24 @@ var TreeVis = React.createClass({
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
       this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
+      this.consensusHeight = 0;
     }
-
-    this.transformTree = 'translate(' + this.margin + ', ' + this.margin + ')';
-    var alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
-    this.transformAlignments = 'translate(' + alignmentOrigin + ', ' + this.margin + ')';
+    else {
+      addConsensus(this.genetree);
+      this.geneTreeRoot = _.clone(this.genetree);
+      delete this.geneTreeRoot.displayInfo;
+      this.geneTreeRoot.displayInfo = {
+        expanded: false
+      };
+      this.initializeAlignments(this.props)();
+      this.consensusHeight = 36;
+    }
+    const treeTop = this.margin + this.consensusHeight;
+    const consensusTop = this.margin;
+    this.transformTree = 'translate(' + this.margin + ', ' + treeTop + ')';
+    this.alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
+    this.transformAlignments = 'translate(' + this.alignmentOrigin + ', ' + treeTop + ')';
+    this.transformConsensus = 'translate(' + this.alignmentOrigin + ', ' + consensusTop + ')';
   },
 
   reinitHeight: function () {
@@ -265,7 +281,7 @@ var TreeVis = React.createClass({
   
   renderBackground: function () {
     if (this.displayAlignments) {
-      var bgStyle = {fill: '#f7f7f7', stroke: false};
+      var bgStyle = {fill: '#fff', stroke: false};
       var h = calculateSvgHeight(this.genetree) + (2 * this.margin);
       var y = -this.margin;
       var x = -this.margin / 2;
@@ -281,14 +297,90 @@ var TreeVis = React.createClass({
     }
   },
 
+  renderConsensus: function () {
+    if (this.displayAlignments) {
+      var w = this.alignmentsWidth + this.margin;
+      var alignment = alignmentTools.calculateAlignment(this.geneTreeRoot);
+      var domains = positionDomains(this.geneTreeRoot);
+      var consensus = (
+        <g>
+          <PositionedAlignment node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats} domains={domains}
+                               highlight={false} alignment={alignment}/>
+          <PositionedDomains node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats} domains={domains}
+                             alignment={alignment}/>
+        </g>
+      );
+      return (
+        <g className="consensus-wrapper" transform={this.transformConsensus}>
+          <svg width={w}
+               height="18">
+            {consensus}
+          </svg>
+        </g>
+      );
+    }
+  },
+
+  scrollConsensus: function (event) {
+    this.setState({xMin: event.target.value || 0});
+  },
+
+  renderAlignments: function () {
+    if (this.displayAlignments) {
+      var width = this.alignmentsWidth;
+      var alignments = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+
+          if (this.displayMSA) {
+
+            var vb = this.state.xMin + " 0 "+this.alignmentsWidth+" 18";
+            var fontStyle={fontFamily:'courier'};
+            return (
+              <g key={node.model.node_id}>
+                <svg width={width} height="18" viewBox={vb}>
+                  <text y={8} dy=".35em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
+                </svg>
+              </g>
+            )
+          }
+          else {
+            var alignment = alignmentTools.calculateAlignment(node);
+            var pej;
+            if (node.model.exon_junctions) {
+              pej = (
+                <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
+              )
+            }
+            var domains = positionDomains(node);
+            return (
+              <g key={node.model.node_id}>
+                {pej}
+                <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
+                                     highlight={false} alignment={alignment}/>
+                <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
+                                   alignment={alignment}/>
+              </g>
+            )
+          }
+        }
+      }.bind(this));
+      return (
+        <g className="alignments-wrapper" transform={this.transformAlignments}>
+          {this.renderBackground()}
+          {alignments}
+        </g>
+      );
+    }
+  },
+
   render: function () {
-    var genetree, alignments, height;
+    var genetree, height;
 
     if (!this.width) {
       return <div></div>;
     }
 
-    height = calculateSvgHeight(this.genetree) + (2 * this.margin);
+    height = calculateSvgHeight(this.genetree) + (2*this.margin + this.consensusHeight);
 
     if (this.state.visibleNodes) {
       genetree = (
@@ -302,58 +394,47 @@ var TreeVis = React.createClass({
                     overlaysContainer={this.refs.overlaysContainer}
           />
       );
-
-      if (this.displayAlignments) {
-        var hoveredNode = this.state.hoveredNode;
-        var width = this.alignmentsWidth;
-        var geneOfInterest = this.state.geneOfInterest;
-        alignments = this.state.visibleNodes.map(function (node) {
-          if (node.model.gene_stable_id || !node.displayInfo.expanded) {
-            var hl = (hoveredNode && _.indexOf(node.getPath(), hoveredNode) >= 0) ? '#ffffcc' : '';
-            if (geneOfInterest._id === node.model.gene_stable_id) {
-              hl = '#ffddaa';
-            }
-            if (!node.hasChildren() &&
-                ( _.get(geneOfInterest, 'homology.gene_tree.representative.model.id') === node.model.gene_stable_id ||
-                _.get(geneOfInterest, 'homology.gene_tree.representative.closest.id') === node.model.gene_stable_id)) {
-              hl = '#ccffaa';
-            }
-            var alignment = alignmentTools.calculateAlignment(node);
-            var pej;
-            if (node.model.exon_junctions) {
-              pej = (
-                  <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
-              )
-            }
-            var domains = positionDomains(node);
-            return (
-                <g key={node.model.node_id}>
-                  {pej}
-                  <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
-                                       highlight={false} alignment={alignment}/>
-                  <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
-                                     alignment={alignment}/>
-                </g>
-            )
-          }
-        }.bind(this));
-      }
     }
+    var zoomPosition = {
+      left: this.alignmentOrigin,
+      width: this.alignmentsWidth
+    };
 
+    const CustomHandle = props => {
+      const style = { left: `${props.offset}%` };
+      return (
+        <span className="handle" style={style} />
+      );
+    };
+    CustomHandle.propTypes = {
+      value: React.PropTypes.any,
+      offset: React.PropTypes.number,
+    };
     return (
-        <div className="genetree-vis">
-          <svg width={this.width} height={height}>
-            <g className="tree-wrapper" transform={this.transformTree}>
-              {genetree}
-            </g>
-            <g className="alignments-wrapper" transform={this.transformAlignments}>
-              {this.renderBackground()}
-              {alignments}
-            </g>
-          </svg>
-          <div ref="overlaysContainer"
-               className="overlays"></div>
-        </div>
+    <div>
+      <div className="zoomer" style={zoomPosition}>
+        <Rcslider
+          min={0}
+          max={this.alignmentsWidth}
+          range={true}
+          pushable={100}
+          defaultValue={[0,this.alignmentsWidth]}
+          handle={<CustomHandle />}
+        />
+      </div>
+      <div className="genetree-vis">
+        <svg width={this.width} height={height}>
+          <g className="tree-wrapper" transform={this.transformTree}>
+            {genetree}
+          </g>
+          {this.renderConsensus()}
+          {this.renderAlignments()}
+        </svg>
+        <div ref="overlaysContainer"
+             className="overlays"></div>
+        <input type="text" defaultValue="0" onChange={this.scrollConsensus}/>
+      </div>
+    </div>
     );
   }
 });

@@ -22,6 +22,8 @@
 @invisible: 0;
 @visible: 1;
 
+@import "../node_modules/rc-slider/assets/index.css";
+
 .genetree-vis {
 
   .node, .edge {
@@ -281,4 +283,31 @@
 .popover-title .tooltip-title-button {
   margin-top: -4px!important;
   margin-right: 4px!important;
+}
+
+.zoomer {
+  position: relative;
+  padding-top: 25px;
+  padding-bottom: 0px;
+  margin-bottom: -10px;
+  
+  .handle {
+    position: absolute;
+    cursor: pointer;
+
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    //border-bottom: 0px solid #abe2fb;
+  }
+  
+  .handle:first-of-type, .triangle-right {
+    transform: translate(0%, -100%);
+    border-left: 20px solid #abe2fb;
+  }
+
+  .handle:last-of-type, .triangle-left {
+    transform: translate(-100%, -100%);
+    border-right: 20px solid #abe2fb;
+  }
 }
