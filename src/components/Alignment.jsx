@@ -28,14 +28,19 @@ var Alignment = React.createClass({
             color: grayScale
           });
         }
-        prevEnd = d.end;
-        var maxColor = stats[d.id].color;
-        var colorScale = scale().domain([0,1]).range(['#FFFFFF', maxColor]);
-        regionColor.push({
-          start: d.start,
-          end: d.end,
-          color: scale().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
-        })
+        if (d.start < prevEnd) {
+          // TODO: deal with overlapping domains
+        }
+        if (d.end > prevEnd) {
+          prevEnd = d.end;
+          var maxColor = stats[d.id].color;
+          var colorScale = scale().domain([0, 1]).range(['#FFFFFF', maxColor]);
+          regionColor.push({
+            start: d.start,
+            end: d.end,
+            color: scale().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
+          });
+        }
       })
     }
     if (prevEnd < alignment.size) {
@@ -114,10 +119,8 @@ var Alignment = React.createClass({
         }
       }
     }
-    var sf = this.props.width / alignment.size;
-    var transform = 'scale('+ sf +' 1)';
     return (
-      <g className="alignment" transform={transform}>
+      <g className="alignment">
         {this.renderHighlight()}
         {bins}
       </g>

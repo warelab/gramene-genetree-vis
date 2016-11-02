@@ -22,7 +22,7 @@ var PositionedExonJunctions = React.createClass({
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 9;
+    y = this.props.node.x - 2;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   },

@@ -5,7 +5,6 @@ var ReactDOM = require('react-dom');
 var Rcslider = require('rc-slider');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
-var svgPanZoom = require('svg-pan-zoom');
 var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
 var PositionedDomains = require('./PositionedDomains.jsx');
@@ -68,7 +67,7 @@ var TreeVis = React.createClass({
 
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
-    // this.initializeAlignments(this.props)();
+    this.initializeAlignments(this.props)();
   },
 
   componentDidMount: function () {
@@ -106,7 +105,6 @@ var TreeVis = React.createClass({
     if (this.width !== parentWidth) {
       this.width = parentWidth;
       this.initHeightAndMargin();
-      // this.reinitHeight();
       this.setState({visibleNodes: this.nodeCoordinates()});
     }
   },
@@ -126,6 +124,14 @@ var TreeVis = React.createClass({
 
   initializeAlignments: function (props = this.props) {
     return function _initializeAlignments() {
+
+      addConsensus(this.genetree);
+      this.geneTreeRoot = _.clone(this.genetree);
+      delete this.geneTreeRoot.displayInfo;
+      this.geneTreeRoot.displayInfo = {
+        expanded: false
+      };
+      nodeCoordinates(this.geneTreeRoot,1);
       alignmentTools.clean();
       var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
       if (!_.isEmpty(props.genomesOfInterest)) {
@@ -138,17 +144,14 @@ var TreeVis = React.createClass({
     }.bind(this);
   },
 
-  // componentWillMount: function () {
-  //   this.initHeightAndMargin();
-  //   this.initNodes();
-  //   this.reinitHeight();
-  // },
   initHeightAndMargin: function () {
     this.margin = this.props.margin || DEFAULT_MARGIN;
     this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
     this.w = this.width - this.labelWidth - (2 * this.margin);
 
     this.treeWidth = this.w / 2 > MAX_TREE_WIDTH ? MAX_TREE_WIDTH : this.w / 2;
+    this.treeHeight = calculateSvgHeight(this.genetree);
+
     this.alignmentsWidth = this.w - this.treeWidth;
     this.displayAlignments = true;
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
@@ -157,40 +160,22 @@ var TreeVis = React.createClass({
       this.consensusHeight = 0;
     }
     else {
-      addConsensus(this.genetree);
-      this.geneTreeRoot = _.clone(this.genetree);
-      delete this.geneTreeRoot.displayInfo;
-      this.geneTreeRoot.displayInfo = {
-        expanded: false
-      };
-      this.initializeAlignments(this.props)();
-      this.consensusHeight = 36;
+      this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
     }
     const treeTop = this.margin + this.consensusHeight;
+    const alignmentTop = treeTop - 7;
     const consensusTop = this.margin;
     this.transformTree = 'translate(' + this.margin + ', ' + treeTop + ')';
     this.alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
-    this.transformAlignments = 'translate(' + this.alignmentOrigin + ', ' + treeTop + ')';
+    this.transformAlignments = 'translate(' + this.alignmentOrigin + ', ' + alignmentTop + ')';
     this.transformConsensus = 'translate(' + this.alignmentOrigin + ', ' + consensusTop + ')';
-  },
-
-  reinitHeight: function () {
-    // this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
   },
 
   nodeCoordinates: function () {
     return nodeCoordinates(this.genetree, this.treeWidth);
   },
-  // updateNodeCoordinates: function () {
-  //   var visibleNodes;
-  //
-  //   visibleNodes = layoutTree(this.genetree, this.treeWidth);
-  //
-  //   this.setState({
-  //     visibleNodes: visibleNodes
-  //   });
-  // },
+
   handleGeneSelect: function (geneNode) {
     if (this.props.allowGeneSelection) {
       GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
@@ -198,7 +183,6 @@ var TreeVis = React.createClass({
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
-        // this.reinitHeight();
         this.setState({geneOfInterest, visibleNodes});
       }.bind(this));
     }
@@ -228,12 +212,11 @@ var TreeVis = React.createClass({
         this.treeWidth
     );
 
-    // this.reinitHeight();
-
     this.setState({
       visibleNodes: newVisibleNodes
     });
   },
+
   handleNodeUnhover: function (node) {
     if (this.state.hoveredNode === node) {
       this.setState({hoveredNode: undefined});
@@ -281,7 +264,7 @@ var TreeVis = React.createClass({
   },
   
   renderBackground: function () {
-    if (this.displayAlignments) {
+    if (false) {
       var bgStyle = {fill: '#fff', stroke: false};
       var h = calculateSvgHeight(this.genetree) + (2 * this.margin);
       var y = -this.margin;
@@ -300,7 +283,7 @@ var TreeVis = React.createClass({
 
   renderConsensus: function () {
     if (this.displayAlignments) {
-      var w = this.alignmentsWidth + this.margin;
+      var w = this.alignmentsWidth;
       var alignment = alignmentTools.calculateAlignment(this.geneTreeRoot);
       var domains = positionDomains(this.geneTreeRoot);
       var consensus = (
@@ -311,10 +294,15 @@ var TreeVis = React.createClass({
                              alignment={alignment}/>
         </g>
       );
+      var viewBoxMinX = 0;
+      var viewBoxMinY = -3;
+      var viewBoxWidth = this.consensusLength;
+      var viewBoxHeight = this.consensusHeight;
+      var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
       return (
         <g className="consensus-wrapper" transform={this.transformConsensus}>
           <svg width={w}
-               height="18">
+               height={this.consensusHeight} viewBox={vb} preserveAspectRatio="none">
             {consensus}
           </svg>
         </g>
@@ -329,16 +317,21 @@ var TreeVis = React.createClass({
   renderAlignments: function () {
     if (this.displayAlignments) {
       var width = this.alignmentsWidth;
+      var viewBoxMinX = this.MSARange.MSAStart;
+      var viewBoxMinY = -3;
+      var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart + 1;
+      var viewBoxHeight = this.treeHeight + 2*this.margin + 3;
+      var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
       var alignments = this.state.visibleNodes.map(function (node) {
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
           if (this.displayMSA) {
 
-            var vb = this.state.xMin + " 0 "+this.alignmentsWidth+" 18";
+            // var vb = this.state.xMin + " 0 "+this.alignmentsWidth+" 18";
             var fontStyle={fontFamily:'courier'};
             return (
               <g key={node.model.node_id}>
-                <svg width={width} height="18" viewBox={vb}>
+                <svg width={width} height="18" viewBox={vb} preserveAspectRatio="none">
                   <text y={8} dy=".35em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
                 </svg>
               </g>
@@ -365,13 +358,21 @@ var TreeVis = React.createClass({
           }
         }
       }.bind(this));
+
       return (
         <g className="alignments-wrapper" transform={this.transformAlignments}>
-          {this.renderBackground()}
-          {alignments}
+          <svg width={this.alignmentsWidth} height={viewBoxHeight} viewBox={vb} preserveAspectRatio="none">
+            {this.renderBackground()}
+            {alignments}
+          </svg>
         </g>
       );
     }
+  },
+
+  handleSliderChange(e) {
+    this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
+    console.log(this.MSARange);
   },
 
   render: function () {
@@ -380,8 +381,9 @@ var TreeVis = React.createClass({
     if (!this.width) {
       return <div></div>;
     }
+    this.treeHeight = calculateSvgHeight(this.genetree);
 
-    height = calculateSvgHeight(this.genetree) + (2*this.margin + this.consensusHeight);
+    height = this.treeHeight + 2*this.margin + this.consensusHeight + 3;
 
     if (this.state.visibleNodes) {
       genetree = (
@@ -414,18 +416,21 @@ var TreeVis = React.createClass({
         value: React.PropTypes.any,
         offset: React.PropTypes.number,
       };
+
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
           <Rcslider
-            min={0}
+            min={1}
             max={this.consensusLength}
             range={true}
-            pushable={100}
+            pushable={100} // figure out the number of characters that fit in this.alignmentsWidth
             defaultValue={[0,this.consensusLength]}
             handle={<CustomHandle />}
+            onChange={this.handleSliderChange}
           />
         </div>
       );
+      this.MSARange = {MSAStart: 1, MSAStop: this.consensusLength};
     }
 
     return (

@@ -30,10 +30,8 @@ var Domains = React.createClass({
   },
 
   render: function () {
-    var sf = this.props.width / this.props.alignment.size;
-    var transform = 'scale(' + sf + ' 1)';
     return (
-      <g className="domains" transform={transform}>
+      <g className="domains">
         {this.renderDomains()}
       </g>
     );
