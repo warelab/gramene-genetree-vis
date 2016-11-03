@@ -15,7 +15,7 @@
   "dependencies": {
     "d3": "^3.5.14",
     "gramene-search-client": "2.6.3",
-    "gramene-trees-client": "^2.4.7",
+    "gramene-trees-client": "git://github.com/warelab/gramene-trees-client.git#consensus",
     "lodash": "^4.2.0",
     "numeral": "^1.5.3",
     "platform": "^1.3.1",
