@@ -3,6 +3,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Rcslider = require('rc-slider');
+var microsoftBrowser = require('../utils/microsoftBrowser');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 var GeneTree = require('./GeneTree.jsx');
@@ -41,7 +42,7 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      xPos: 0,
+      displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest
     };
   },
@@ -160,8 +161,12 @@ var TreeVis = React.createClass({
       this.consensusHeight = 0;
     }
     else {
+      this.charWidth = 8.0;
       this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
+      this.consensusWidth = Math.floor(this.alignmentsWidth / this.charWidth);
+      this.MSARange = {MSAStart: 1, MSAStop: this.consensusLength};
+      this.vbHeight = this.treeHeight + 2*this.margin + 3;
     }
     const treeTop = this.margin + this.consensusHeight;
     const alignmentTop = treeTop - 7;
@@ -183,6 +188,7 @@ var TreeVis = React.createClass({
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
+        this.initHeightAndMargin();
         this.setState({geneOfInterest, visibleNodes});
       }.bind(this));
     }
@@ -211,7 +217,7 @@ var TreeVis = React.createClass({
         this.genetree,
         this.treeWidth
     );
-
+    this.initHeightAndMargin();
     this.setState({
       visibleNodes: newVisibleNodes
     });
@@ -258,6 +264,7 @@ var TreeVis = React.createClass({
       this.treeWidth
     );
     // this.reinitHeight();
+    this.initHeightAndMargin();
     this.setState({
       visibleNodes: newVisibleNodes
     });
@@ -310,30 +317,33 @@ var TreeVis = React.createClass({
     }
   },
 
-  scrollConsensus: function (event) {
-    this.setState({xMin: event.target.value || 0});
-  },
-
   renderAlignments: function () {
     if (this.displayAlignments) {
       var width = this.alignmentsWidth;
       var viewBoxMinX = this.MSARange.MSAStart;
       var viewBoxMinY = -3;
-      var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart + 1;
-      var viewBoxHeight = this.treeHeight + 2*this.margin + 3;
+      var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart;
+      var viewBoxHeight = this.vbHeight;
+      if (this.state.displayMSA) {
+        viewBoxWidth *= this.charWidth;
+        viewBoxMinX *= this.charWidth;
+      }
       var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
       var alignments = this.state.visibleNodes.map(function (node) {
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
-          if (this.displayMSA) {
-
-            // var vb = this.state.xMin + " 0 "+this.alignmentsWidth+" 18";
+          if (this.state.displayMSA) {
             var fontStyle={fontFamily:'courier'};
+            var MSAProps = {key: node.model.node_id};
+            if(microsoftBrowser) {
+              MSAProps.transform = 'translate(0, ' + node.x + ')';
+            }
+            else {
+              MSAProps.style = { transform: 'translate(0px, ' + node.x + 'px)' };
+            }
             return (
-              <g key={node.model.node_id}>
-                <svg width={width} height="18" viewBox={vb} preserveAspectRatio="none">
-                  <text y={8} dy=".35em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
-                </svg>
+              <g {...MSAProps}>
+                <text y={8} dy=".35em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
               </g>
             )
           }
@@ -361,7 +371,7 @@ var TreeVis = React.createClass({
 
       return (
         <g className="alignments-wrapper" transform={this.transformAlignments}>
-          <svg width={this.alignmentsWidth} height={viewBoxHeight} viewBox={vb} preserveAspectRatio="none">
+          <svg ref={(svg) => this.alignmentsSVG = svg} width={this.alignmentsWidth} height={viewBoxHeight} viewBox={vb} preserveAspectRatio="none">
             {this.renderBackground()}
             {alignments}
           </svg>
@@ -372,7 +382,22 @@ var TreeVis = React.createClass({
 
   handleSliderChange(e) {
     this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
-    console.log(this.MSARange);
+    var MSAWidth = e[1] - e[0];
+    if (!this.state.displayMSA && MSAWidth <= this.consensusWidth) {
+      this.setState({displayMSA: true});
+    }
+    else if (this.state.displayMSA && MSAWidth > this.consensusWidth) {
+      this.setState({displayMSA: false});
+    }
+    else {
+      var Xmin = e[0];
+      if (this.state.displayMSA) {
+        MSAWidth *= this.charWidth;
+        Xmin = e[0] * this.charWidth;
+      }
+      var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
+      this.alignmentsSVG.setAttribute('viewBox', vb);
+    }
   },
 
   render: function () {
@@ -423,14 +448,13 @@ var TreeVis = React.createClass({
             min={1}
             max={this.consensusLength}
             range={true}
-            pushable={100} // figure out the number of characters that fit in this.alignmentsWidth
+            pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
             defaultValue={[0,this.consensusLength]}
             handle={<CustomHandle />}
             onChange={this.handleSliderChange}
           />
         </div>
       );
-      this.MSARange = {MSAStart: 1, MSAStop: this.consensusLength};
     }
 
     return (
@@ -446,7 +470,6 @@ var TreeVis = React.createClass({
         </svg>
         <div ref="overlaysContainer"
              className="overlays"></div>
-        <input type="text" defaultValue="0" onChange={this.scrollConsensus}/>
       </div>
     </div>
     );
