@@ -165,7 +165,6 @@ var TreeVis = React.createClass({
       this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
       this.consensusWidth = Math.floor(this.alignmentsWidth / this.charWidth);
-      this.MSARange = {MSAStart: 1, MSAStop: this.consensusLength};
       this.vbHeight = this.treeHeight + 2*this.margin + 3;
     }
     const treeTop = this.margin + this.consensusHeight;
@@ -333,7 +332,7 @@ var TreeVis = React.createClass({
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
           if (this.state.displayMSA) {
-            var fontStyle={fontFamily:'courier'};
+            var fontStyle={fontFamily:'courier', fontSize:'11px'};
             var MSAProps = {key: node.model.node_id};
             if(microsoftBrowser) {
               MSAProps.transform = 'translate(0, ' + node.x + ')';
@@ -343,7 +342,7 @@ var TreeVis = React.createClass({
             }
             return (
               <g {...MSAProps}>
-                <text y={8} dy=".35em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
+                <text y={8} dy=".05em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
               </g>
             )
           }
@@ -442,6 +441,13 @@ var TreeVis = React.createClass({
         offset: React.PropTypes.number,
       };
 
+      if (!this.MSARange) {
+        this.MSARange = {
+          MSAStart: 0,
+          MSAStop: this.consensusLength
+        };
+      }
+
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
           <Rcslider
@@ -449,7 +455,7 @@ var TreeVis = React.createClass({
             max={this.consensusLength}
             range={true}
             pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
-            defaultValue={[0,this.consensusLength]}
+            defaultValue={[this.MSARange.MSAStart,this.MSARange.MSAStop]}
             handle={<CustomHandle />}
             onChange={this.handleSliderChange}
           />
