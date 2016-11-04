@@ -161,7 +161,7 @@ var TreeVis = React.createClass({
       this.consensusHeight = 0;
     }
     else {
-      this.charWidth = 8.0;
+      this.charWidth = 7.2065;
       this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
       this.consensusWidth = Math.floor(this.alignmentsWidth / this.charWidth);
@@ -332,7 +332,7 @@ var TreeVis = React.createClass({
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
           if (this.state.displayMSA) {
-            var fontStyle={fontFamily:'courier', fontSize:'11px'};
+            var fontStyle={fontFamily:'courier', fontSize:'12px'};
             var MSAProps = {key: node.model.node_id};
             if(microsoftBrowser) {
               MSAProps.transform = 'translate(0, ' + node.x + ')';
@@ -451,7 +451,7 @@ var TreeVis = React.createClass({
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
           <Rcslider
-            min={1}
+            min={0}
             max={this.consensusLength}
             range={true}
             pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
