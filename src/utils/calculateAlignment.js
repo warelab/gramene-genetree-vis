@@ -143,11 +143,78 @@ function removeGaps(gaps, tree) {
   });
 }
 
+function resolveOverlaps(domainList) {
+  if (domainList.length < 2)
+    return domainList;
+  domainList.sort(function(a,b) {
+    return a.start - b.start;
+  });
+  let trimmed = [];
+  let last = _.clone(domainList[0]);
+  let i = 1;
+  while (i < domainList.length) {
+    var d = domainList[i];
+    if (d.start >= last.end) {
+      trimmed.push(last);
+      last = d;
+      i++;
+    }
+    else {
+      // trim last up to d.start
+      if (last.start < d.start) {
+        let l = _.clone(last);
+        l.end = d.start;
+        trimmed.push(l);
+        last.start = d.start;
+        i++;
+      }
+      if (d.nSeqs > last.nSeqs) {
+        if (d.end >= last.end) {
+          last = d;
+          i++;
+        }
+        else {
+          // d ends inside of last but d is better
+          // need to trim last and insert it into domainList
+          // where it goes to preserve sorted order
+          let l = _.clone(last);
+          l.start = d.end;
+          last = _.clone(d);
+          let j = i+1;
+          while (j < domainList.length && domainList[j].start < l.start) {
+            domainList[j-1] = domainList[j];
+            j++;
+          }
+          domainList[j-1] = l;
+        }
+      }
+      else { // last.nSeqs >= d.nSeqs
+        if (last.end >= d.end) { // skip d
+          i++;
+        }
+        else {
+          let l = _.clone(d);
+          l.start = last.end;
+          let j = i+1;
+          while (j < domainList.length && domainList[j].start < l.start) {
+            domainList[j-1] = domainList[j];
+            j++;
+          }
+          domainList[j-1] = l;
+        }
+      }
+    }
+  }
+  trimmed.push(last);
+  return trimmed;
+}
+
 module.exports = {
   calculateAlignment: calculateAlignment,
   findGaps: findGaps,
   removeGaps: removeGaps,
   getOffsets: getOffsets,
+  resolveOverlaps: resolveOverlaps,
   clean: function() {
     alignments = {};
   }

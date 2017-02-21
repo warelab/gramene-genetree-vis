@@ -1,7 +1,9 @@
 'use strict';
 var React = require('react');
 var numeral = require('numeral');
+import _ from 'lodash';
 import {OverlayTrigger, Popover} from "react-bootstrap";
+import {resolveOverlaps} from '../utils/calculateAlignment';
 
 var colors = require('d3').scale.category10().range();
 
@@ -39,7 +41,8 @@ var Domains = React.createClass({
 
 
   renderDomains: function () {
-    return this.props.domains.map(function (domain, idx) {
+    let nonOverlappingDomains = resolveOverlaps(this.props.domains);
+    return nonOverlappingDomains.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
       var stats = this.props.stats[domain.id];
 
@@ -48,7 +51,7 @@ var Domains = React.createClass({
       var style = {fill: color, stroke: color, fillOpacity: opacity};
 
       return (
-        <OverlayTrigger key={idx}
+        <OverlayTrigger key={'ot'+idx}
                         trigger={['click', 'focus']} rootClose
                         placement="bottom"
                         overlay={this.renderPopover(domain)}>

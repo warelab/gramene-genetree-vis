@@ -4,6 +4,7 @@ var _ = require('lodash');
 var React = require('react');
 var alignmentTools = require('../utils/calculateAlignment');
 
+
 var Alignment = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
@@ -20,7 +21,7 @@ var Alignment = React.createClass({
     var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
     if (this.props.domains.length > 0) {
-      this.props.domains.forEach(function(d) {
+      alignmentTools.resolveOverlaps(this.props.domains).forEach(function(d) {
         if (d.start > prevEnd) {
           regionColor.push({
             start: prevEnd,
