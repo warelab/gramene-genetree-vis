@@ -68,6 +68,9 @@ var Domains = React.createClass({
   },
 
   renderPopoverContent(domain) {
+    if (this.props.node.isRoot()) {
+      return this.renderRootNodePopoverContent(domain);
+    }
     if (this.props.node.hasChildren()) {
       return this.renderInternalNodePopoverContent(domain);
     }
@@ -75,7 +78,19 @@ var Domains = React.createClass({
       return this.renderGeneNodePopoverContent(domain);
     }
   },
-  
+
+  renderRootNodePopoverContent(domain) {
+    var stats = this.props.stats[domain.id];
+
+    var treeStatement = createStatement(stats, 'genetree');
+
+    return (
+      <div>
+        <p className="description">{domain.description}</p>
+        <p className="stats">{treeStatement}</p>
+      </div>
+    );
+  },
   renderInternalNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
     var cladeStats = this.cladeStats[domain.id];
@@ -91,7 +106,7 @@ var Domains = React.createClass({
       </div>
     );
   },
-  
+
   renderGeneNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
     var statement = createStatement(stats, 'genetree');
@@ -115,7 +130,7 @@ function createStatement(stats, whatIsThis) {
     statement = `Shared by all ${totalGenes} genes in this ${whatIsThis}.`;
   }
   else if (geneCount === 1) {
-    statement = `This is the only gene in the ${whatIsThis} with this domain.`;
+    statement = `There is only one gene in the ${whatIsThis} with this domain.`;
   }
   else {
     statement = `Shared by ${geneCount} of ${totalGenes} (${proportion}) genes in this ${whatIsThis}.`;
