@@ -2,7 +2,7 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Rcslider = require('rc-slider');
+import Range from 'rc-slider/lib/Range';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
@@ -450,13 +450,12 @@ var TreeVis = React.createClass({
 
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
-          <Rcslider
+          <Range
             min={0}
             max={this.consensusLength}
-            range={true}
             pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
             defaultValue={[this.MSARange.MSAStart,this.MSARange.MSAStop]}
-            handle={<CustomHandle />}
+            //handle={} //<CustomHandle />}
             onChange={this.handleSliderChange}
           />
         </div>

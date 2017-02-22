@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var domains = {};
-var calculateAlignment = require('./calculateAlignment').calculateAlignment;
+import {calculateAlignment, getOffsets} from './calculateAlignment';
 
 
 function remap(seqPos, blocks) {
@@ -14,44 +14,6 @@ function remap(seqPos, blocks) {
     posInSeq += blockLength;
   }
   return 0;
-}
-
-function mergeOverlappingDomains(domainList) {
-  domainList.sort(function(a,b) {
-    return a.start - b.start;
-  });
-  var merged = [];
-  var prev = domainList.shift();
-  domainList.forEach(function(d) {
-    if (d.start <= prev.end) {
-      if (d.id === prev.id) {
-        if (d.end > prev.end) {
-          prev.end = d.end;
-          prev.nSeqs += d.nSeqs;
-        }
-      }
-      else {
-        if (d.end > prev.end) {
-          d.start = prev.end;
-          merged.push(prev);
-          prev = d;
-        }
-        else { // this domain fits inside prev
-
-        }
-      }
-    }
-    else {
-      merged.push(prev);
-      prev = d;
-    }
-  });
-  merged.push(prev);
-  return merged;
-}
-
-function getOffsets(positions) {
-  return Object.keys(positions).map(function(i) { return +i }).sort(function(a,b){return a - b});
 }
 
 function mergeDomains(domainList) {
@@ -114,7 +76,7 @@ module.exports = function positionDomains(node,reset) {
           nSeqs: 1
         }
       });
-      domains[nodeId] = domainsList
+      domains[nodeId] = domainsList;
     }
     else {
       // no domains on this gene, return an empty list

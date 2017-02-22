@@ -71,7 +71,6 @@ var Alignment = React.createClass({
   },
   
   render: function () {
-    var node = this.props.node;
     var alignment = _.cloneDeep(this.props.alignment);
     var regionColor = this.getColorMap(alignment, this.props.stats);
 

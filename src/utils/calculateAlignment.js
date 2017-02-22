@@ -143,9 +143,26 @@ function removeGaps(gaps, tree) {
   });
 }
 
-function resolveOverlaps(domainList) {
-  if (domainList.length < 2)
-    return domainList;
+function mergeAdjacent(domainList) {
+  let merged=[];
+  let last = domainList.shift();
+  domainList.forEach(function (d) {
+    if (last.id === d.id && last.end === d.start) {
+      last.end = d.end;
+    }
+    else {
+      merged.push(last);
+      last = d;
+    }
+  });
+  merged.push(last);
+  return merged;
+}
+
+function resolveOverlaps(dl) {
+  if (dl.length < 2)
+    return dl;
+  let domainList = _.cloneDeep(dl);
   domainList.sort(function(a,b) {
     return a.start - b.start;
   });
@@ -166,7 +183,6 @@ function resolveOverlaps(domainList) {
         l.end = d.start;
         trimmed.push(l);
         last.start = d.start;
-        i++;
       }
       if (d.nSeqs > last.nSeqs) {
         if (d.end >= last.end) {
@@ -206,7 +222,7 @@ function resolveOverlaps(domainList) {
     }
   }
   trimmed.push(last);
-  return trimmed;
+  return mergeAdjacent(trimmed);
 }
 
 module.exports = {
