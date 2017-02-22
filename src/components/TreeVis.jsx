@@ -430,17 +430,6 @@ var TreeVis = React.createClass({
         width: this.alignmentsWidth
       };
 
-      const CustomHandle = props => {
-        const style = {left: `${props.offset}%`};
-        return (
-          <span className="handle" style={style}/>
-        );
-      };
-      CustomHandle.propTypes = {
-        value: React.PropTypes.any,
-        offset: React.PropTypes.number,
-      };
-
       if (!this.MSARange) {
         this.MSARange = {
           MSAStart: 0,
@@ -455,7 +444,6 @@ var TreeVis = React.createClass({
             max={this.consensusLength}
             pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
             defaultValue={[this.MSARange.MSAStart,this.MSARange.MSAStop]}
-            //handle={} //<CustomHandle />}
             onChange={this.handleSliderChange}
           />
         </div>
