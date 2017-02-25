@@ -3,6 +3,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 import Range from 'rc-slider/lib/Range';
+import Slider from 'rc-slider/lib/Slider';
+import Switch from 'react-toggle-switch';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
@@ -42,7 +44,7 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: true,
+      displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest
     };
   },
@@ -399,7 +401,7 @@ var TreeVis = React.createClass({
         return (
           // <g transform={this.transformAlignments}>
             <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7} width={this.alignmentsWidth} height={viewBoxHeight}>
-              <div className="MSAlignments-wrapper">
+              <div className="MSAlignments-wrapper" onLoad={() => this.scrollLeft = this.MSARange.MSAStart * this.charWidth}>
               {MSAlignments}
               </div>
             </foreignObject>
@@ -421,29 +423,18 @@ var TreeVis = React.createClass({
   },
 
   handleSliderChange(e) {
-    this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
-    var MSAWidth = e[1] - e[0];
     if (this.state.displayMSA) {
-      if (MSAWidth > this.consensusWidth) {
-        // this.setState({displayMSA: false});
-      }
-      else {
-        let Xmin = e[0] * this.charWidth;
-        let rows = document.getElementsByClassName('clustal');
-        for (var i=0;i<rows.length; i++) {
-          rows[i].scrollLeft = Xmin;
-        }
-      }
+      this.MSARange = {MSAStart: e[0], MSAStop: e[0] + Math.floor(this.consensusLength/100)};
+      let Xmin = e[0] * this.charWidth;
+      let rows = document.getElementsByClassName('MSAlignments-wrapper');
+      rows[0].scrollLeft = Xmin;
     }
     else {
-      if (MSAWidth <= this.consensusWidth) {
-        this.setState({displayMSA: true});
-      }
-      else {
-        var Xmin = e[0];
-        var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
-        this.alignmentsSVG.setAttribute('viewBox', vb);
-      }
+      this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
+      var MSAWidth = e[1] - e[0];
+      var Xmin = e[0];
+      var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
+      this.alignmentsSVG.setAttribute('viewBox', vb);
     }
   },
 
@@ -477,25 +468,38 @@ var TreeVis = React.createClass({
         left: this.alignmentOrigin,
         width: this.alignmentsWidth
       };
-
       if (!this.MSARange) {
         this.MSARange = {
           MSAStart: 0,
           MSAStop: this.consensusLength
         };
       }
-
-      zoomer = (
-        <div className="zoomer" style={zoomPosition}>
-          <Range
-            min={0}
-            max={this.consensusLength}
-            pushable={this.consensusWidth} // figure out the number of characters that fit in this.alignmentsWidth
-            defaultValue={[this.MSARange.MSAStart,this.MSARange.MSAStop]}
-            onChange={this.handleSliderChange}
-          />
-        </div>
-      );
+      {/*if (this.state.displayMSA) {*/}
+        {/*zoomer = (*/}
+          {/*<div className="msa-slider" style={zoomPosition}>*/}
+      //       <Slider
+      //         min={0}
+      //         max={this.consensusLength}
+      //         onChange={this.handleSliderChange}
+      //         defaultValue={this.MSARange.MSAStart}
+      //       />
+      //     </div>
+      //   )
+      // }
+      // else {
+        zoomer = (
+          <div className="zoomer" style={zoomPosition}>
+            MSA<Switch on={this.state.displayMSA} onClick={() => this.setState({displayMSA: !this.state.displayMSA})}/>
+            <Range
+              min={0}
+              max={this.consensusLength}
+              pushable={Math.floor(this.consensusLength/100)}
+              defaultValue={[this.MSARange.MSAStart, this.MSARange.MSAStop]}
+              onChange={this.handleSliderChange}
+            />
+          </div>
+        );
+      // }
     }
 
     return (

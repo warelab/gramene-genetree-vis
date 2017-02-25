@@ -1,10 +1,40 @@
+.switch {
+  border:1px solid #ccc;
+  width:25px;
+  height:14px;
+  border-radius:7px;
+  cursor:pointer;
+  display:inline-block
+}
+.switch-toggle {
+  border:1px solid #999;
+  box-shadow:1px 1px 1px #ccc;
+  width:13px;
+  height:12px;
+  left:0;
+  border-radius:6px;
+  background:#fff;
+  position:relative;
+  transition:left .2s ease-in-out
+}
+.switch.on {
+  background:green
+}
+.switch.on .switch-toggle {
+  left:10px
+}
+.switch.disabled {
+  cursor:not-allowed
+}
+
 .MSAlignments-wrapper {
   overflow-x: scroll;
 }
 .clustal {
   white-space: nowrap;
   font-family: monospace;
-  font-size: 11pt;
+  font-size: 10pt;
+  padding: 0px;
   margin: -2px;
   .A,.I,.L,.M,.F,.W,.V {
     background-color: #80a0f0
