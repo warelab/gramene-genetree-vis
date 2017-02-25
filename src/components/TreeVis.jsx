@@ -42,7 +42,7 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: false,
+      displayMSA: true,
       geneOfInterest: this.props.initialGeneOfInterest
     };
   },
@@ -328,25 +328,53 @@ var TreeVis = React.createClass({
         viewBoxMinX *= this.charWidth;
       }
       var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
+      var MSAlignments = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+
+          var MSAProps = {
+            key: node.model.node_id,
+            className: 'clustal'
+          };
+          // if (microsoftBrowser) {
+          //   MSAProps.transform = 'translate(0, ' + node.x + ')';
+          // }
+          // else {
+          //   MSAProps.style = {width: width, height: 18, transform: 'translate(0px, ' + node.x + 'px)'};
+          // }
+          let idx = 0;
+          let chars = node.model.consensus.sequence;
+          let spans = [];
+          spans[0] = chars[0];
+          let j=0;
+          for(let i=1;i<chars.length;i++) {
+            if (chars[i] === chars[i-1]) {
+              spans[j] += chars[i]
+            }
+            else {
+              spans.push(chars[i]);
+              j++;
+            }
+          }
+
+          let msaRow = spans.map(function (base) {
+            if (base.charAt(0) === '-')
+              return (<span key={++idx} className="gap">{base}</span>)
+            else
+              return (<span key={++idx} className={base.charAt(0)}>{base}</span>)
+          });
+          return (
+            <div {...MSAProps}>{msaRow}</div>
+          );
+          // return (
+          //   <g {...MSAProps}>
+          //     <text y={8} dy=".05em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
+          //   </g>
+          // )
+        }
+      }.bind(this));
       var alignments = this.state.visibleNodes.map(function (node) {
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
-          if (this.state.displayMSA) {
-            var fontStyle={fontFamily:'courier', fontSize:'12px'};
-            var MSAProps = {key: node.model.node_id};
-            if(microsoftBrowser) {
-              MSAProps.transform = 'translate(0, ' + node.x + ')';
-            }
-            else {
-              MSAProps.style = { transform: 'translate(0px, ' + node.x + 'px)' };
-            }
-            return (
-              <g {...MSAProps}>
-                <text y={8} dy=".05em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
-              </g>
-            )
-          }
-          else {
             var alignment = alignmentTools.calculateAlignment(node);
             var pej;
             if (node.model.exon_junctions) {
@@ -364,38 +392,58 @@ var TreeVis = React.createClass({
                                    alignment={alignment}/>
               </g>
             )
-          }
         }
       }.bind(this));
 
-      return (
-        <g className="alignments-wrapper" transform={this.transformAlignments}>
-          <svg ref={(svg) => this.alignmentsSVG = svg} width={this.alignmentsWidth} height={viewBoxHeight} viewBox={vb} preserveAspectRatio="none">
-            {this.renderBackground()}
-            {alignments}
-          </svg>
-        </g>
-      );
+      if (this.state.displayMSA) {
+        return (
+          // <g transform={this.transformAlignments}>
+            <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7} width={this.alignmentsWidth} height={viewBoxHeight}>
+              <div className="MSAlignments-wrapper">
+              {MSAlignments}
+              </div>
+            </foreignObject>
+          // </g>
+        )
+      }
+      else {
+        return (
+          <g className="alignments-wrapper" transform={this.transformAlignments}>
+            <svg ref={(svg) => this.alignmentsSVG = svg} width={this.alignmentsWidth} height={viewBoxHeight}
+                 viewBox={vb} preserveAspectRatio="none">
+              {this.renderBackground()}
+              {alignments}
+            </svg>
+          </g>
+        );
+      }
     }
   },
 
   handleSliderChange(e) {
     this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
     var MSAWidth = e[1] - e[0];
-    if (!this.state.displayMSA && MSAWidth <= this.consensusWidth) {
-      this.setState({displayMSA: true});
-    }
-    else if (this.state.displayMSA && MSAWidth > this.consensusWidth) {
-      this.setState({displayMSA: false});
+    if (this.state.displayMSA) {
+      if (MSAWidth > this.consensusWidth) {
+        // this.setState({displayMSA: false});
+      }
+      else {
+        let Xmin = e[0] * this.charWidth;
+        let rows = document.getElementsByClassName('clustal');
+        for (var i=0;i<rows.length; i++) {
+          rows[i].scrollLeft = Xmin;
+        }
+      }
     }
     else {
-      var Xmin = e[0];
-      if (this.state.displayMSA) {
-        MSAWidth *= this.charWidth;
-        Xmin = e[0] * this.charWidth;
+      if (MSAWidth <= this.consensusWidth) {
+        this.setState({displayMSA: true});
       }
-      var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
-      this.alignmentsSVG.setAttribute('viewBox', vb);
+      else {
+        var Xmin = e[0];
+        var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
+        this.alignmentsSVG.setAttribute('viewBox', vb);
+      }
     }
   },
 
