@@ -4,9 +4,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import Range from 'rc-slider/lib/Range';
 import Slider from 'rc-slider/lib/Slider';
-import Switch from 'react-toggle-switch';
 import {MenuItem, DropdownButton, Button, ButtonToolbar} from 'react-bootstrap';
-var microsoftBrowser = require('../utils/microsoftBrowser');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 var GeneTree = require('./GeneTree.jsx');
@@ -51,7 +49,7 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: true,
+      displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest,
       colorScheme: 'clustal'
     };
@@ -490,10 +488,21 @@ var TreeVis = React.createClass({
       let colorSchemeDropdown;
       let slider;
       if (this.state.displayMSA) {
-        const colorSchemes = ['clustal', 'zappo'];
+        const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity'];
         let items = colorSchemes.map(function (scheme, i) {
-          return <MenuItem key={i} eventKey={i}>{scheme}</MenuItem>;
-        });
+          if (scheme === this.state.colorScheme)
+            return (
+              <MenuItem key={i} eventKey={i} active
+                onClick={() => this.setState({colorScheme: scheme})}
+              >{scheme}</MenuItem>
+            );
+          else
+            return (
+              <MenuItem key={i} eventKey={i}
+                onClick={() => this.setState({colorScheme: scheme})}
+              >{scheme}</MenuItem>
+            );
+        }.bind(this));
         colorSchemeDropdown = (
           <DropdownButton title="Color Scheme">
             {items}
