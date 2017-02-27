@@ -1,18 +1,19 @@
 .switch {
   border:1px solid #ccc;
-  width:25px;
-  height:14px;
-  border-radius:7px;
+  width:36px;
+  height:21px;
+  border-radius:10px;
   cursor:pointer;
-  display:inline-block
+  display:inline-block;
+  vertical-align:middle;
 }
 .switch-toggle {
   border:1px solid #999;
   box-shadow:1px 1px 1px #ccc;
-  width:13px;
-  height:12px;
+  width:19px;
+  height:18px;
   left:0;
-  border-radius:6px;
+  border-radius:9px;
   background:#fff;
   position:relative;
   transition:left .2s ease-in-out
@@ -21,7 +22,7 @@
   background:green
 }
 .switch.on .switch-toggle {
-  left:10px
+  left:14px
 }
 .switch.disabled {
   cursor:not-allowed
@@ -29,23 +30,23 @@
 
 .MSAlignments-wrapper {
   overflow-x: scroll;
+  overflow-y: hidden;
 }
 .clustal {
   white-space: nowrap;
   font-family: monospace;
-  font-size: 10pt;
-  padding: 0px;
-  margin: -2px;
-  .A,.I,.L,.M,.F,.W,.V {
+  height: 18px;
+  font-size: 12px;
+  .A, .I, .L, .M, .F, .W, .V {
     background-color: #80a0f0
   }
-  .R,.K {
+  .R, .K {
     background-color: #f01505
   }
-  .N,.Q,.S,.T {
+  .N, .Q, .S, .T {
     background-color: #00ff00
   }
-  .D,.E {
+  .D, .E {
     background-color: #c048c0
   }
   .C {
@@ -59,5 +60,8 @@
   }
   .P {
     background-color: #ffff00
+  }
+  .gap {
+    color: #ccc
   }
 }

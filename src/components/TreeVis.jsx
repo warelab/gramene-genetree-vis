@@ -5,6 +5,7 @@ var ReactDOM = require('react-dom');
 import Range from 'rc-slider/lib/Range';
 import Slider from 'rc-slider/lib/Slider';
 import Switch from 'react-toggle-switch';
+import {MenuItem, DropdownButton, Button, ButtonToolbar} from 'react-bootstrap';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
@@ -19,7 +20,13 @@ var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
 var alignmentTools = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
-import {setDefaultNodeDisplayInfo, makeCladeVisible, makeCladeInvisible, makeNodeVisible, makeNodeInvisible} from "../utils/visibleNodes";
+import {
+  setDefaultNodeDisplayInfo,
+  makeCladeVisible,
+  makeCladeInvisible,
+  makeNodeVisible,
+  makeNodeInvisible
+} from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 var addConsensus = require('gramene-trees-client').extensions.addConsensus;
 
@@ -44,8 +51,9 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: false,
-      geneOfInterest: this.props.initialGeneOfInterest
+      displayMSA: true,
+      geneOfInterest: this.props.initialGeneOfInterest,
+      colorScheme: 'clustal'
     };
   },
 
@@ -55,8 +63,8 @@ var TreeVis = React.createClass({
     this.domainStats = domainStats(this.genetree); // do this to all genomes
 
     this.resizeListener = _.debounce(
-        this.updateAvailableWidth,
-        windowResizeDebounceMs
+      this.updateAvailableWidth,
+      windowResizeDebounceMs
     );
 
     if (!_.isUndefined(global.addEventListener)) {
@@ -73,6 +81,14 @@ var TreeVis = React.createClass({
     this.initializeAlignments(this.props)();
   },
 
+  componentDidUpdate: function () {
+    if (this.state.displayMSA) {
+      let Xmin = this.MSARange.MSAStart * this.charWidth;
+      let MSA = document.getElementsByClassName('MSAlignments-wrapper');
+      MSA[0].scrollLeft = Xmin;
+    }
+  },
+
   componentDidMount: function () {
     this.updateAvailableWidth();
   },
@@ -86,7 +102,7 @@ var TreeVis = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     function haveSameKeys(a, b) {
       return _.size(a) === _.size(b)
-          && _.every(b, (val, key) => !!a[key])
+        && _.every(b, (val, key) => !!a[key])
     }
 
     if (!haveSameKeys(nextProps.genomesOfInterest, this.props.genomesOfInterest)) {
@@ -116,7 +132,7 @@ var TreeVis = React.createClass({
     return function _keepNode(node) {
       if (props.genomesOfInterest.hasOwnProperty(node.model.taxon_id)) return true;
       if (node.model.gene_stable_id &&
-          _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
+        _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
         if (node.model.gene_stable_id === props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
           return true;
         }
@@ -134,7 +150,7 @@ var TreeVis = React.createClass({
       this.geneTreeRoot.displayInfo = {
         expanded: false
       };
-      nodeCoordinates(this.geneTreeRoot,1);
+      nodeCoordinates(this.geneTreeRoot, 1);
       alignmentTools.clean();
       var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
       if (!_.isEmpty(props.genomesOfInterest)) {
@@ -167,7 +183,7 @@ var TreeVis = React.createClass({
       this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
       this.consensusWidth = Math.floor(this.alignmentsWidth / this.charWidth);
-      this.vbHeight = this.treeHeight + 2*this.margin + 3;
+      this.vbHeight = this.treeHeight + 2 * this.margin + 3;
     }
     const treeTop = this.margin + this.consensusHeight;
     const alignmentTop = treeTop - 7;
@@ -195,7 +211,7 @@ var TreeVis = React.createClass({
     }
   },
 
-  changeCladeVisibility: function (node,recursive) {
+  changeCladeVisibility: function (node, recursive) {
 
     if (node.displayInfo.expanded) {
       if (recursive) {
@@ -215,8 +231,8 @@ var TreeVis = React.createClass({
     }
 
     const newVisibleNodes = nodeCoordinates(
-        this.genetree,
-        this.treeWidth
+      this.genetree,
+      this.treeWidth
     );
     this.initHeightAndMargin();
     this.setState({
@@ -270,7 +286,7 @@ var TreeVis = React.createClass({
       visibleNodes: newVisibleNodes
     });
   },
-  
+
   renderBackground: function () {
     if (false) {
       var bgStyle = {fill: '#fff', stroke: false};
@@ -279,12 +295,12 @@ var TreeVis = React.createClass({
       var x = -this.margin / 2;
       var w = this.alignmentsWidth + this.margin;
       return (
-          <rect key='bg'
-                width={w}
-                height={h}
-                x={x}
-                y={y}
-                style={bgStyle}/>
+        <rect key='bg'
+              width={w}
+              height={h}
+              x={x}
+              y={y}
+              style={bgStyle}/>
       );
     }
   },
@@ -296,9 +312,11 @@ var TreeVis = React.createClass({
       var domains = positionDomains(this.geneTreeRoot);
       var consensus = (
         <g>
-          <PositionedAlignment node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats} domains={domains}
+          <PositionedAlignment node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats}
+                               domains={domains}
                                highlight={false} alignment={alignment}/>
-          <PositionedDomains node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats} domains={domains}
+          <PositionedDomains node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats}
+                             domains={domains}
                              alignment={alignment}/>
         </g>
       );
@@ -335,21 +353,15 @@ var TreeVis = React.createClass({
 
           var MSAProps = {
             key: node.model.node_id,
-            className: 'clustal'
+            className: this.state.colorScheme
           };
-          // if (microsoftBrowser) {
-          //   MSAProps.transform = 'translate(0, ' + node.x + ')';
-          // }
-          // else {
-          //   MSAProps.style = {width: width, height: 18, transform: 'translate(0px, ' + node.x + 'px)'};
-          // }
           let idx = 0;
           let chars = node.model.consensus.sequence;
           let spans = [];
           spans[0] = chars[0];
-          let j=0;
-          for(let i=1;i<chars.length;i++) {
-            if (chars[i] === chars[i-1]) {
+          let j = 0;
+          for (let i = 1; i < chars.length; i++) {
+            if (chars[i] === chars[i - 1]) {
               spans[j] += chars[i]
             }
             else {
@@ -367,44 +379,42 @@ var TreeVis = React.createClass({
           return (
             <div {...MSAProps}>{msaRow}</div>
           );
-          // return (
-          //   <g {...MSAProps}>
-          //     <text y={8} dy=".05em" style={fontStyle}>{node.model.consensus.sequence.join('')}</text>
-          //   </g>
-          // )
         }
       }.bind(this));
       var alignments = this.state.visibleNodes.map(function (node) {
         if (node.model.gene_stable_id || !node.displayInfo.expanded) {
 
-            var alignment = alignmentTools.calculateAlignment(node);
-            var pej;
-            if (node.model.exon_junctions) {
-              pej = (
-                <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
-              )
-            }
-            var domains = positionDomains(node);
-            return (
-              <g key={node.model.node_id}>
-                {pej}
-                <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
-                                     highlight={false} alignment={alignment}/>
-                <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
-                                   alignment={alignment}/>
-              </g>
+          var alignment = alignmentTools.calculateAlignment(node);
+          var pej;
+          if (node.model.exon_junctions) {
+            pej = (
+              <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
             )
+          }
+          var domains = positionDomains(node);
+          return (
+            <g key={node.model.node_id}>
+              {pej}
+              <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
+                                   highlight={false} alignment={alignment}/>
+              <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
+                                 alignment={alignment}/>
+            </g>
+          )
         }
       }.bind(this));
 
       if (this.state.displayMSA) {
         return (
           // <g transform={this.transformAlignments}>
-            <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7} width={this.alignmentsWidth} height={viewBoxHeight}>
-              <div className="MSAlignments-wrapper" onLoad={() => this.scrollLeft = this.MSARange.MSAStart * this.charWidth}>
+          <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7}
+                         width={this.alignmentsWidth} height={viewBoxHeight}>
+            <div className="MSAlignments-wrapper"
+                 onLoad={() => this.scrollLeft = this.MSARange.MSAStart * this.charWidth}
+            >
               {MSAlignments}
-              </div>
-            </foreignObject>
+            </div>
+          </foreignObject>
           // </g>
         )
       }
@@ -424,8 +434,11 @@ var TreeVis = React.createClass({
 
   handleSliderChange(e) {
     if (this.state.displayMSA) {
-      this.MSARange = {MSAStart: e[0], MSAStop: e[0] + Math.floor(this.consensusLength/100)};
-      let Xmin = e[0] * this.charWidth;
+      this.MSARange = {
+        MSAStart: e,
+        MSAStop: Math.min(e + Math.floor(this.alignmentsWidth / this.charWidth), this.consensusLength)
+      };
+      let Xmin = e * this.charWidth;
       let rows = document.getElementsByClassName('MSAlignments-wrapper');
       rows[0].scrollLeft = Xmin;
     }
@@ -446,19 +459,19 @@ var TreeVis = React.createClass({
     }
     this.treeHeight = calculateSvgHeight(this.genetree);
 
-    height = this.treeHeight + 2*this.margin + this.consensusHeight + 3;
+    height = this.treeHeight + 2 * this.margin + this.consensusHeight + 3;
 
     if (this.state.visibleNodes) {
       genetree = (
-          <GeneTree nodes={this.state.visibleNodes}
-                    onGeneSelect={this.handleGeneSelect}
-                    onInternalNodeSelect={this.changeCladeVisibility}
-                    onInternalNodeSelect2={this.changeParalogVisibility}
-                    onNodeHover={this.handleNodeHover}
-                    onNodeUnhover={this.handleNodeUnhover}
-                    taxonomy={this.props.taxonomy}
-                    overlaysContainer={this.refs.overlaysContainer}
-          />
+        <GeneTree nodes={this.state.visibleNodes}
+                  onGeneSelect={this.handleGeneSelect}
+                  onInternalNodeSelect={this.changeCladeVisibility}
+                  onInternalNodeSelect2={this.changeParalogVisibility}
+                  onNodeHover={this.handleNodeHover}
+                  onNodeUnhover={this.handleNodeUnhover}
+                  taxonomy={this.props.taxonomy}
+                  overlaysContainer={this.refs.overlaysContainer}
+        />
       );
     }
 
@@ -474,49 +487,67 @@ var TreeVis = React.createClass({
           MSAStop: this.consensusLength
         };
       }
-      {/*if (this.state.displayMSA) {*/}
-        {/*zoomer = (*/}
-          {/*<div className="msa-slider" style={zoomPosition}>*/}
-      //       <Slider
-      //         min={0}
-      //         max={this.consensusLength}
-      //         onChange={this.handleSliderChange}
-      //         defaultValue={this.MSARange.MSAStart}
-      //       />
-      //     </div>
-      //   )
-      // }
-      // else {
-        zoomer = (
-          <div className="zoomer" style={zoomPosition}>
-            MSA<Switch on={this.state.displayMSA} onClick={() => this.setState({displayMSA: !this.state.displayMSA})}/>
-            <Range
-              min={0}
-              max={this.consensusLength}
-              pushable={Math.floor(this.consensusLength/100)}
-              defaultValue={[this.MSARange.MSAStart, this.MSARange.MSAStop]}
-              onChange={this.handleSliderChange}
-            />
-          </div>
+      let colorSchemeDropdown;
+      let slider;
+      if (this.state.displayMSA) {
+        const colorSchemes = ['clustal', 'zappo'];
+        let items = colorSchemes.map(function (scheme, i) {
+          return <MenuItem key={i} eventKey={i}>{scheme}</MenuItem>;
+        });
+        colorSchemeDropdown = (
+          <DropdownButton title="Color Scheme">
+            {items}
+          </DropdownButton>
         );
+        slider = (
+          <Slider
+            min={0}
+            max={this.consensusLength}
+            defaultValue={this.MSARange.MSAStart}
+            onChange={this.handleSliderChange}
+          />
+        )
+      }
+      else {
+        slider = (
+          <Range
+            min={0}
+            max={this.consensusLength}
+            pushable={Math.floor(this.alignmentsWidth / this.charWidth)}
+            defaultValue={[this.MSARange.MSAStart, this.MSARange.MSAStop]}
+            onChange={this.handleSliderChange}
+          />
+        )
+      }
+      zoomer = (
+        <div className="zoomer" style={zoomPosition}>
+          <ButtonToolbar>
+            <Button bsStyle={this.state.displayMSA ? 'success' : 'default'}
+                    onClick={() => this.setState({displayMSA: !this.state.displayMSA})}>Multiple Sequence
+              Alignment</Button>
+            {colorSchemeDropdown}
+          </ButtonToolbar>
+          {slider}
+        </div>
+      );
       // }
     }
 
     return (
-    <div>
-      {zoomer}
-      <div className="genetree-vis">
-        <svg width={this.width} height={height}>
-          <g className="tree-wrapper" transform={this.transformTree}>
-            {genetree}
-          </g>
-          {this.renderConsensus()}
-          {this.renderAlignments()}
-        </svg>
-        <div ref="overlaysContainer"
-             className="overlays"></div>
+      <div>
+        {zoomer}
+        <div className="genetree-vis">
+          <svg width={this.width} height={height}>
+            <g className="tree-wrapper" transform={this.transformTree}>
+              {genetree}
+            </g>
+            {this.renderConsensus()}
+            {this.renderAlignments()}
+          </svg>
+          <div ref="overlaysContainer"
+               className="overlays"></div>
+        </div>
       </div>
-    </div>
     );
   }
 });
