@@ -488,19 +488,23 @@ var TreeVis = React.createClass({
       let colorSchemeDropdown;
       let slider;
       if (this.state.displayMSA) {
-        const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity'];
+        function toTitleCase(str) {
+          return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        }
+        const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
         let items = colorSchemes.map(function (scheme, i) {
+          let label = toTitleCase(scheme.replace('_',' '));
           if (scheme === this.state.colorScheme)
             return (
               <MenuItem key={i} eventKey={i} active
                 onClick={() => this.setState({colorScheme: scheme})}
-              >{scheme}</MenuItem>
+              >{label}</MenuItem>
             );
           else
             return (
               <MenuItem key={i} eventKey={i}
                 onClick={() => this.setState({colorScheme: scheme})}
-              >{scheme}</MenuItem>
+              >{label}</MenuItem>
             );
         }.bind(this));
         colorSchemeDropdown = (
