@@ -487,31 +487,32 @@ var TreeVis = React.createClass({
       }
       let colorSchemeDropdown;
       let slider;
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
+      let items = colorSchemes.map(function (scheme, i) {
+        let label = toTitleCase(scheme.replace('_',' '));
+        if (scheme === this.state.colorScheme)
+          return (
+            <MenuItem key={i} eventKey={i} active
+              onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+        else
+          return (
+            <MenuItem key={i} eventKey={i}
+              onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+      }.bind(this));
+      let nofloat = {float:'none'};
+      colorSchemeDropdown = (
+        <DropdownButton title="Color Scheme" disabled={!this.state.displayMSA} style={nofloat}>
+          {items}
+        </DropdownButton>
+      );
       if (this.state.displayMSA) {
-        function toTitleCase(str) {
-          return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-        }
-        const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
-        let items = colorSchemes.map(function (scheme, i) {
-          let label = toTitleCase(scheme.replace('_',' '));
-          if (scheme === this.state.colorScheme)
-            return (
-              <MenuItem key={i} eventKey={i} active
-                onClick={() => this.setState({colorScheme: scheme})}
-              >{label}</MenuItem>
-            );
-          else
-            return (
-              <MenuItem key={i} eventKey={i}
-                onClick={() => this.setState({colorScheme: scheme})}
-              >{label}</MenuItem>
-            );
-        }.bind(this));
-        colorSchemeDropdown = (
-          <DropdownButton title="Color Scheme">
-            {items}
-          </DropdownButton>
-        );
         slider = (
           <Slider
             min={0}
@@ -522,10 +523,6 @@ var TreeVis = React.createClass({
         )
       }
       else {
-        colorSchemeDropdown = (
-          <DropdownButton title="Color Scheme" disabled={true}>
-          </DropdownButton>
-        );
         slider = (
           <Range
             min={0}
