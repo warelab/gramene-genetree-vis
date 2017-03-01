@@ -522,6 +522,10 @@ var TreeVis = React.createClass({
         )
       }
       else {
+        colorSchemeDropdown = (
+          <DropdownButton title="Color Scheme" disabled={true}>
+          </DropdownButton>
+        );
         slider = (
           <Range
             min={0}
