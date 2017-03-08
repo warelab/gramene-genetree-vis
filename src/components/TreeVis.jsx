@@ -456,6 +456,7 @@ var TreeVis = React.createClass({
       return <div></div>;
     }
     this.treeHeight = calculateSvgHeight(this.genetree);
+    this.vbHeight = this.treeHeight + 2 * this.margin + 3;
 
     height = this.treeHeight + 2 * this.margin + this.consensusHeight + 3;
 
