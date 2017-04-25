@@ -5,7 +5,7 @@ var React = require('react'); // This var is required after JSX->JS transpile.
 var ReactDOM = require('react-dom');
 var TreeVis = require('./src/components/TreeVis.jsx');
 
-var geneFixture = require('./fixtures/GRMZM2G105791.json');
+var geneFixture = require('./fixtures/Zm00001d018033.json');
 
 var GrameneTrees = require('gramene-trees-client');
 

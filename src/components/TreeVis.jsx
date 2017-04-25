@@ -4,7 +4,13 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import Range from 'rc-slider/lib/Range';
 import Slider from 'rc-slider/lib/Slider';
-import {MenuItem, DropdownButton, Button, ButtonToolbar} from 'react-bootstrap';
+import {
+  MenuItem,
+  DropdownButton,
+  Button,
+  ButtonToolbar,
+  Dropdown,
+} from 'react-bootstrap';
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 var GeneTree = require('./GeneTree.jsx');
@@ -51,7 +57,8 @@ var TreeVis = React.createClass({
       hoveredNode: undefined,
       displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest,
-      colorScheme: 'clustal'
+      colorScheme: 'clustal',
+      displayMode: 'domains',
     };
   },
 
@@ -449,6 +456,11 @@ var TreeVis = React.createClass({
     }
   },
 
+  handleModeSelection(e) {
+    console.log('handelModeSelection',e);
+    this.setState({displayMode: e});
+  },
+
   render: function () {
     var genetree, height;
 
@@ -550,6 +562,26 @@ var TreeVis = React.createClass({
 
     return (
       <div>
+        <Dropdown id="display-mode-dropdown"
+                  onClick={(e)=>e.stopPropagation()}>
+          <Dropdown.Toggle>
+            Display mode
+          </Dropdown.Toggle>
+          <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+            <MenuItem eventKey="domains"
+                      active={this.state.displayMode === 'domains'}>
+              Domains
+            </MenuItem>
+            <MenuItem eventKey="msa"
+                      active={this.state.displayMode === 'msa'}>
+              Multiple Sequence Alignment
+            </MenuItem>
+            <MenuItem eventKey="phyloview"
+                      active={this.state.displayMode === 'phyloview'}>
+              Neighborhood conservation
+            </MenuItem>
+          </Dropdown.Menu>
+        </Dropdown>
         {zoomer}
         <div className="genetree-vis">
           <svg width={this.width} height={height}>
