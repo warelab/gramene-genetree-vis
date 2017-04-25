@@ -18,17 +18,28 @@ var PositionedDomains = React.createClass({
     return {};
   },
 
-  transform: function () {
-    var x, y;
-    x = 0;
-    y = this.props.node.x - 9;
+  transform: function (isStyle) {
+    var x, y, px;
 
-    return 'translate(' + x + ', ' + y + ')';
+    px = isStyle ? 'px' : '';
+
+    x = 0;
+    y = this.props.node.x - 2;
+
+    return 'translate(' + x + px + ', ' + y + px + ')';
   },
 
   render: function () {
+    var props = {};
+    if(microsoftBrowser) {
+      props.transform = this.transform(false);
+    }
+    else {
+      props.style = { transform: this.transform(true) };
+    }
+
     return (
-      <g transform={this.transform()}>
+      <g {...props}>
         <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} domains={this.props.domains} alignment={this.props.alignment} />
       </g>
     )

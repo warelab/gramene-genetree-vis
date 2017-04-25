@@ -2,9 +2,11 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+import Range from 'rc-slider/lib/Range';
+import Slider from 'rc-slider/lib/Slider';
+import {MenuItem, DropdownButton, Button, ButtonToolbar} from 'react-bootstrap';
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
-
 var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
 var PositionedDomains = require('./PositionedDomains.jsx');
@@ -16,8 +18,15 @@ var calculateSvgHeight = require('../utils/calculateSvgHeight');
 var domainStats = require('../utils/domainsStats').domainStats;
 var alignmentTools = require('../utils/calculateAlignment');
 var positionDomains = require('../utils/positionDomains');
-import {setDefaultNodeDisplayInfo, makeCladeVisible, makeCladeInvisible, makeNodeVisible, makeNodeInvisible} from "../utils/visibleNodes";
+import {
+  setDefaultNodeDisplayInfo,
+  makeCladeVisible,
+  makeCladeInvisible,
+  makeNodeVisible,
+  makeNodeInvisible
+} from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
+var addConsensus = require('gramene-trees-client').extensions.addConsensus;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -40,7 +49,9 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      geneOfInterest: this.props.initialGeneOfInterest
+      displayMSA: false,
+      geneOfInterest: this.props.initialGeneOfInterest,
+      colorScheme: 'clustal'
     };
   },
 
@@ -50,8 +61,8 @@ var TreeVis = React.createClass({
     this.domainStats = domainStats(this.genetree); // do this to all genomes
 
     this.resizeListener = _.debounce(
-        this.updateAvailableWidth,
-        windowResizeDebounceMs
+      this.updateAvailableWidth,
+      windowResizeDebounceMs
     );
 
     if (!_.isUndefined(global.addEventListener)) {
@@ -68,6 +79,14 @@ var TreeVis = React.createClass({
     this.initializeAlignments(this.props)();
   },
 
+  componentDidUpdate: function () {
+    if (this.state.displayMSA) {
+      let Xmin = this.MSARange.MSAStart * this.charWidth;
+      let MSA = document.getElementsByClassName('MSAlignments-wrapper');
+      MSA[0].scrollLeft = Xmin;
+    }
+  },
+
   componentDidMount: function () {
     this.updateAvailableWidth();
   },
@@ -81,7 +100,7 @@ var TreeVis = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     function haveSameKeys(a, b) {
       return _.size(a) === _.size(b)
-          && _.every(b, (val, key) => !!a[key])
+        && _.every(b, (val, key) => !!a[key])
     }
 
     if (!haveSameKeys(nextProps.genomesOfInterest, this.props.genomesOfInterest)) {
@@ -103,7 +122,6 @@ var TreeVis = React.createClass({
     if (this.width !== parentWidth) {
       this.width = parentWidth;
       this.initHeightAndMargin();
-      // this.reinitHeight();
       this.setState({visibleNodes: this.nodeCoordinates()});
     }
   },
@@ -112,7 +130,7 @@ var TreeVis = React.createClass({
     return function _keepNode(node) {
       if (props.genomesOfInterest.hasOwnProperty(node.model.taxon_id)) return true;
       if (node.model.gene_stable_id &&
-          _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
+        _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
         if (node.model.gene_stable_id === props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
           return true;
         }
@@ -123,6 +141,14 @@ var TreeVis = React.createClass({
 
   initializeAlignments: function (props = this.props) {
     return function _initializeAlignments() {
+
+      addConsensus(this.genetree);
+      this.geneTreeRoot = _.clone(this.genetree);
+      delete this.geneTreeRoot.displayInfo;
+      this.geneTreeRoot.displayInfo = {
+        expanded: false
+      };
+      nodeCoordinates(this.geneTreeRoot, 1);
       alignmentTools.clean();
       var multipleAlignment = alignmentTools.calculateAlignment(this.genetree); // not necessarily all genomes
       if (!_.isEmpty(props.genomesOfInterest)) {
@@ -135,45 +161,41 @@ var TreeVis = React.createClass({
     }.bind(this);
   },
 
-  // componentWillMount: function () {
-  //   this.initHeightAndMargin();
-  //   this.initNodes();
-  //   this.reinitHeight();
-  // },
   initHeightAndMargin: function () {
     this.margin = this.props.margin || DEFAULT_MARGIN;
     this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
     this.w = this.width - this.labelWidth - (2 * this.margin);
 
     this.treeWidth = this.w / 2 > MAX_TREE_WIDTH ? MAX_TREE_WIDTH : this.w / 2;
+    this.treeHeight = calculateSvgHeight(this.genetree);
+
     this.alignmentsWidth = this.w - this.treeWidth;
     this.displayAlignments = true;
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
       this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
+      this.consensusHeight = 0;
     }
-
-    this.transformTree = 'translate(' + this.margin + ', ' + this.margin + ')';
-    var alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
-    this.transformAlignments = 'translate(' + alignmentOrigin + ', ' + this.margin + ')';
-  },
-
-  reinitHeight: function () {
-    // this.h = calculateSvgHeight(this.genetree); // - (2 * this.margin);
+    else {
+      this.charWidth = 7.2065;
+      this.consensusHeight = 30;
+      this.consensusLength = this.genetree.model.consensus.sequence.length;
+      this.consensusWidth = Math.floor(this.alignmentsWidth / this.charWidth);
+      this.vbHeight = this.treeHeight + 2 * this.margin + 3;
+    }
+    const treeTop = this.margin + this.consensusHeight;
+    const alignmentTop = treeTop - 7;
+    const consensusTop = this.margin;
+    this.transformTree = 'translate(' + this.margin + ', ' + treeTop + ')';
+    this.alignmentOrigin = this.margin + this.treeWidth + this.labelWidth;
+    this.transformAlignments = 'translate(' + this.alignmentOrigin + ', ' + alignmentTop + ')';
+    this.transformConsensus = 'translate(' + this.alignmentOrigin + ', ' + consensusTop + ')';
   },
 
   nodeCoordinates: function () {
     return nodeCoordinates(this.genetree, this.treeWidth);
   },
-  // updateNodeCoordinates: function () {
-  //   var visibleNodes;
-  //
-  //   visibleNodes = layoutTree(this.genetree, this.treeWidth);
-  //
-  //   this.setState({
-  //     visibleNodes: visibleNodes
-  //   });
-  // },
+
   handleGeneSelect: function (geneNode) {
     if (this.props.allowGeneSelection) {
       GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
@@ -181,13 +203,13 @@ var TreeVis = React.createClass({
         relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
-        // this.reinitHeight();
+        this.initHeightAndMargin();
         this.setState({geneOfInterest, visibleNodes});
       }.bind(this));
     }
   },
 
-  changeCladeVisibility: function (node,recursive) {
+  changeCladeVisibility: function (node, recursive) {
 
     if (node.displayInfo.expanded) {
       if (recursive) {
@@ -207,16 +229,15 @@ var TreeVis = React.createClass({
     }
 
     const newVisibleNodes = nodeCoordinates(
-        this.genetree,
-        this.treeWidth
+      this.genetree,
+      this.treeWidth
     );
-
-    // this.reinitHeight();
-
+    this.initHeightAndMargin();
     this.setState({
       visibleNodes: newVisibleNodes
     });
   },
+
   handleNodeUnhover: function (node) {
     if (this.state.hoveredNode === node) {
       this.setState({hoveredNode: undefined});
@@ -258,102 +279,290 @@ var TreeVis = React.createClass({
       this.treeWidth
     );
     // this.reinitHeight();
+    this.initHeightAndMargin();
     this.setState({
       visibleNodes: newVisibleNodes
     });
   },
-  
+
   renderBackground: function () {
-    if (this.displayAlignments) {
-      var bgStyle = {fill: '#f7f7f7', stroke: false};
+    if (false) {
+      var bgStyle = {fill: '#fff', stroke: false};
       var h = calculateSvgHeight(this.genetree) + (2 * this.margin);
       var y = -this.margin;
       var x = -this.margin / 2;
       var w = this.alignmentsWidth + this.margin;
       return (
-          <rect key='bg'
-                width={w}
-                height={h}
-                x={x}
-                y={y}
-                style={bgStyle}/>
+        <rect key='bg'
+              width={w}
+              height={h}
+              x={x}
+              y={y}
+              style={bgStyle}/>
       );
     }
   },
 
+  renderConsensus: function () {
+    if (this.displayAlignments) {
+      var w = this.alignmentsWidth;
+      var alignment = alignmentTools.calculateAlignment(this.geneTreeRoot);
+      var domains = positionDomains(this.geneTreeRoot);
+      var consensus = (
+        <g>
+          <PositionedAlignment node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats}
+                               domains={domains}
+                               highlight={false} alignment={alignment}/>
+          <PositionedDomains node={this.geneTreeRoot} width={this.alignmentsWidth} stats={this.domainStats}
+                             domains={domains}
+                             alignment={alignment}/>
+        </g>
+      );
+      var viewBoxMinX = 0;
+      var viewBoxMinY = -3;
+      var viewBoxWidth = this.consensusLength;
+      var viewBoxHeight = this.consensusHeight;
+      var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
+      return (
+        <g className="consensus-wrapper" transform={this.transformConsensus}>
+          <svg width={w}
+               height={this.consensusHeight} viewBox={vb} preserveAspectRatio="none">
+            {consensus}
+          </svg>
+        </g>
+      );
+    }
+  },
+
+  renderAlignments: function () {
+    if (this.displayAlignments) {
+      var width = this.alignmentsWidth;
+      var viewBoxMinX = this.MSARange.MSAStart;
+      var viewBoxMinY = -3;
+      var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart;
+      var viewBoxHeight = this.vbHeight;
+      if (this.state.displayMSA) {
+        viewBoxWidth *= this.charWidth;
+        viewBoxMinX *= this.charWidth;
+      }
+      var vb = `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
+      var MSAlignments = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+
+          var MSAProps = {
+            key: node.model.node_id,
+            className: this.state.colorScheme
+          };
+          let idx = 0;
+          let chars = node.model.consensus.sequence;
+          let spans = [];
+          spans[0] = chars[0];
+          let j = 0;
+          for (let i = 1; i < chars.length; i++) {
+            if (chars[i] === chars[i - 1]) {
+              spans[j] += chars[i]
+            }
+            else {
+              spans.push(chars[i]);
+              j++;
+            }
+          }
+
+          let msaRow = spans.map(function (base) {
+            if (base.charAt(0) === '-')
+              return (<span key={++idx} className="gap">{base}</span>)
+            else
+              return (<span key={++idx} className={base.charAt(0)}>{base}</span>)
+          });
+          return (
+            <div {...MSAProps}>{msaRow}</div>
+          );
+        }
+      }.bind(this));
+      var alignments = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+
+          var alignment = alignmentTools.calculateAlignment(node);
+          var pej;
+          if (node.model.exon_junctions) {
+            pej = (
+              <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
+            )
+          }
+          var domains = positionDomains(node);
+          return (
+            <g key={node.model.node_id}>
+              {pej}
+              <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
+                                   highlight={false} alignment={alignment}/>
+              <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
+                                 alignment={alignment}/>
+            </g>
+          )
+        }
+      }.bind(this));
+
+      if (this.state.displayMSA) {
+        return (
+          // <g transform={this.transformAlignments}>
+          <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7}
+                         width={this.alignmentsWidth} height={viewBoxHeight}>
+            <div className="MSAlignments-wrapper"
+                 onLoad={() => this.scrollLeft = this.MSARange.MSAStart * this.charWidth}
+            >
+              {MSAlignments}
+            </div>
+          </foreignObject>
+          // </g>
+        )
+      }
+      else {
+        return (
+          <g className="alignments-wrapper" transform={this.transformAlignments}>
+            <svg ref={(svg) => this.alignmentsSVG = svg} width={this.alignmentsWidth} height={viewBoxHeight}
+                 viewBox={vb} preserveAspectRatio="none">
+              {this.renderBackground()}
+              {alignments}
+            </svg>
+          </g>
+        );
+      }
+    }
+  },
+
+  handleSliderChange(e) {
+    if (this.state.displayMSA) {
+      this.MSARange = {
+        MSAStart: e,
+        MSAStop: Math.min(e + Math.floor(this.alignmentsWidth / this.charWidth), this.consensusLength)
+      };
+      let Xmin = e * this.charWidth;
+      let rows = document.getElementsByClassName('MSAlignments-wrapper');
+      rows[0].scrollLeft = Xmin;
+    }
+    else {
+      this.MSARange = {MSAStart: e[0], MSAStop: e[1]};
+      var MSAWidth = e[1] - e[0];
+      var Xmin = e[0];
+      var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
+      this.alignmentsSVG.setAttribute('viewBox', vb);
+    }
+  },
+
   render: function () {
-    var genetree, alignments, height;
+    var genetree, height;
 
     if (!this.width) {
       return <div></div>;
     }
+    this.treeHeight = calculateSvgHeight(this.genetree);
+    this.vbHeight = this.treeHeight + 2 * this.margin + 3;
 
-    height = calculateSvgHeight(this.genetree) + (2 * this.margin);
+    height = this.treeHeight + 2 * this.margin + this.consensusHeight + 3;
 
     if (this.state.visibleNodes) {
       genetree = (
-          <GeneTree nodes={this.state.visibleNodes}
-                    onGeneSelect={this.handleGeneSelect}
-                    onInternalNodeSelect={this.changeCladeVisibility}
-                    onInternalNodeSelect2={this.changeParalogVisibility}
-                    onNodeHover={this.handleNodeHover}
-                    onNodeUnhover={this.handleNodeUnhover}
-                    taxonomy={this.props.taxonomy}
-                    overlaysContainer={this.refs.overlaysContainer}
-          />
+        <GeneTree nodes={this.state.visibleNodes}
+                  onGeneSelect={this.handleGeneSelect}
+                  onInternalNodeSelect={this.changeCladeVisibility}
+                  onInternalNodeSelect2={this.changeParalogVisibility}
+                  onNodeHover={this.handleNodeHover}
+                  onNodeUnhover={this.handleNodeUnhover}
+                  taxonomy={this.props.taxonomy}
+                  overlaysContainer={this.refs.overlaysContainer}
+        />
       );
+    }
 
-      if (this.displayAlignments) {
-        var hoveredNode = this.state.hoveredNode;
-        var width = this.alignmentsWidth;
-        var geneOfInterest = this.state.geneOfInterest;
-        alignments = this.state.visibleNodes.map(function (node) {
-          if (node.model.gene_stable_id || !node.displayInfo.expanded) {
-            var hl = (hoveredNode && _.indexOf(node.getPath(), hoveredNode) >= 0) ? '#ffffcc' : '';
-            if (geneOfInterest._id === node.model.gene_stable_id) {
-              hl = '#ffddaa';
-            }
-            if (!node.hasChildren() &&
-                ( _.get(geneOfInterest, 'homology.gene_tree.representative.model.id') === node.model.gene_stable_id ||
-                _.get(geneOfInterest, 'homology.gene_tree.representative.closest.id') === node.model.gene_stable_id)) {
-              hl = '#ccffaa';
-            }
-            var alignment = alignmentTools.calculateAlignment(node);
-            var pej;
-            if (node.model.exon_junctions) {
-              pej = (
-                  <PositionedExonJunctions node={node} width={width} alignment={alignment}/>
-              )
-            }
-            var domains = positionDomains(node);
-            return (
-                <g key={node.model.node_id}>
-                  {pej}
-                  <PositionedAlignment node={node} width={width} stats={this.domainStats} domains={domains}
-                                       highlight={false} alignment={alignment}/>
-                  <PositionedDomains node={node} width={width} stats={this.domainStats} domains={domains}
-                                     alignment={alignment}/>
-                </g>
-            )
-          }
-        }.bind(this));
+    var zoomer;
+    if (this.displayAlignments) {
+      var zoomPosition = {
+        left: this.alignmentOrigin,
+        width: this.alignmentsWidth
+      };
+      if (!this.MSARange) {
+        this.MSARange = {
+          MSAStart: 0,
+          MSAStop: this.consensusLength
+        };
       }
+      let colorSchemeDropdown;
+      let slider;
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
+      let items = colorSchemes.map(function (scheme, i) {
+        let label = toTitleCase(scheme.replace('_',' '));
+        if (scheme === this.state.colorScheme)
+          return (
+            <MenuItem key={i} eventKey={i} active
+              onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+        else
+          return (
+            <MenuItem key={i} eventKey={i}
+              onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+      }.bind(this));
+      let nofloat = {float:'none'};
+      colorSchemeDropdown = (
+        <DropdownButton title="Color Scheme" disabled={!this.state.displayMSA} style={nofloat}>
+          {items}
+        </DropdownButton>
+      );
+      if (this.state.displayMSA) {
+        slider = (
+          <Slider
+            min={0}
+            max={this.consensusLength}
+            defaultValue={this.MSARange.MSAStart}
+            onChange={this.handleSliderChange}
+          />
+        )
+      }
+      else {
+        slider = (
+          <Range
+            min={0}
+            max={this.consensusLength}
+            pushable={Math.floor(this.alignmentsWidth / this.charWidth)}
+            defaultValue={[this.MSARange.MSAStart, this.MSARange.MSAStop]}
+            onChange={this.handleSliderChange}
+          />
+        )
+      }
+      zoomer = (
+        <div className="zoomer" style={zoomPosition}>
+          <ButtonToolbar>
+            <Button bsStyle={this.state.displayMSA ? 'success' : 'default'}
+                    onClick={() => this.setState({displayMSA: !this.state.displayMSA})}>Multiple Sequence
+              Alignment</Button>
+            {colorSchemeDropdown}
+          </ButtonToolbar>
+          {slider}
+        </div>
+      );
+      // }
     }
 
     return (
+      <div>
+        {zoomer}
         <div className="genetree-vis">
           <svg width={this.width} height={height}>
             <g className="tree-wrapper" transform={this.transformTree}>
               {genetree}
             </g>
-            <g className="alignments-wrapper" transform={this.transformAlignments}>
-              {this.renderBackground()}
-              {alignments}
-            </g>
+            {this.renderConsensus()}
+            {this.renderAlignments()}
           </svg>
           <div ref="overlaysContainer"
                className="overlays"></div>
         </div>
+      </div>
     );
   }
 });

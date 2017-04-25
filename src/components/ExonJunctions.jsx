@@ -27,19 +27,15 @@ var ExonJunctions = React.createClass({
     var node = this.props.node;
     var alignment = this.props.alignment;
     
-    var sf = this.props.width / alignment.size;
     var k=0;
     var bins = node.model.exon_junctions.map(function(ej) {
       var ejPos = remap(ej, alignment.blocks);
-      var top = (ejPos-1)*sf;
-      var bl = top-2.0;
-      var br = top+2.0;
-      var d = 'M'+top+',0 '+bl+',+3 '+br+',+3 '+top+',0';
+      var top = (ejPos-1);
       var style = {fill: "red", stroke: false};
       k++;
       return (
         <rect key={k} width="1" height="18" x={top} style={style} />
-      )      
+      )
     });
     
     return (

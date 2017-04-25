@@ -4,6 +4,7 @@ var _ = require('lodash');
 var React = require('react');
 var alignmentTools = require('../utils/calculateAlignment');
 
+
 var Alignment = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
@@ -20,7 +21,7 @@ var Alignment = React.createClass({
     var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
     if (this.props.domains.length > 0) {
-      this.props.domains.forEach(function(d) {
+      alignmentTools.resolveOverlaps(this.props.domains).forEach(function(d) {
         if (d.start > prevEnd) {
           regionColor.push({
             start: prevEnd,
@@ -28,14 +29,19 @@ var Alignment = React.createClass({
             color: grayScale
           });
         }
-        prevEnd = d.end;
-        var maxColor = stats[d.id].color;
-        var colorScale = scale().domain([0,1]).range(['#FFFFFF', maxColor]);
-        regionColor.push({
-          start: d.start,
-          end: d.end,
-          color: scale().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
-        })
+        if (d.start < prevEnd) {
+          // TODO: deal with overlapping domains
+        }
+        if (d.end > prevEnd) {
+          prevEnd = d.end;
+          var maxColor = stats[d.id].color;
+          var colorScale = scale().domain([0, 1]).range(['#FFFFFF', maxColor]);
+          regionColor.push({
+            start: d.start,
+            end: d.end,
+            color: scale().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
+          });
+        }
       })
     }
     if (prevEnd < alignment.size) {
@@ -65,7 +71,6 @@ var Alignment = React.createClass({
   },
   
   render: function () {
-    var node = this.props.node;
     var alignment = _.cloneDeep(this.props.alignment);
     var regionColor = this.getColorMap(alignment, this.props.stats);
 
@@ -114,10 +119,8 @@ var Alignment = React.createClass({
         }
       }
     }
-    var sf = this.props.width / alignment.size;
-    var transform = 'scale('+ sf +' 1)';
     return (
-      <g className="alignment" transform={transform}>
+      <g className="alignment">
         {this.renderHighlight()}
         {bins}
       </g>

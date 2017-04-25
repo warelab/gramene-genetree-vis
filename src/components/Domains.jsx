@@ -2,8 +2,7 @@
 var React = require('react');
 var numeral = require('numeral');
 import {OverlayTrigger, Popover} from "react-bootstrap";
-
-var colors = require('d3').scale.category10().range();
+import {resolveOverlaps} from '../utils/calculateAlignment';
 
 var domainStats = require('../utils/domainsStats').domainStats;
 
@@ -30,10 +29,8 @@ var Domains = React.createClass({
   },
 
   render: function () {
-    var sf = this.props.width / this.props.alignment.size;
-    var transform = 'scale(' + sf + ' 1)';
     return (
-      <g className="domains" transform={transform}>
+      <g className="domains">
         {this.renderDomains()}
       </g>
     );
@@ -41,7 +38,8 @@ var Domains = React.createClass({
 
 
   renderDomains: function () {
-    return this.props.domains.map(function (domain, idx) {
+    let nonOverlappingDomains = resolveOverlaps(this.props.domains);
+    return nonOverlappingDomains.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
       var stats = this.props.stats[domain.id];
 
@@ -70,6 +68,9 @@ var Domains = React.createClass({
   },
 
   renderPopoverContent(domain) {
+    if (this.props.node.isRoot()) {
+      return this.renderRootNodePopoverContent(domain);
+    }
     if (this.props.node.hasChildren()) {
       return this.renderInternalNodePopoverContent(domain);
     }
@@ -77,7 +78,19 @@ var Domains = React.createClass({
       return this.renderGeneNodePopoverContent(domain);
     }
   },
-  
+
+  renderRootNodePopoverContent(domain) {
+    var stats = this.props.stats[domain.id];
+
+    var treeStatement = createStatement(stats, 'genetree');
+
+    return (
+      <div>
+        <p className="description">{domain.description}</p>
+        <p className="stats">{treeStatement}</p>
+      </div>
+    );
+  },
   renderInternalNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
     var cladeStats = this.cladeStats[domain.id];
@@ -93,7 +106,7 @@ var Domains = React.createClass({
       </div>
     );
   },
-  
+
   renderGeneNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
     var statement = createStatement(stats, 'genetree');
@@ -117,7 +130,7 @@ function createStatement(stats, whatIsThis) {
     statement = `Shared by all ${totalGenes} genes in this ${whatIsThis}.`;
   }
   else if (geneCount === 1) {
-    statement = `This is the only gene in the ${whatIsThis} with this domain.`;
+    statement = `There is only one gene in the ${whatIsThis} with this domain.`;
   }
   else {
     statement = `Shared by ${geneCount} of ${totalGenes} (${proportion}) genes in this ${whatIsThis}.`;
