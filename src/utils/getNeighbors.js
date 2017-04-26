@@ -196,7 +196,7 @@ export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) 
     genetree.leafNodes().map((n) => {
       return {
         id: n.model.gene_stable_id,
-        identity: n.model.relationToGeneOfInterest.identity
+        identity: n.relationToGeneOfInterest.identity
       }
     })
   ])
