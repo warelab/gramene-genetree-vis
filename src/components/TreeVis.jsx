@@ -40,6 +40,11 @@ const MAX_TREE_WIDTH = 200;
 const MIN_ALIGN_WIDTH = 200;
 const windowResizeDebounceMs = 250;
 
+const DISPLAY_DOMAINS     = "domains";
+const DISPLAY_MSA         = "msa";
+const DISPLAY_PHYLOVIEW   = "phyloview";
+
+
 var TreeVis = React.createClass({
   propTypes: {
     // width: React.PropTypes.number.isRequired,
@@ -55,10 +60,9 @@ var TreeVis = React.createClass({
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest,
       colorScheme: 'clustal',
-      displayMode: 'domains',
+      displayMode: DISPLAY_DOMAINS,
     };
   },
 
@@ -87,7 +91,7 @@ var TreeVis = React.createClass({
   },
 
   componentDidUpdate: function () {
-    if (this.state.displayMSA) {
+    if (this.state.displayMode === DISPLAY_MSA ) {
       let Xmin = this.MSARange.MSAStart * this.charWidth;
       let MSA = document.getElementsByClassName('MSAlignments-wrapper');
       MSA[0].scrollLeft = Xmin;
@@ -349,7 +353,7 @@ var TreeVis = React.createClass({
       var viewBoxMinY = -3;
       var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart;
       var viewBoxHeight = this.vbHeight;
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA) {
         viewBoxWidth *= this.charWidth;
         viewBoxMinX *= this.charWidth;
       }
@@ -410,7 +414,7 @@ var TreeVis = React.createClass({
         }
       }.bind(this));
 
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA ) {
         return (
           // <g transform={this.transformAlignments}>
           <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7}
@@ -439,7 +443,7 @@ var TreeVis = React.createClass({
   },
 
   handleSliderChange(e) {
-    if (this.state.displayMSA) {
+    if (this.state.displayMode === DISPLAY_MSA ) {
       this.MSARange = {
         MSAStart: e,
         MSAStop: Math.min(e + Math.floor(this.alignmentsWidth / this.charWidth), this.consensusLength)
@@ -522,11 +526,11 @@ var TreeVis = React.createClass({
       }.bind(this));
       let nofloat = {float:'none'};
       colorSchemeDropdown = (
-        <DropdownButton title="Color Scheme" disabled={!this.state.displayMSA} style={nofloat}>
+        <DropdownButton title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
           {items}
         </DropdownButton>
       );
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA ) {
         slider = (
           <Slider
             min={0}
@@ -550,9 +554,6 @@ var TreeVis = React.createClass({
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
           <ButtonToolbar>
-            <Button bsStyle={this.state.displayMSA ? 'success' : 'default'}
-                    onClick={() => this.setState({displayMSA: !this.state.displayMSA})}>Multiple Sequence
-              Alignment</Button>
             {colorSchemeDropdown}
           </ButtonToolbar>
           {slider}
@@ -569,16 +570,16 @@ var TreeVis = React.createClass({
             Display mode
           </Dropdown.Toggle>
           <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
-            <MenuItem eventKey="domains"
-                      active={this.state.displayMode === 'domains'}>
+            <MenuItem eventKey={ DISPLAY_DOMAINS }
+                      active={this.state.displayMode === DISPLAY_DOMAINS }>
               Domains
             </MenuItem>
-            <MenuItem eventKey="msa"
-                      active={this.state.displayMode === 'msa'}>
+            <MenuItem eventKey={ DISPLAY_MSA }
+                      active={this.state.displayMode === DISPLAY_MSA }>
               Multiple Sequence Alignment
             </MenuItem>
-            <MenuItem eventKey="phyloview"
-                      active={this.state.displayMode === 'phyloview'}>
+            <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
+                      active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
               Neighborhood conservation
             </MenuItem>
           </Dropdown.Menu>
