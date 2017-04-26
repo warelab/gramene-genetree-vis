@@ -157,22 +157,22 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {
   neighborhoodsAndFacets.neighborhoods = neighborhoodsAndFacets.neighborhoods.map( (neighborhood) => {
-      const {genes, center_idx} = neighborhood;
-  const centerGenes = genes[center_idx];
-  centerGenes.identity = neighborhood.center_identity;
-  if(centerGenes.orientation === '-') {
-    genes.reverse();
-    genes.map( (gene) => {
-      gene.orientation = gene.orientation === '-' ? '+' : '-';
+    const {genes, center_idx} = neighborhood;
+    const centerGenes = genes[center_idx];
+    centerGenes.identity = neighborhood.center_identity;
+    if(centerGenes.orientation === '-') {
+      genes.reverse();
+      genes.map( (gene) => {
+        gene.orientation = gene.orientation === '-' ? '+' : '-';
+      });
+      neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
+      neighborhood.flipped = true;
+    }
+    else {
+      neighborhood.flipped = false;
+    }
+    return neighborhood;
   });
-    neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
-    neighborhood.flipped = true;
-  }
-  else {
-    neighborhood.flipped = false;
-  }
-  return neighborhood;
-});
   return neighborhoodsAndFacets;
 }
 
@@ -184,7 +184,7 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 
 
 export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
-  let queryString = `gene_tree:${genetree._id}`;
+  let queryString = `gene_tree:${genetree.model._id}`;
   if (genomesOfInterest) {
     let taxa = Object.keys(genomesOfInterest).join(' ');
     queryString = `${queryString} AND taxon_id:(${taxa})`;

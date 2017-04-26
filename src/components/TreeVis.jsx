@@ -91,7 +91,11 @@ var TreeVis = React.createClass({
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     this.initializeAlignments(this.props)();
-    this.neighborhoods = getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest);
+    let that = this;
+    getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest)
+      .then(function(neighborhoodsAndFacets) {
+        that.setState(neighborhoodsAndFacets);
+      });
   },
 
   componentDidUpdate: function () {
@@ -447,7 +451,7 @@ var TreeVis = React.createClass({
   },
 
   renderPhyloview: function () {
-    if (this.neighborhoods) {
+    if (this.state.neighborhoods) {
       return (
         <div>phyloview placeholder</div>
       )
