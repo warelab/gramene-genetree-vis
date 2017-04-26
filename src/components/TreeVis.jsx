@@ -165,6 +165,7 @@ var TreeVis = React.createClass({
         alignmentTools.removeGaps(gaps, this.genetree);
       }
       this.domainHist = positionDomains(this.genetree, true);
+
     }.bind(this);
   },
 
