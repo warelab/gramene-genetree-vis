@@ -33,6 +33,7 @@ import {
 } from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 var addConsensus = require('gramene-trees-client').extensions.addConsensus;
+import { getNeighborhood } from '../utils/getNeighbors';
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -43,6 +44,7 @@ const windowResizeDebounceMs = 250;
 const DISPLAY_DOMAINS     = "domains";
 const DISPLAY_MSA         = "msa";
 const DISPLAY_PHYLOVIEW   = "phyloview";
+const NUM_NEIGHBORS       = 10;
 
 
 var TreeVis = React.createClass({
@@ -54,7 +56,8 @@ var TreeVis = React.createClass({
     initialGeneOfInterest: React.PropTypes.object,
     genomesOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object,
-    allowGeneSelection: React.PropTypes.bool
+    allowGeneSelection: React.PropTypes.bool,
+    numberOfNeighbors: React.PropTypes.number
   },
 
   getInitialState: function () {
@@ -88,6 +91,11 @@ var TreeVis = React.createClass({
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     this.initializeAlignments(this.props)();
+    let that = this;
+    getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest)
+      .then(function(neighborhoodsAndFacets) {
+        that.setState(neighborhoodsAndFacets);
+      });
   },
 
   componentDidUpdate: function () {
@@ -169,6 +177,7 @@ var TreeVis = React.createClass({
         alignmentTools.removeGaps(gaps, this.genetree);
       }
       this.domainHist = positionDomains(this.genetree, true);
+
     }.bind(this);
   },
 
@@ -183,7 +192,7 @@ var TreeVis = React.createClass({
     this.alignmentsWidth = this.w - this.treeWidth;
     this.displayAlignments = true;
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
-      this.displayAlignments = false;
+      // this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
       this.consensusHeight = 0;
     }
@@ -441,6 +450,14 @@ var TreeVis = React.createClass({
     }
   },
 
+  renderPhyloview: function () {
+    if (this.state.neighborhoods) {
+      return (
+        <div>phyloview placeholder</div>
+      )
+    }
+  },
+
   handleSliderChange(e) {
     if (this.state.displayMode === DISPLAY_MSA ) {
       this.MSARange = {
@@ -462,6 +479,7 @@ var TreeVis = React.createClass({
 
   handleModeSelection(e) {
     console.log('handelModeSelection',e);
+    this.displayAlignments = (e === DISPLAY_DOMAINS || e === DISPLAY_MSA);
     this.setState({displayMode: e});
   },
 
@@ -539,7 +557,7 @@ var TreeVis = React.createClass({
           />
         )
       }
-      else {
+      else if (this.state.displayMode === DISPLAY_DOMAINS ) {
         slider = (
           <Range
             min={0}
@@ -591,6 +609,7 @@ var TreeVis = React.createClass({
             </g>
             {this.renderConsensus()}
             {this.renderAlignments()}
+            {this.renderPhyloview()}
           </svg>
           <div ref="overlaysContainer"
                className="overlays"></div>
