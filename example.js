@@ -25,6 +25,7 @@ ReactDOM.render(
            taxonomy={taxonomy}
            genomesOfInterest={genomesOfInterest}
            width={1200}
-           allowGeneSelection={true}/>,
+           allowGeneSelection={true}
+           pivotTree={true}/>,
   document.getElementById('tree')
 );

@@ -2,19 +2,20 @@ var _ = require('lodash');
 var scale = require('d3').scale.linear;
 var calculateIdentity = require('gramene-trees-client').extensions.identity;
 
-function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy) {
-  // pivot tree branches to put geneOfInterest first
-  let node = genetree.indices.gene_stable_id[geneOfInterest._id];
-  while (!node.isRoot()) {
-    const parent = node.parent;
-    const children = parent.children;
-    const nodeIdx = _.findIndex(children, (n) => n === node);
+function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
+  if (pivotTree) {
+    let node = genetree.indices.gene_stable_id[geneOfInterest._id];
+    while (!node.isRoot()) {
+      const parent = node.parent;
+      const children = parent.children;
+      const nodeIdx = _.findIndex(children, (n) => n === node);
 
-    // move this node to the front of the children array.
-    if (nodeIdx) {
-      children.splice(0, 0, children.splice(nodeIdx, 1)[0]);
+      // move this node to the front of the children array.
+      if (nodeIdx) {
+        children.splice(0, 0, children.splice(nodeIdx, 1)[0]);
+      }
+      node = parent;
     }
-    node = parent;
   }
   // (re)initialize relationships
   genetree.walk(function (node) {

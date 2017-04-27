@@ -57,6 +57,7 @@ var TreeVis = React.createClass({
     genomesOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object,
     allowGeneSelection: React.PropTypes.bool,
+    pivotTree: React.PropTypes.bool,
     numberOfNeighbors: React.PropTypes.number
   },
 
@@ -88,7 +89,7 @@ var TreeVis = React.createClass({
       this.genetree.geneCount = this.props.genetree.geneCount;
     }
 
-    relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
+    relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     this.initializeAlignments(this.props)();
     let that = this;
@@ -128,7 +129,7 @@ var TreeVis = React.createClass({
         this.genetree = pruneTree(this.genetree, this.keepNode(nextProps));
         this.genetree.geneCount = nextProps.genetree.geneCount;
       }
-      relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
+      relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
       setDefaultNodeDisplayInfo(this.genetree, nextProps.initialGeneOfInterest);
       this.initializeAlignments(nextProps)();
       // this.reinitHeight();
@@ -220,7 +221,7 @@ var TreeVis = React.createClass({
     if (this.props.allowGeneSelection) {
       GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
         var geneOfInterest = response.docs[0];
-        relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
+        relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy, this.props.pivotTree);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
         this.initHeightAndMargin();
