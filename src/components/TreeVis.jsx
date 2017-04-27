@@ -17,6 +17,7 @@ var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
 var PositionedDomains = require('./PositionedDomains.jsx');
 var PositionedExonJunctions = require('./PositionedExonJunctions.jsx');
+var PositionedNeighborhood = require('./PositionedNeighborhood.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var nodeCoordinates = require('../utils/nodeCoordinates');
@@ -191,7 +192,7 @@ var TreeVis = React.createClass({
     this.treeHeight = calculateSvgHeight(this.genetree);
 
     this.alignmentsWidth = this.w - this.treeWidth;
-    this.displayAlignments = true;
+    this.displayAlignments = (this.state.displayMode === DISPLAY_MSA || this.state.displayMode === DISPLAY_DOMAINS);
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
       // this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
@@ -452,9 +453,23 @@ var TreeVis = React.createClass({
   },
 
   renderPhyloview: function () {
-    if (this.state.neighborhoods) {
+    if (this.state.displayMode === DISPLAY_PHYLOVIEW && this.state.neighborhoods) {
+      let neighborhoods = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id) { // || !node.displayInfo.expanded) {
+          let neighborhood = this.state.neighborhoods[node.model.gene_stable_id];
+          return (
+            <g key={node.model.node_id}>
+              <PositionedNeighborhood node={node} width={this.alignmentsWidth} neighborhood={neighborhood}/>
+            </g>
+          )
+        }
+      }.bind(this));
       return (
-        <div>phyloview placeholder</div>
+        <g className="phyloview-wrapper" transform={this.transformAlignments}>
+          <svg ref={(svg) => this.phyloviewSVG = svg} width={this.alignmentsWidth} height={this.vbHeight}>
+            {neighborhoods}
+          </svg>
+        </g>
       )
     }
   },
@@ -521,33 +536,7 @@ var TreeVis = React.createClass({
           MSAStop: this.consensusLength
         };
       }
-      let colorSchemeDropdown;
       let slider;
-      function toTitleCase(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-      }
-      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
-      let items = colorSchemes.map(function (scheme, i) {
-        let label = toTitleCase(scheme.replace('_',' '));
-        if (scheme === this.state.colorScheme)
-          return (
-            <MenuItem key={i} eventKey={i} active
-              onClick={() => this.setState({colorScheme: scheme})}
-            >{label}</MenuItem>
-          );
-        else
-          return (
-            <MenuItem key={i} eventKey={i}
-              onClick={() => this.setState({colorScheme: scheme})}
-            >{label}</MenuItem>
-          );
-      }.bind(this));
-      let nofloat = {float:'none'};
-      colorSchemeDropdown = (
-        <DropdownButton title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
-          {items}
-        </DropdownButton>
-      );
       if (this.state.displayMode === DISPLAY_MSA ) {
         slider = (
           <Slider
@@ -571,37 +560,65 @@ var TreeVis = React.createClass({
       }
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
-          <ButtonToolbar>
-            {colorSchemeDropdown}
-          </ButtonToolbar>
           {slider}
         </div>
       );
       // }
     }
 
+    let colorSchemeDropdown;
+    if (this.state.displayMode === DISPLAY_MSA) {
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
+      let items = colorSchemes.map(function (scheme, i) {
+        let label = toTitleCase(scheme.replace('_',' '));
+        if (scheme === this.state.colorScheme)
+          return (
+            <MenuItem key={i} eventKey={i} active
+                      onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+        else
+          return (
+            <MenuItem key={i} eventKey={i}
+                      onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+      }.bind(this));
+      let nofloat = {float:'none'};
+      colorSchemeDropdown = (
+        <DropdownButton title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
+          {items}
+        </DropdownButton>
+      );
+    }
     return (
       <div>
-        <Dropdown id="display-mode-dropdown"
-                  onClick={(e)=>e.stopPropagation()}>
-          <Dropdown.Toggle>
-            Display mode
-          </Dropdown.Toggle>
-          <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
-            <MenuItem eventKey={ DISPLAY_DOMAINS }
-                      active={this.state.displayMode === DISPLAY_DOMAINS }>
-              Domains
-            </MenuItem>
-            <MenuItem eventKey={ DISPLAY_MSA }
-                      active={this.state.displayMode === DISPLAY_MSA }>
-              Multiple Sequence Alignment
-            </MenuItem>
-            <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
-                      active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
-              Neighborhood conservation
-            </MenuItem>
-          </Dropdown.Menu>
-        </Dropdown>
+        <ButtonToolbar>
+          <Dropdown id="display-mode-dropdown"
+                    onClick={(e)=>e.stopPropagation()}>
+            <Dropdown.Toggle>
+              Display mode
+            </Dropdown.Toggle>
+            <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+              <MenuItem eventKey={ DISPLAY_DOMAINS }
+                        active={this.state.displayMode === DISPLAY_DOMAINS }>
+                Domains
+              </MenuItem>
+              <MenuItem eventKey={ DISPLAY_MSA }
+                        active={this.state.displayMode === DISPLAY_MSA }>
+                Multiple Sequence Alignment
+              </MenuItem>
+              <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
+                        active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
+                Neighborhood conservation
+              </MenuItem>
+            </Dropdown.Menu>
+          </Dropdown>
+          {colorSchemeDropdown}
+        </ButtonToolbar>
         {zoomer}
         <div className="genetree-vis">
           <svg width={this.width} height={height}>

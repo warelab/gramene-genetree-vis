@@ -156,7 +156,7 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
 }
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {
-  neighborhoodsAndFacets.neighborhoods = neighborhoodsAndFacets.neighborhoods.map( (neighborhood) => {
+  let neighborhoods = neighborhoodsAndFacets.neighborhoods.map( (neighborhood) => {
     const {genes, center_idx} = neighborhood;
     const centerGenes = genes[center_idx];
     centerGenes.identity = neighborhood.center_identity;
@@ -173,6 +173,7 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
     }
     return neighborhood;
   });
+  neighborhoodsAndFacets.neighborhoods = _.keyBy(neighborhoods,'center_gene_id');
   return neighborhoodsAndFacets;
 }
 
