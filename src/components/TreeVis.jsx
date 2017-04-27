@@ -149,12 +149,12 @@ var TreeVis = React.createClass({
   keepNode: function (props = this.props) {
     return function _keepNode(node) {
       if (props.genomesOfInterest.hasOwnProperty(node.model.taxon_id)) return true;
-      if (node.model.gene_stable_id &&
-        _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
-        if (node.model.gene_stable_id === props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
-          return true;
-        }
-      }
+      // if (node.model.gene_stable_id &&
+      //   _.has(props, 'initialGeneOfInterest.homology.gene_tree.representative.model.id')) {
+      //   if (node.model.gene_stable_id === props.initialGeneOfInterest.homology.gene_tree.representative.model.id) {
+      //     return true;
+      //   }
+      // }
       return false;
     }
   },
