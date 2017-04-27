@@ -179,9 +179,12 @@ var GeneTree = React.createClass({
 
       overlay: function (node) {
         const model = node.model;
-        const titleText = model.gene_display_label
-          ? `${model.taxon_name} – ${model.gene_display_label}`
-          : `${model.taxon_name} – ${model.node_type}`;
+        const titleText = model.node_type
+          ? `${model.taxon_name} – ${model.node_type}`
+          : model.gene_display_label
+            ? `${model.taxon_name} – ${model.gene_display_label}`
+            : `${model.taxon_name} - ${model.gene_stable_id}`;
+
         const id = `nodepopover${model.node_id}`;
 
         const title = <div>
