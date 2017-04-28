@@ -69,6 +69,7 @@ var TreeVis = React.createClass({
       geneOfInterest: this.props.initialGeneOfInterest,
       colorScheme: 'clustal',
       displayMode: DISPLAY_DOMAINS,
+      treeOnly: false
     };
   },
 
@@ -195,13 +196,13 @@ var TreeVis = React.createClass({
     this.treeHeight = calculateSvgHeight(this.genetree);
 
     this.alignmentsWidth = this.w - this.treeWidth;
-    this.displayAlignments = (this.state.displayMode === DISPLAY_MSA || this.state.displayMode === DISPLAY_DOMAINS);
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
-      // this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
       this.consensusHeight = 0;
+      this.setState({treeOnly: true});
     }
     else {
+      this.setState({treeOnly: false});
       this.charWidth = 7.2065;
       this.consensusHeight = 30;
       this.consensusLength = this.genetree.model.consensus.sequence.length;
@@ -329,7 +330,7 @@ var TreeVis = React.createClass({
   },
 
   renderConsensus: function () {
-    if (this.displayAlignments) {
+    if (this.state.displayMode === DISPLAY_DOMAINS || this.state.displayMode === DISPLAY_MSA) {
       var w = this.alignmentsWidth;
       var alignment = alignmentTools.calculateAlignment(this.geneTreeRoot);
       var domains = positionDomains(this.geneTreeRoot);
@@ -360,7 +361,7 @@ var TreeVis = React.createClass({
   },
 
   renderAlignments: function () {
-    if (this.displayAlignments) {
+    if (this.state.displayMode === DISPLAY_DOMAINS || this.state.displayMode === DISPLAY_MSA) {
       var width = this.alignmentsWidth;
       var viewBoxMinX = this.MSARange.MSAStart;
       var viewBoxMinY = -3;
@@ -500,8 +501,7 @@ var TreeVis = React.createClass({
 
   handleModeSelection(e) {
     console.log('handelModeSelection',e);
-    this.displayAlignments = (e === DISPLAY_DOMAINS || e === DISPLAY_MSA);
-    this.setState({displayMode: e});
+    this.setState({displayMode: e, treeOnly: (this.alignmentsWidth < MIN_ALIGN_WIDTH)});
   },
 
   render: function () {
@@ -513,7 +513,6 @@ var TreeVis = React.createClass({
     this.treeHeight = calculateSvgHeight(this.genetree);
     this.vbHeight = this.treeHeight + 2 * this.margin + 3;
 
-    height = this.treeHeight + 2 * this.margin + this.consensusHeight + 3;
 
     if (this.state.visibleNodes) {
       genetree = (
@@ -529,8 +528,22 @@ var TreeVis = React.createClass({
       );
     }
 
+    if (this.state.treeOnly) {
+      return (
+        <div className="genetree-vis">
+          <svg width={this.width} height={this.treeHeight + 2 * this.margin}>
+            <g className="tree-wrapper" transform={this.transformTree}>
+              {genetree}
+            </g>
+          </svg>
+          <div ref="overlaysContainer"
+               className="overlays"></div>
+        </div>
+      )
+    }
+    height = this.treeHeight + 2 * this.margin + this.consensusHeight + 3;
     var zoomer;
-    if (this.displayAlignments) {
+    if (this.state.displayMode === DISPLAY_DOMAINS || this.state.displayMode === DISPLAY_MSA) {
       var zoomPosition = {
         left: this.alignmentOrigin,
         width: this.alignmentsWidth
