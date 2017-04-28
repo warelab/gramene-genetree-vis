@@ -4,13 +4,20 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import Range from 'rc-slider/lib/Range';
 import Slider from 'rc-slider/lib/Slider';
-import {MenuItem, DropdownButton, Button, ButtonToolbar} from 'react-bootstrap';
+import {
+  MenuItem,
+  DropdownButton,
+  Button,
+  ButtonToolbar,
+  Dropdown,
+} from 'react-bootstrap';
 var _ = require('lodash');
 var GrameneClient = require('gramene-search-client').client;
 var GeneTree = require('./GeneTree.jsx');
 var PositionedAlignment = require('./PositionedAlignment.jsx');
 var PositionedDomains = require('./PositionedDomains.jsx');
 var PositionedExonJunctions = require('./PositionedExonJunctions.jsx');
+var PositionedNeighborhood = require('./PositionedNeighborhood.jsx');
 
 var relateGeneToTree = require('../utils/relateGeneToTree');
 var nodeCoordinates = require('../utils/nodeCoordinates');
@@ -27,12 +34,19 @@ import {
 } from "../utils/visibleNodes";
 var pruneTree = require('gramene-trees-client').extensions.pruneTree;
 var addConsensus = require('gramene-trees-client').extensions.addConsensus;
+import { getNeighborhood } from '../utils/getNeighbors';
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
 const MAX_TREE_WIDTH = 200;
 const MIN_ALIGN_WIDTH = 200;
 const windowResizeDebounceMs = 250;
+
+const DISPLAY_DOMAINS     = "domains";
+const DISPLAY_MSA         = "msa";
+const DISPLAY_PHYLOVIEW   = "phyloview";
+const NUM_NEIGHBORS       = 10;
+
 
 var TreeVis = React.createClass({
   propTypes: {
@@ -43,15 +57,18 @@ var TreeVis = React.createClass({
     initialGeneOfInterest: React.PropTypes.object,
     genomesOfInterest: React.PropTypes.object,
     taxonomy: React.PropTypes.object,
-    allowGeneSelection: React.PropTypes.bool
+    allowGeneSelection: React.PropTypes.bool,
+    pivotTree: React.PropTypes.bool,
+    numberOfNeighbors: React.PropTypes.number,
+    enablePhyloview: React.PropTypes.bool
   },
 
   getInitialState: function () {
     return {
       hoveredNode: undefined,
-      displayMSA: false,
       geneOfInterest: this.props.initialGeneOfInterest,
-      colorScheme: 'clustal'
+      colorScheme: 'clustal',
+      displayMode: DISPLAY_DOMAINS,
     };
   },
 
@@ -74,13 +91,20 @@ var TreeVis = React.createClass({
       this.genetree.geneCount = this.props.genetree.geneCount;
     }
 
-    relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
+    relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     this.initializeAlignments(this.props)();
+    if (this.props.enablePhyloview) {
+      let that = this;
+      getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest)
+        .then(function (neighborhoodsAndFacets) {
+          that.setState(neighborhoodsAndFacets);
+        });
+    }
   },
 
   componentDidUpdate: function () {
-    if (this.state.displayMSA) {
+    if (this.state.displayMode === DISPLAY_MSA ) {
       let Xmin = this.MSARange.MSAStart * this.charWidth;
       let MSA = document.getElementsByClassName('MSAlignments-wrapper');
       MSA[0].scrollLeft = Xmin;
@@ -109,7 +133,7 @@ var TreeVis = React.createClass({
         this.genetree = pruneTree(this.genetree, this.keepNode(nextProps));
         this.genetree.geneCount = nextProps.genetree.geneCount;
       }
-      relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy);
+      relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
       setDefaultNodeDisplayInfo(this.genetree, nextProps.initialGeneOfInterest);
       this.initializeAlignments(nextProps)();
       // this.reinitHeight();
@@ -158,6 +182,7 @@ var TreeVis = React.createClass({
         alignmentTools.removeGaps(gaps, this.genetree);
       }
       this.domainHist = positionDomains(this.genetree, true);
+
     }.bind(this);
   },
 
@@ -170,9 +195,9 @@ var TreeVis = React.createClass({
     this.treeHeight = calculateSvgHeight(this.genetree);
 
     this.alignmentsWidth = this.w - this.treeWidth;
-    this.displayAlignments = true;
+    this.displayAlignments = (this.state.displayMode === DISPLAY_MSA || this.state.displayMode === DISPLAY_DOMAINS);
     if (this.alignmentsWidth < MIN_ALIGN_WIDTH) {
-      this.displayAlignments = false;
+      // this.displayAlignments = false;
       this.treeWidth += this.alignmentsWidth;
       this.consensusHeight = 0;
     }
@@ -200,7 +225,7 @@ var TreeVis = React.createClass({
     if (this.props.allowGeneSelection) {
       GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
         var geneOfInterest = response.docs[0];
-        relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy);
+        relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy, this.props.pivotTree);
         setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
         var visibleNodes = this.nodeCoordinates();
         this.initHeightAndMargin();
@@ -341,7 +366,7 @@ var TreeVis = React.createClass({
       var viewBoxMinY = -3;
       var viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart;
       var viewBoxHeight = this.vbHeight;
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA) {
         viewBoxWidth *= this.charWidth;
         viewBoxMinX *= this.charWidth;
       }
@@ -402,7 +427,7 @@ var TreeVis = React.createClass({
         }
       }.bind(this));
 
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA ) {
         return (
           // <g transform={this.transformAlignments}>
           <foreignObject x={this.alignmentOrigin} y={this.margin + this.consensusHeight - 7}
@@ -430,8 +455,32 @@ var TreeVis = React.createClass({
     }
   },
 
+  renderPhyloview: function () {
+    if (this.state.displayMode === DISPLAY_PHYLOVIEW && !_.isEmpty(this.state.neighborhoods)) {
+      let neighborhoods = this.state.visibleNodes.map(function (node) {
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+          let neighborhood = node.model.gene_stable_id
+            ? this.state.neighborhoods[node.model.gene_stable_id]
+            : {genes : []};
+          return (
+            <g key={node.model.node_id}>
+              <PositionedNeighborhood node={node} width={this.alignmentsWidth} neighborhood={neighborhood}/>
+            </g>
+          )
+        }
+      }.bind(this));
+      return (
+        <g className="phyloview-wrapper" transform={this.transformAlignments}>
+          <svg ref={(svg) => this.phyloviewSVG = svg} width={this.alignmentsWidth} height={this.vbHeight}>
+            {neighborhoods}
+          </svg>
+        </g>
+      )
+    }
+  },
+
   handleSliderChange(e) {
-    if (this.state.displayMSA) {
+    if (this.state.displayMode === DISPLAY_MSA ) {
       this.MSARange = {
         MSAStart: e,
         MSAStop: Math.min(e + Math.floor(this.alignmentsWidth / this.charWidth), this.consensusLength)
@@ -447,6 +496,12 @@ var TreeVis = React.createClass({
       var vb = `${Xmin} -3 ${MSAWidth} ${this.vbHeight}`;
       this.alignmentsSVG.setAttribute('viewBox', vb);
     }
+  },
+
+  handleModeSelection(e) {
+    console.log('handelModeSelection',e);
+    this.displayAlignments = (e === DISPLAY_DOMAINS || e === DISPLAY_MSA);
+    this.setState({displayMode: e});
   },
 
   render: function () {
@@ -486,34 +541,8 @@ var TreeVis = React.createClass({
           MSAStop: this.consensusLength
         };
       }
-      let colorSchemeDropdown;
       let slider;
-      function toTitleCase(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-      }
-      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
-      let items = colorSchemes.map(function (scheme, i) {
-        let label = toTitleCase(scheme.replace('_',' '));
-        if (scheme === this.state.colorScheme)
-          return (
-            <MenuItem key={i} eventKey={i} active
-              onClick={() => this.setState({colorScheme: scheme})}
-            >{label}</MenuItem>
-          );
-        else
-          return (
-            <MenuItem key={i} eventKey={i}
-              onClick={() => this.setState({colorScheme: scheme})}
-            >{label}</MenuItem>
-          );
-      }.bind(this));
-      let nofloat = {float:'none'};
-      colorSchemeDropdown = (
-        <DropdownButton title="Color Scheme" disabled={!this.state.displayMSA} style={nofloat}>
-          {items}
-        </DropdownButton>
-      );
-      if (this.state.displayMSA) {
+      if (this.state.displayMode === DISPLAY_MSA ) {
         slider = (
           <Slider
             min={0}
@@ -523,7 +552,7 @@ var TreeVis = React.createClass({
           />
         )
       }
-      else {
+      else if (this.state.displayMode === DISPLAY_DOMAINS ) {
         slider = (
           <Range
             min={0}
@@ -536,20 +565,71 @@ var TreeVis = React.createClass({
       }
       zoomer = (
         <div className="zoomer" style={zoomPosition}>
-          <ButtonToolbar>
-            <Button bsStyle={this.state.displayMSA ? 'success' : 'default'}
-                    onClick={() => this.setState({displayMSA: !this.state.displayMSA})}>Multiple Sequence
-              Alignment</Button>
-            {colorSchemeDropdown}
-          </ButtonToolbar>
           {slider}
         </div>
       );
       // }
     }
 
+    let colorSchemeDropdown;
+    if (this.state.displayMode === DISPLAY_MSA) {
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
+      let items = colorSchemes.map(function (scheme, i) {
+        let label = toTitleCase(scheme.replace('_',' '));
+        if (scheme === this.state.colorScheme)
+          return (
+            <MenuItem key={i} eventKey={i} active
+                      onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+        else
+          return (
+            <MenuItem key={i} eventKey={i}
+                      onClick={() => this.setState({colorScheme: scheme})}
+            >{label}</MenuItem>
+          );
+      }.bind(this));
+      let nofloat = {float:'none'};
+      colorSchemeDropdown = (
+        <DropdownButton id="colorscheme-dropdown" title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
+          {items}
+        </DropdownButton>
+      );
+    }
+    let phyloviewMenuItem = this.props.enablePhyloview ?
+      (
+        <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
+                  active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
+          Neighborhood conservation
+        </MenuItem>
+      )
+      : undefined;
+
     return (
       <div>
+        <ButtonToolbar>
+          <Dropdown id="display-mode-dropdown"
+                    onClick={(e)=>e.stopPropagation()}>
+            <Dropdown.Toggle>
+              Display mode
+            </Dropdown.Toggle>
+            <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+              <MenuItem eventKey={ DISPLAY_DOMAINS }
+                        active={this.state.displayMode === DISPLAY_DOMAINS }>
+                Domains
+              </MenuItem>
+              <MenuItem eventKey={ DISPLAY_MSA }
+                        active={this.state.displayMode === DISPLAY_MSA }>
+                Multiple Sequence Alignment
+              </MenuItem>
+              {phyloviewMenuItem}
+            </Dropdown.Menu>
+          </Dropdown>
+          {colorSchemeDropdown}
+        </ButtonToolbar>
         {zoomer}
         <div className="genetree-vis">
           <svg width={this.width} height={height}>
@@ -558,6 +638,7 @@ var TreeVis = React.createClass({
             </g>
             {this.renderConsensus()}
             {this.renderAlignments()}
+            {this.renderPhyloview()}
           </svg>
           <div ref="overlaysContainer"
                className="overlays"></div>

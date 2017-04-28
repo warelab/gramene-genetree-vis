@@ -1,7 +1,23 @@
 var _ = require('lodash');
 var scale = require('d3').scale.linear;
+var calculateIdentity = require('gramene-trees-client').extensions.identity;
 
-function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy) {
+function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
+  if (pivotTree) {
+    let node = genetree.indices.gene_stable_id[geneOfInterest._id];
+    while (!node.isRoot()) {
+      const parent = node.parent;
+      const children = parent.children;
+      const nodeIdx = _.findIndex(children, (n) => n === node);
+
+      // move this node to the front of the children array.
+      if (nodeIdx) {
+        children.splice(0, 0, children.splice(nodeIdx, 1)[0]);
+      }
+      node = parent;
+    }
+  }
+  // (re)initialize relationships
   genetree.walk(function (node) {
     node.relationToGeneOfInterest = {};
   });
@@ -12,6 +28,7 @@ function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy) {
 function addHomologyInformationToNodes(genetree, theGene) {
   var homologs, representatives;
   if (theGene) {
+    var theGeneNode = genetree.indices.gene_stable_id[theGene._id];
     homologs = indexHomologs(theGene);
     representatives = indexReps(theGene);
     genetree.walk(function (node) {
@@ -24,7 +41,7 @@ function addHomologyInformationToNodes(genetree, theGene) {
         else {
           homology = homologs[nodeId];
         }
-
+        node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
         node.relationToGeneOfInterest.homology = homology;
         node.relationToGeneOfInterest.repType = representatives[nodeId];
       }
