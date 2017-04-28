@@ -26,6 +26,8 @@ ReactDOM.render(
            genomesOfInterest={genomesOfInterest}
            width={1200}
            allowGeneSelection={true}
-           pivotTree={true}/>,
+           pivotTree={true}
+           enablePhyloview={true}
+           />,
   document.getElementById('tree')
 );

@@ -166,10 +166,10 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
         gene.orientation = gene.orientation === '-' ? '+' : '-';
       });
       neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
-      neighborhood.flipped = true;
+      neighborhood.strand = 'forward';
     }
     else {
-      neighborhood.flipped = false;
+      neighborhood.strand = 'reverse';
     }
     return neighborhood;
   });
@@ -186,7 +186,7 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 
 export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
   let queryString = `gene_tree:${genetree.model._id}`;
-  if (genomesOfInterest) {
+  if (!_.isEmpty(genomesOfInterest)) {
     let taxa = Object.keys(genomesOfInterest).join(' ');
     queryString = `${queryString} AND taxon_id:(${taxa})`;
   }

@@ -38,7 +38,7 @@ var PositionedNeighborhood = React.createClass({
 
     return (
       <g {...props}>
-        <Neighborhood width={this.props.width} node={this.props.node} neighborhood={this.props.neighborhood} />
+        <Neighborhood {...this.props} />
       </g>
     )
   }

@@ -59,7 +59,8 @@ var TreeVis = React.createClass({
     taxonomy: React.PropTypes.object,
     allowGeneSelection: React.PropTypes.bool,
     pivotTree: React.PropTypes.bool,
-    numberOfNeighbors: React.PropTypes.number
+    numberOfNeighbors: React.PropTypes.number,
+    enablePhyloview: React.PropTypes.bool
   },
 
   getInitialState: function () {
@@ -93,11 +94,13 @@ var TreeVis = React.createClass({
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     this.initializeAlignments(this.props)();
-    let that = this;
-    getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest)
-      .then(function(neighborhoodsAndFacets) {
-        that.setState(neighborhoodsAndFacets);
-      });
+    if (this.props.enablePhyloview) {
+      let that = this;
+      getNeighborhood(this.genetree, this.props.numberOfNeighbors || NUM_NEIGHBORS, this.props.genomesOfInterest)
+        .then(function (neighborhoodsAndFacets) {
+          that.setState(neighborhoodsAndFacets);
+        });
+    }
   },
 
   componentDidUpdate: function () {
@@ -453,10 +456,12 @@ var TreeVis = React.createClass({
   },
 
   renderPhyloview: function () {
-    if (this.state.displayMode === DISPLAY_PHYLOVIEW && this.state.neighborhoods) {
+    if (this.state.displayMode === DISPLAY_PHYLOVIEW && !_.isEmpty(this.state.neighborhoods)) {
       let neighborhoods = this.state.visibleNodes.map(function (node) {
-        if (node.model.gene_stable_id) { // || !node.displayInfo.expanded) {
-          let neighborhood = this.state.neighborhoods[node.model.gene_stable_id];
+        if (node.model.gene_stable_id || !node.displayInfo.expanded) {
+          let neighborhood = node.model.gene_stable_id
+            ? this.state.neighborhoods[node.model.gene_stable_id]
+            : {genes : []};
           return (
             <g key={node.model.node_id}>
               <PositionedNeighborhood node={node} width={this.alignmentsWidth} neighborhood={neighborhood}/>
@@ -589,11 +594,20 @@ var TreeVis = React.createClass({
       }.bind(this));
       let nofloat = {float:'none'};
       colorSchemeDropdown = (
-        <DropdownButton title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
+        <DropdownButton id="colorscheme-dropdown" title="Color Scheme" disabled={this.state.displayMode !== DISPLAY_MSA } style={nofloat}>
           {items}
         </DropdownButton>
       );
     }
+    let phyloviewMenuItem = this.props.enablePhyloview ?
+      (
+        <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
+                  active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
+          Neighborhood conservation
+        </MenuItem>
+      )
+      : undefined;
+
     return (
       <div>
         <ButtonToolbar>
@@ -611,10 +625,7 @@ var TreeVis = React.createClass({
                         active={this.state.displayMode === DISPLAY_MSA }>
                 Multiple Sequence Alignment
               </MenuItem>
-              <MenuItem eventKey={ DISPLAY_PHYLOVIEW }
-                        active={this.state.displayMode === DISPLAY_PHYLOVIEW }>
-                Neighborhood conservation
-              </MenuItem>
+              {phyloviewMenuItem}
             </Dropdown.Menu>
           </Dropdown>
           {colorSchemeDropdown}
