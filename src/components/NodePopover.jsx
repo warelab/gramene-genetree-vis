@@ -17,14 +17,16 @@ function buttons(props) {
       : internalNodeButtons(props);
 }
 
-function internalNodeButtons({node, changeCladeVisibility}) {
-  const cladeButton = node.displayInfo.expanded
-      ? btn("Collapse clade", () => changeCladeVisibility(node,true), "warning")
-      : btn("Expand clade", () => changeCladeVisibility(node,true), "success");
+function internalNodeButtons({node, collapseClade, expandClade}) {
+  const collapseCladeButton = btn('Collapse clade', () => collapseClade(node,true), "warning");
+  const collapseNodeButton = btn('Collapse node', () => collapseClade(node,false), "warning");
+  const expandCladeButton = btn('Expand clade', () => expandClade(node,true), "success");
+  const expandNodeButton = btn('Expand node', () => expandClade(node,false), "success");
 
   return (
       <ButtonGroup style={{marginBottom: 3}}>
-        {cladeButton}
+        {expandNodeButton} {expandCladeButton}
+        {collapseNodeButton} {collapseCladeButton}
       </ButtonGroup>
   )
 }
@@ -101,7 +103,8 @@ function prop(name, value) {
 
 NodePopover.propTypes = {
   node: React.PropTypes.object.isRequired,
-  changeCladeVisibility: React.PropTypes.func.isRequired,
+  collapseClade: React.PropTypes.func.isRequired,
+  expandClade: React.PropTypes.func.isRequired,
   changeParalogVisibility: React.PropTypes.func.isRequired
 };
 

@@ -110,24 +110,27 @@ export default class TreeVis extends React.Component {
     }.bind(this));
   }
 
-  changeCladeVisibility(node, recursive) {
-    if (node.displayInfo.expanded) {
-      if (recursive) {
-        makeCladeInvisible(node);
-      }
-      else {
-        makeNodeInvisible(node);
-      }
+  expandClade(node, recursive) {
+    if (recursive) {
+      makeCladeVisible(node);
     }
     else {
-      if (recursive) {
-        makeCladeVisible(node);
-      }
-      else {
-        makeNodeVisible(node)
-      }
+      makeNodeVisible(node);
     }
+    this.updateVisibleNodes();
+  }
 
+  collapseClade(node, recursive) {
+    if (recursive) {
+      makeCladeInvisible(node);
+    }
+    else {
+      makeNodeInvisible(node);
+    }
+    this.updateVisibleNodes();
+  }
+
+  updateVisibleNodes() {
     calculateXIndex(this.genetree);
     this.treeHeight = calculateSvgHeight(this.genetree);
     const newVisibleNodes = layoutNodes(
@@ -177,16 +180,7 @@ export default class TreeVis extends React.Component {
         }
       });
     }
-    calculateXIndex(this.genetree);
-    this.treeHeight = calculateSvgHeight(this.genetree);
-    const newVisibleNodes = layoutNodes(
-      this.genetree,
-      this.treeWidth,
-      this.treeHeight
-    );
-    this.setState({
-      visibleNodes: newVisibleNodes
-    });
+    this.updateVisibleNodes();
   }
 
   render() {
@@ -196,8 +190,9 @@ export default class TreeVis extends React.Component {
     let genetree = (
       <GeneTree nodes={this.state.visibleNodes}
                 onGeneSelect={this.handleGeneSelect.bind(this)}
-                onInternalNodeSelect={this.changeCladeVisibility.bind(this)}
-                onInternalNodeSelect2={this.changeParalogVisibility.bind(this)}
+                collapseClade={this.collapseClade.bind(this)}
+                expandClade={this.expandClade.bind(this)}
+                changeParalogVisibility={this.changeParalogVisibility.bind(this)}
                 onNodeHover={this.handleNodeHover}
                 onNodeUnhover={this.handleNodeUnhover}
                 taxonomy={this.props.taxonomy}

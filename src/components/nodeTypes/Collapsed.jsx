@@ -51,7 +51,6 @@ function triangle(node) {
 
 Collapsed.propTypes = {
   node: React.PropTypes.object.isRequired,
-  onSelect: React.PropTypes.func.isRequired,
   onHover: React.PropTypes.func.isRequired
 };
 

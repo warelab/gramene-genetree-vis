@@ -19,19 +19,6 @@ export default class Clade extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.onSelect = this.nodeSelectHandler(this.props.node);
-  }
-
-  nodeSelectHandler(node) {
-    if (node.model.gene_stable_id) {
-      return this.props.onGeneSelect;
-    }
-    else {
-      return this.props.onInternalNodeSelect;
-    }
-  }
-
   componentDidMount() {
     this.setState({mounted: true});
   }
@@ -54,14 +41,19 @@ export default class Clade extends React.Component {
     });
   }
 
-  changeCladeVisibility(node) {
+  collapseClade(node,recurse) {
     this.setState({popoverVisible: false});
-    this.props.onInternalNodeSelect(node, true);
+    this.props.collapseClade(node,recurse);
+  }
+
+  expandClade(node,recurse) {
+    this.setState({popoverVisible: false});
+    this.props.expandClade(node,recurse);
   }
 
   changeParalogVisibility(node) {
     this.setState({popoverVisible: false});
-    this.props.onInternalNodeSelect2(node);
+    this.props.changeParalogVisibility(node);
   }
 
   changeGeneOfInterest(node) {
@@ -108,7 +100,6 @@ export default class Clade extends React.Component {
     return (
       <Node node={node}
             onHover={() => this.hover}
-            onSelect={() => this.onSelect}
             taxonomy={this.props.taxonomy}/>
     );
   }
@@ -153,7 +144,8 @@ export default class Clade extends React.Component {
                target={this.clickable}>
         <Popover id={id} title={title}>
           <NodePopover node={node}
-                       changeCladeVisibility={this.changeCladeVisibility.bind(this)}
+                       collapseClade={this.collapseClade.bind(this)}
+                       expandClade={this.expandClade.bind(this)}
                        changeParalogVisibility={this.changeParalogVisibility.bind(this)}
                        changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
           />
