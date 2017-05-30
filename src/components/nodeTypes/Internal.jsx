@@ -1,57 +1,50 @@
-'use strict';
-
-var React = require('react');
-var _ = require('lodash');
+import React from 'react';
+import _ from 'lodash';
 
 const INTERNAL_NODE_SIZE = 4;
 const ONE_CHILD_SIZE_RATIO = 0.8;
 
-var Internal = React.createClass({
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired
-  },
+const Internal = props => {
+  const hasOneChild = props.node.children.length == 1;
+  const xy = hasOneChild ? Internal.xy * ONE_CHILD_SIZE_RATIO : Internal.xy;
+  const wh = hasOneChild ? Internal.wh * ONE_CHILD_SIZE_RATIO : Internal.wh;
 
-  className: function () {
-    var className, nodeType;
+  return (
+    <g className={className(props.node)}>
+      <rect x={xy} y={xy} width={wh} height={wh}/>
+      <text x="10"
+            dy=".35em"
+            textAnchor="start">
+        {text(props.node)}
+      </text>
+    </g>
+  )
+};
 
-    className = 'internal';
-    nodeType = _.get(this.props.node, 'model.node_type');
-    if (nodeType) {
-      className += ' ' + nodeType;
-    }
-    return className;
-  },
-
-  text: function () {
-    return (
-      _.get(this.props.node, 'model.gene_display_label') ||
-      _.get(this.props.node, 'model.gene_stable_id') ||
-      ''
-    );
-  },
-
-  render: function () {
-    const hasOneChild = this.props.node.children.length == 1;
-    const xy = hasOneChild ? Internal.xy * ONE_CHILD_SIZE_RATIO : Internal.xy;
-    const wh = hasOneChild ? Internal.wh * ONE_CHILD_SIZE_RATIO : Internal.wh;
-
-    return (
-      <g className={this.className()}>
-        <rect x={xy} y={xy} width={wh} height={wh}/>
-        <text x="10"
-              dy=".35em"
-              textAnchor="start">
-          {this.text()}
-        </text>
-      </g>
-    )
+function className(node) {
+  let className = 'internal';
+  let nodeType = _.get(node, 'model.node_type');
+  if (nodeType) {
+    className += ' ' + nodeType;
   }
-});
+  return className;
+}
+
+function text(node) {
+  return (
+    _.get(node, 'model.gene_display_label') ||
+    _.get(node, 'model.gene_stable_id') ||
+    ''
+  );
+}
+
+Internal.propTypes = {
+  node: React.PropTypes.object.isRequired,
+  onSelect: React.PropTypes.func.isRequired,
+  onHover: React.PropTypes.func.isRequired
+};
 
 Internal.xy = INTERNAL_NODE_SIZE / -2;
 Internal.wh = INTERNAL_NODE_SIZE;
 
-module.exports = Internal;
+export default Internal;

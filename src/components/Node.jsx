@@ -1,66 +1,42 @@
-'use strict';
+import React from 'react';
 
-var React = require('react');
+import Collapsed from './nodeTypes/Collapsed.jsx';
+import Internal from './nodeTypes/Internal.jsx';
+import Gene from './nodeTypes/Gene.jsx';
 
-var Collapsed = require('./nodeTypes/Collapsed.jsx');
-var Internal = require('./nodeTypes/Internal.jsx');
-var Gene = require('./nodeTypes/Gene.jsx');
+const Node = props => {
+  return (
+    <g className="node">
+      <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
+      {React.createElement(getNodeComponent(props.node), props)}
+    </g>
+  )
+};
 
-var Node = React.createClass({
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    taxonomy: React.PropTypes.object.isRequired
-  },
-
-  getNodeType: function() {
-    var node = this.props.node;
-
-    if (node.model.gene_stable_id) {
-      return 'Gene';
-    }
-    else if (!node.displayInfo.expanded) {
-      return 'Collapsed';
-    }
-    else {
-      return 'Internal';
-    }
-  },
-  
-  getNodeComponent: function () {
-    switch(this.getNodeType()) {
-      case 'Gene': return Gene;
-      case 'Collapsed': return Collapsed;
-      case 'Internal': return Internal;
-    }
-  },
-
-  getInitialState: function () {
-    return {};
-  },
-
-  handleClick: function () {
-    //this.props.onSelect(this.props.node);
-  },
-
-  className: function () {
-    var className;
-
-    className = 'node';
-
-    return className;
-  },
-
-  render: function () {
-    return (
-      <g className={this.className()}
-         //transform={this.transform()}
-         onClick={this.handleClick}>
-        <rect className="interaction-helper" x="-5" y="-5" width="10" height="10"/>
-        {React.createElement(this.getNodeComponent(), this.props)}
-      </g>
-    )
+function getNodeType(node) {
+  if (node.model.gene_stable_id) {
+    return 'Gene';
   }
-});
+  else if (!node.displayInfo.expanded) {
+    return 'Collapsed';
+  }
+  else {
+    return 'Internal';
+  }
+}
+  
+function getNodeComponent(node) {
+  switch(getNodeType(node)) {
+    case 'Gene': return Gene;
+    case 'Collapsed': return Collapsed;
+    case 'Internal': return Internal;
+  }
+}
 
-module.exports = Node;
+
+Node.propTypes = {
+  node: React.PropTypes.object.isRequired,
+  taxonomy: React.PropTypes.object.isRequired
+};
+
+export default Node;

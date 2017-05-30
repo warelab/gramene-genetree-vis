@@ -16,35 +16,65 @@ export function makeCladeInvisible(node) {
   node.walk(makeNodeInvisible);
 }
 
-export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
-  var paralogPathIds, orthologPathIds, pathIds;
+export function calculateXIndex(genetree) {
+  let visibleUnexpanded = []; // array of unexpanded nodes that are visible
 
-  pathIds = getPathIds();
-  paralogPathIds = getParalogPathIds();
-  orthologPathIds = getOrthologPathIds();
+  function calcXIndexFor(node) {
+    if (node.displayInfo.expanded && node.children.length > 0) {
+
+      if (node.children.length === 2) {
+        let leftExtrema = calcXIndexFor(node.children[0]); // left child
+        let rightExtrema = calcXIndexFor(node.children[1]); // right child
+        node.xindex = (rightExtrema.min + leftExtrema.max) / 2; // midpoint
+        return {
+          min: leftExtrema.min,
+          max: rightExtrema.max
+        };
+      }
+      else {
+        let childExtrema = calcXIndexFor(node.children[0]);
+        node.xindex = node.children[0].xindex;
+        return {
+          min: childExtrema.min,
+          max: childExtrema.max
+        };
+      }
+    }
+    else {
+      visibleUnexpanded.push(node);
+      node.xindex = visibleUnexpanded.length;
+      return {
+        min: node.xindex,
+        max: node.xindex
+      };
+    }
+  }
+
+  let treeExtrema = calcXIndexFor(genetree);
+  genetree.maxXindex = treeExtrema.max;
+  genetree.minXindex = treeExtrema.min;
+}
+
+export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
+  let pathIds = getPathIds();
+  let paralogPathIds = getParalogPathIds();
+  let orthologPathIds = getOrthologPathIds();
 
   genetree.walk(function (node) {
-    var nodeId, isLeafNode, onlyChild, parentNodeId, displayInfo;
-    nodeId = node.model.node_id;
-    isLeafNode = !!node.model.gene_stable_id;
-    onlyChild = (node.children && node.children.length === 1);
-    displayInfo = {
+    let nodeId = node.model.node_id;
+    let isLeafNode = !!node.model.gene_stable_id;
+    let onlyChild = (node.children && node.children.length === 1);
+    let displayInfo = {
       expanded: false,
       leafNode: isLeafNode,
-      isGeneOfInterest: (node.model.gene_stable_id == geneOfInterest._id)
+      isGeneOfInterest: (node.model.gene_stable_id === geneOfInterest._id)
     };
     if (!!pathIds[nodeId]) {
       displayInfo.expanded = true;
       displayInfo.expandedBecause = pathIds[nodeId];
     }
-    // else if(!!additionalVisibleIds[nodeId]) {
-    //   if (node.parent.displayInfo.expanded) {
-    //     displayInfo.expanded = true;
-    //     displayInfo.expandedBecause = 'selected';
-    //   }
-    // }
     else if (node.parent) {
-      parentNodeId = node.parent.model.node_id;
+      let parentNodeId = node.parent.model.node_id;
 
       if ((isLeafNode || onlyChild) && pathIds[parentNodeId]) {
         displayInfo.expanded = true;
@@ -60,12 +90,10 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
   });
 
   function getPathIds() {
-    var representatives, nodesToExpand;
-
-    representatives = _.get(geneOfInterest.homology.gene_tree, 'representative');
+    let representatives = _.get(geneOfInterest.homology.gene_tree, 'representative');
 
     // get nodes of representatives and gene of interest.
-    nodesToExpand = representatives ? _.map(representatives, (rep)=>idToNode(rep.id)) : [];
+    let nodesToExpand = representatives ? _.map(representatives, (rep)=>idToNode(rep.id)) : [];
     nodesToExpand.push(idToNode(geneOfInterest._id));
 
     // get and index all node_ids in the paths for those nodes.
@@ -74,9 +102,8 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
   }
 
   function pathIdsImpl(path) {
-    var ids, nodes;
-    ids = _.get(geneOfInterest, path);
-    nodes = _.map(ids, idToNode);
+    let ids = _.get(geneOfInterest, path);
+    let nodes = _.map(ids, idToNode);
     return _.reduce(nodes, nodesToPathIds, {});
   }
 
@@ -85,18 +112,16 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
   }
 
   function getOrthologPathIds() {
-    var keys, filteredKeys, pathIdsArray, result;
-    keys = _.keys(_.get(geneOfInterest, 'homology.homologous_genes')).map(function (key) {
+    let keys = _.keys(_.get(geneOfInterest, 'homology.homologous_genes')).map(function (key) {
       return 'homology.homologous_genes.' + key;
     });
-    filteredKeys = _.filter(keys, function (key) { return key.indexOf('ortholog') > -1; });
-    pathIdsArray = _.map(filteredKeys, pathIdsImpl);
-    result = _.reduce(pathIdsArray, function (acc, obj) {
+    let filteredKeys = _.filter(keys, function (key) { return key.indexOf('ortholog') > -1; });
+    let pathIdsArray = _.map(filteredKeys, pathIdsImpl);
+    return _.reduce(pathIdsArray, function (acc, obj) {
       return _.mergeWith(acc, obj, function mergeIndexedPathIds(accVal, objVal) {
         return _.isArray(accVal) ? accVal.concat(objVal) : objVal;
       });
     });
-    return result;
   }
 
   function idToNode(id) {
@@ -109,11 +134,10 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
     // value: array of actual nodes (not the ones in the path).
     if(!node) return acc;
 
-    var paralogPairs, paralogLUT;
-    paralogPairs = _.map(node.getPath(), function (n) {
+    let paralogPairs = _.map(node.getPath(), function (n) {
       return [n.model.node_id, node];
     });
-    paralogLUT = _.fromPairs(paralogPairs);
+    let paralogLUT = _.fromPairs(paralogPairs);
 
     return _.assignWith(acc, paralogLUT, function (accVal, srcVal) {
       return _.isUndefined(accVal) ? [srcVal] : _.concat(accVal, srcVal);

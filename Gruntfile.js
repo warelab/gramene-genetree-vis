@@ -9,7 +9,10 @@ module.exports = function (grunt) {
 
         browserifyOptions: {
           debug: true
-        }
+        },
+        transform: [
+          ['babelify', {presets: ['es2015', 'react']}]
+        ]
       },
       dev: {
         src: './example.js',
