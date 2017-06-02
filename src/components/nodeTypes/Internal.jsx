@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const INTERNAL_NODE_SIZE = 4;
@@ -39,8 +40,8 @@ function text(node) {
 }
 
 Internal.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  onHover: React.PropTypes.func.isRequired
+  node: PropTypes.object.isRequired,
+  onHover: PropTypes.func.isRequired
 };
 
 Internal.xy = INTERNAL_NODE_SIZE / -2;

@@ -184,7 +184,7 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 }
 
 
-export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
+export function getNeighborhood(genetree_id, sortedIdsAndIdentities, numberOfNeighbors, genomesOfInterest) {
   let queryString = `gene_tree:${genetree.model._id}`;
   if (!_.isEmpty(genomesOfInterest)) {
     let taxa = Object.keys(genomesOfInterest).join(' ');
@@ -194,12 +194,7 @@ export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) 
     centralGenePromise(queryString),
     getAndIndexGenes(queryString, numberOfNeighbors),
     numberOfNeighbors,
-    genetree.leafNodes().map((n) => {
-      return {
-        id: n.model.gene_stable_id,
-        identity: n.relationToGeneOfInterest.identity
-      }
-    })
+    sortedIdsAndIdentities
   ])
     .spread(groupGenesIntoNeighborhoods)
     .then(reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand);

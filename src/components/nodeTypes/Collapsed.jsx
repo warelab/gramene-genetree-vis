@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import taxonomyColor from '../../utils/taxonomyColor';
@@ -50,8 +51,8 @@ function triangle(node) {
 }
 
 Collapsed.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  onHover: React.PropTypes.func.isRequired
+  node: PropTypes.object.isRequired,
+  onHover: PropTypes.func.isRequired
 };
 
 export default Collapsed;

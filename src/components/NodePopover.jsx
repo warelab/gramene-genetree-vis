@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import _ from "lodash";
 import {ButtonGroup, Button, Table} from "react-bootstrap";
 
@@ -102,10 +103,10 @@ function prop(name, value) {
 }
 
 NodePopover.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  collapseClade: React.PropTypes.func.isRequired,
-  expandClade: React.PropTypes.func.isRequired,
-  changeParalogVisibility: React.PropTypes.func.isRequired
+  node: PropTypes.object.isRequired,
+  collapseClade: PropTypes.func.isRequired,
+  expandClade: PropTypes.func.isRequired,
+  changeParalogVisibility: PropTypes.func.isRequired
 };
 
 export default NodePopover;

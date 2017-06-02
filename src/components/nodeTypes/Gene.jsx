@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const Gene = props => {
@@ -33,9 +34,9 @@ function text(node) {
 }
 
 Gene.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  onHover: React.PropTypes.func.isRequired,
-  taxonomy: React.PropTypes.object.isRequired
+  node: PropTypes.object.isRequired,
+  onHover: PropTypes.func.isRequired,
+  taxonomy: PropTypes.object.isRequired
 };
 
 export default Gene;

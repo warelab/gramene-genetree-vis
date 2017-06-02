@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import microsoftBrowser from '../utils/microsoftBrowser';
@@ -138,10 +139,10 @@ function interactionHelper(props) {
 }
 
 Edge.propTypes = {
-  source: React.PropTypes.object.isRequired, // child
-  target: React.PropTypes.object.isRequired,  // parent
-  cladeHovered: React.PropTypes.bool.isRequired,
-  thisCladeHovered: React.PropTypes.bool.isRequired
+  source: PropTypes.object.isRequired, // child
+  target: PropTypes.object.isRequired,  // parent
+  cladeHovered: PropTypes.bool.isRequired,
+  thisCladeHovered: PropTypes.bool.isRequired
 };
 
 

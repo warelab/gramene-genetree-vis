@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import microsoftBrowser from '../utils/microsoftBrowser';
@@ -99,7 +101,7 @@ export default class Clade extends React.Component {
 
     return (
       <Node node={node}
-            onHover={() => this.hover}
+            onHover={() => this.hover()}
             taxonomy={this.props.taxonomy}/>
     );
   }
@@ -140,8 +142,10 @@ export default class Clade extends React.Component {
 
     return (
       <Overlay show={this.state.popoverVisible}
-               container={this.props.overlaysContainer}
-               target={this.clickable}>
+               target={ props => {
+                 console.log("Getting target for overlay", this, this.refs.clickable, props);
+                 return ReactDOM.findDOMNode(this.refs.clickable)
+               } }>
         <Popover id={id} title={title}>
           <NodePopover node={node}
                        collapseClade={this.collapseClade.bind(this)}
@@ -172,7 +176,7 @@ export default class Clade extends React.Component {
   render() {
     return (
       <g {...this.cladeProps()}>
-        <g ref={(elem) => {this.clickable = elem}} onClick={this.togglePopoverVisibility.bind(this)}>
+        <g ref="clickable" onClick={this.togglePopoverVisibility.bind(this)}>
           {this.renderEdge()}
           {this.renderNode()}
         </g>
@@ -185,8 +189,8 @@ export default class Clade extends React.Component {
 }
 
 Clade.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  cladeHovered: React.PropTypes.bool,
-  xOffset: React.PropTypes.number.isRequired,
-  yOffset: React.PropTypes.number.isRequired
+  node: PropTypes.object.isRequired,
+  cladeHovered: PropTypes.bool,
+  xOffset: PropTypes.number.isRequired,
+  yOffset: PropTypes.number.isRequired
 };

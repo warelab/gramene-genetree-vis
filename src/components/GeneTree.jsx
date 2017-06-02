@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Clade from './Clade.jsx';
 
 const GeneTree = props => {
@@ -10,10 +11,10 @@ const GeneTree = props => {
 };
 
 GeneTree.propTypes = {
-  nodes: React.PropTypes.array.isRequired,
-  onGeneSelect: React.PropTypes.func.isRequired,
-  onNodeHover: React.PropTypes.func.isRequired,
-  taxonomy: React.PropTypes.object
+  nodes: PropTypes.array.isRequired,
+  onGeneSelect: PropTypes.func.isRequired,
+  onNodeHover: PropTypes.func.isRequired,
+  taxonomy: PropTypes.object
 };
 
 export default GeneTree;

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import GeneTree from './GeneTree.jsx';
 import _ from 'lodash';
 import {client as GrameneClient} from 'gramene-search-client';
@@ -15,7 +16,12 @@ import {
   makeNodeVisible,
   makeNodeInvisible
 } from "../utils/visibleNodes";
+// import work from 'webworkify';
+
+// let treePrepWorker = work(require('../workers/prepareTree'));
+
 let pruneTree = GrameneTreesClient.extensions.pruneTree;
+let addConsensus = GrameneTreesClient.extensions.addConsensus;
 
 const DEFAULT_MARGIN = 10;
 const DEFAULT_LABEL_WIDTH = 200;
@@ -32,7 +38,7 @@ export default class TreeVis extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      geneOfInterest: this.props.initialGeneOfInterest,
+      geneOfInterest: this.props.initialGeneOfInterest
     }
   }
 
@@ -54,13 +60,15 @@ export default class TreeVis extends React.Component {
       this.genetree.geneCount = this.props.genetree.geneCount;
     }
     else {
-      this.genetree = _.clone(this.props.genetree);
+      this.genetree = _.cloneDeep(this.props.genetree);
     }
 
+    addConsensus(this.genetree);
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     calculateXIndex(this.genetree);
     this.treeHeight = calculateSvgHeight(this.genetree);
+
   }
 
   componentWillUnmount() {
@@ -105,6 +113,7 @@ export default class TreeVis extends React.Component {
       setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
       calculateXIndex(this.genetree);
       this.treeHeight = calculateSvgHeight(this.genetree);
+
       let visibleNodes = layoutNodes(this.genetree, this.treeWidth, this.treeHeight);
       this.setState({geneOfInterest, visibleNodes});
     }.bind(this));
@@ -196,7 +205,6 @@ export default class TreeVis extends React.Component {
                 onNodeHover={this.handleNodeHover}
                 onNodeUnhover={this.handleNodeUnhover}
                 taxonomy={this.props.taxonomy}
-                overlaysContainer={this.overlaysContainer}
       />
     );
 
@@ -207,21 +215,30 @@ export default class TreeVis extends React.Component {
             {genetree}
           </g>
         </svg>
-        <div ref={(elem) => {this.overlaysContainer = elem}}
-             className="overlays">
-        </div>
       </div>
     )
+    // return (
+    //   <div className="genetree-vis">
+    //     <svg width={this.width} height={this.treeHeight + 2 * this.margin}>
+    //       <g className="tree-wrapper" transform={this.transformTree}>
+    //         {genetree}
+    //       </g>
+    //     </svg>
+    //     <div ref={(elem) => {this.overlaysContainer = elem}}
+    //          className="overlays">
+    //     </div>
+    //   </div>
+    // )
   }
 }
 
 TreeVis.propTypes = {
-  margin: React.PropTypes.number,
-  genetree: React.PropTypes.object.isRequired,
-  initialGeneOfInterest: React.PropTypes.object,
-  genomesOfInterest: React.PropTypes.object,
-  taxonomy: React.PropTypes.object,
-  pivotTree: React.PropTypes.bool,
-  numberOfNeighbors: React.PropTypes.number,
-  enablePhyloview: React.PropTypes.bool
+  margin: PropTypes.number,
+  genetree: PropTypes.object.isRequired,
+  initialGeneOfInterest: PropTypes.object,
+  genomesOfInterest: PropTypes.object,
+  taxonomy: PropTypes.object,
+  pivotTree: PropTypes.bool,
+  numberOfNeighbors: PropTypes.number,
+  enablePhyloview: PropTypes.bool
 };

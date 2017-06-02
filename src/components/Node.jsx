@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Collapsed from './nodeTypes/Collapsed.jsx';
 import Internal from './nodeTypes/Internal.jsx';
@@ -35,8 +36,8 @@ function getNodeComponent(node) {
 
 
 Node.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  taxonomy: React.PropTypes.object.isRequired
+  node: PropTypes.object.isRequired,
+  taxonomy: PropTypes.object.isRequired
 };
 
 export default Node;

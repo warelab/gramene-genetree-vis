@@ -18,9 +18,9 @@ function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTr
     }
   }
   // (re)initialize relationships
-  genetree.walk(function (node) {
-    node.relationToGeneOfInterest = {};
-  });
+  // genetree.walk(function (node) {
+  //   node.relationToGeneOfInterest = {};
+  // });
   addHomologyInformationToNodes(genetree, geneOfInterest);
   addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy);
 }
@@ -31,8 +31,9 @@ function addHomologyInformationToNodes(genetree, theGene) {
     let homologs = indexHomologs(theGene);
     let representatives = indexReps(theGene);
     genetree.walk(function (node) {
-      var nodeId, homology;
-      nodeId = node.model.gene_stable_id;
+      let homology;
+      let nodeId = node.model.gene_stable_id;
+      node.relationToGeneOfInterest = {};
       if (nodeId) {
         if (nodeId === theGene._id) {
           homology = 'self';
@@ -40,7 +41,7 @@ function addHomologyInformationToNodes(genetree, theGene) {
         else {
           homology = homologs[nodeId];
         }
-        node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
+        // node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
         node.relationToGeneOfInterest.homology = homology;
         node.relationToGeneOfInterest.repType = representatives[nodeId];
       }
