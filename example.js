@@ -25,6 +25,7 @@ ReactDOM.render(
            allowGeneSelection={true}
            pivotTree={true}
            enablePhyloview={true}
+           numberOfNeighbors={10}
            />,
   document.getElementById('tree')
 );

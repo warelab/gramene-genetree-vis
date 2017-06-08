@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import GeneTree from './GeneTree.jsx';
+import MSAOverview from './vizTypes/MSAOverview.jsx';
+import MSASequence from './vizTypes/MSASequence.jsx';
+import Phyloview from './vizTypes/Phyloview.jsx';
 import _ from 'lodash';
 import {client as GrameneClient} from 'gramene-search-client';
 import GrameneTreesClient from 'gramene-trees-client';
@@ -16,34 +19,90 @@ import {
   makeNodeVisible,
   makeNodeInvisible
 } from "../utils/visibleNodes";
-// import work from 'webworkify';
-
-// let treePrepWorker = work(require('../workers/prepareTree'));
+import {MenuItem, Dropdown, DropdownButton, ButtonToolbar} from 'react-bootstrap';
+import domainStats from '../utils/domainsStats';
+import getNeighborhood from '../utils/getNeighbors';
+import alignmentTools from '../utils/calculateAlignment';
+import positionDomains from '../utils/positionDomains';
 
 let pruneTree = GrameneTreesClient.extensions.pruneTree;
 let addConsensus = GrameneTreesClient.extensions.addConsensus;
 
 const DEFAULT_MARGIN = 10;
+const DEFAULT_ZOOM_HEIGHT = 30;
 const DEFAULT_LABEL_WIDTH = 200;
 const MIN_TREE_WIDTH = 50;
 const MIN_VIZ_WIDTH = 150;
 const windowResizeDebounceMs = 250;
 
-const DISPLAY_DOMAINS     = "domains";
-const DISPLAY_MSA         = "msa";
-const DISPLAY_PHYLOVIEW   = "phyloview";
-const NUM_NEIGHBORS       = 10;
-
 export default class TreeVis extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      geneOfInterest: this.props.initialGeneOfInterest
-    }
+      geneOfInterest: this.props.initialGeneOfInterest,
+      displayMode: 'domains',
+      visibleNodes: undefined,
+      colorScheme: 'clustal'
+    };
+    this.displayModes = [
+      {
+        id: 'domains',
+        label: 'Domains',
+        getComponent: function(app) {
+          if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
+            return React.createElement(MSAOverview, {
+              nodes: app.state.visibleNodes,
+              rootNode: app.geneTreeRoot,
+              width: app.vizWidth,
+              height: app.treeHeight,
+              margin: app.margin,
+              controlsHeight: DEFAULT_ZOOM_HEIGHT,
+              stats: app.domainStats
+            });
+          }
+        }
+      },
+      {
+        id: 'msa',
+        label: 'Multiple Sequence Alignment',
+        getComponent: function(app) {
+          if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
+            return React.createElement(MSASequence, {
+              nodes: app.state.visibleNodes,
+              rootNode: app.geneTreeRoot,
+              width: app.vizWidth,
+              height: app.treeHeight,
+              margin: app.margin,
+              xOffset: app.margin + app.treeWidth + app.labelWidth,
+              controlsHeight: DEFAULT_ZOOM_HEIGHT,
+              stats: app.domainStats,
+              colorScheme: app.state.colorScheme
+            });
+          }
+        }
+      },
+      {
+        id: 'phyloview',
+        label: 'Neighborhood conservation',
+        getComponent: function(app) {
+          if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
+            return React.createElement(Phyloview, {
+              nodes: app.state.visibleNodes,
+              width: app.vizWidth,
+              height: app.treeHeight,
+              margin: app.margin,
+              controlsHeight: DEFAULT_ZOOM_HEIGHT,
+              neighborhoods: app.state.neighborhoods
+            });
+          }
+        }
+      }
+    ];
+    this.displayModeIdx = _.keyBy(this.displayModes,'id');
   }
 
   componentWillMount() {
-    // kick off web workers to prep the tree and viz components
+    // TODO: use web workers to prep data for the tree and viz components
     this.resizeListener = _.debounce(
       this.updateAvailableWidth.bind(this),
       windowResizeDebounceMs
@@ -52,7 +111,7 @@ export default class TreeVis extends React.Component {
       global.addEventListener('resize', this.resizeListener);
     }
 
-    // this.domainStats = domainStats(this.props.genetree); // do this to all genomes
+    this.domainStats = domainStats(this.props.genetree); // TODO: use a promise and a web worker
     if (!_.isEmpty(this.props.genomesOfInterest)) {
       this.genetree = pruneTree(this.props.genetree, function (node) {
         return (this.props.genomesOfInterest.hasOwnProperty(node.model.taxon_id));
@@ -63,11 +122,33 @@ export default class TreeVis extends React.Component {
       this.genetree = _.cloneDeep(this.props.genetree);
     }
 
-    addConsensus(this.genetree);
+    addConsensus(this.genetree); // TODO: use a promise
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
     calculateXIndex(this.genetree);
     this.treeHeight = calculateSvgHeight(this.genetree);
+
+    this.geneTreeRoot = _.clone(this.genetree);
+    delete this.geneTreeRoot.displayInfo;
+    this.geneTreeRoot.displayInfo = {
+      expanded: false
+    };
+    calculateXIndex(this.geneTreeRoot);
+    layoutNodes(this.geneTreeRoot, 0, this.treeHeight);
+
+    let ma = alignmentTools.calculateAlignment(this.genetree);
+    if (!_.isEmpty(this.props.genomesOfInterest)) {
+      let gaps = alignmentTools.findGaps(ma);
+      alignmentTools.removeGaps(gaps, this.genetree);
+    }
+    this.domainHist = positionDomains(this.genetree, true);
+    if (this.props.enablePhyloview) {
+      let that = this;
+      getNeighborhood(this.genetree, this.props.numberOfNeighbors, this.props.genomesOfInterest)
+        .then(function (neighborhoodsAndFacets) {
+          that.setState(neighborhoodsAndFacets);
+        });
+    }
 
   }
 
@@ -101,9 +182,8 @@ export default class TreeVis extends React.Component {
       console.log('Is this too small to see everything?');
       this.width = this.treeWidth + this.vizWidth + this.labelWidth + 2 * this.margin;
     }
-    this.consensusHeight = 0;
-    const treeTop = this.margin + this.consensusHeight;
-    this.transformTree = 'translate(' + this.margin + ', ' + treeTop + ')';
+    this.transformTree = `translate(${this.margin},${this.margin + DEFAULT_ZOOM_HEIGHT})`;
+    this.transformViz = `translate(${this.margin + this.treeWidth + this.labelWidth},0)`;
   }
 
   handleGeneSelect(geneNode) {
@@ -167,7 +247,7 @@ export default class TreeVis extends React.Component {
       // hide these paralogs
       node.displayInfo.paralogs.forEach(function (paralog) {
         let parentNode = paralog.parent;
-        while (parentNode != node) {
+        while (parentNode !== node) {
           parentNode.displayInfo.expandedParalogs = false;
           // check if any child is expanded
           parentNode.displayInfo.expanded = false;
@@ -192,6 +272,61 @@ export default class TreeVis extends React.Component {
     this.updateVisibleNodes();
   }
 
+  handleModeSelection(e) {
+    this.setState({displayMode: e});
+  }
+
+  colorSchemeDropdown() {
+    if (this.state.displayMode === 'msa') {
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+      const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
+      let items = colorSchemes.map(function (scheme, i) {
+        return (
+          <MenuItem key={i} eventKey={i} active={scheme === this.state.colorScheme}
+                    onClick={() => this.setState({colorScheme: scheme})}
+          >{toTitleCase(scheme.replace('_',' '))}</MenuItem>
+        );
+      }.bind(this));
+      let nofloat = {float:'none'};
+      return (
+        <DropdownButton id="colorscheme-dropdown"
+                        title="Color Scheme"
+                        disabled={this.state.displayMode !== 'msa' }
+                        style={nofloat}>
+          {items}
+        </DropdownButton>
+      );
+    }
+  }
+
+  renderToolbar(activeMode) {
+    let choices = this.displayModes.map(function(mode, idx) {
+      return (
+        <MenuItem eventKey={mode.id}
+                  key={idx}
+                  active={ activeMode === mode.id }>
+          {mode.label}
+        </MenuItem>
+      )
+    });
+    return (
+      <ButtonToolbar>
+        <Dropdown id="display-mode-dropdown"
+                  onClick={(e) => e.stopPropagation()}>
+          <Dropdown.Toggle>
+            Display mode
+          </Dropdown.Toggle>
+          <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+            {choices}
+          </Dropdown.Menu>
+        </Dropdown>
+        {this.colorSchemeDropdown()}
+      </ButtonToolbar>
+    )
+  }
+
   render() {
     if (!this.state.visibleNodes) {
       return <div></div>;
@@ -208,27 +343,23 @@ export default class TreeVis extends React.Component {
       />
     );
 
+    let theViz = this.displayModeIdx[this.state.displayMode].getComponent(this);
+
     return (
-      <div className="genetree-vis">
-        <svg width={this.width} height={this.treeHeight + 2 * this.margin}>
-          <g className="tree-wrapper" transform={this.transformTree}>
-            {genetree}
-          </g>
-        </svg>
+      <div>
+        {this.renderToolbar(this.state.displayMode)}
+        <div className="genetree-vis">
+          <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>
+            <g className="tree-wrapper" transform={this.transformTree}>
+              {genetree}
+            </g>
+            <g className="viz-wrapper" transform={this.transformViz}>
+              {theViz}
+           </g>
+          </svg>
+        </div>
       </div>
     )
-    // return (
-    //   <div className="genetree-vis">
-    //     <svg width={this.width} height={this.treeHeight + 2 * this.margin}>
-    //       <g className="tree-wrapper" transform={this.transformTree}>
-    //         {genetree}
-    //       </g>
-    //     </svg>
-    //     <div ref={(elem) => {this.overlaysContainer = elem}}
-    //          className="overlays">
-    //     </div>
-    //   </div>
-    // )
   }
 }
 

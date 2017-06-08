@@ -41,7 +41,7 @@ function addHomologyInformationToNodes(genetree, theGene) {
         else {
           homology = homologs[nodeId];
         }
-        // node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
+        node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
         node.relationToGeneOfInterest.homology = homology;
         node.relationToGeneOfInterest.repType = representatives[nodeId];
       }

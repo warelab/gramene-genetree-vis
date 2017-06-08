@@ -1,19 +1,19 @@
 'use strict';
-var React = require('react');
-var numeral = require('numeral');
+import React from 'react';
+import numeral from 'numeral';
 import {OverlayTrigger, Popover} from "react-bootstrap";
 import {resolveOverlaps} from '../utils/calculateAlignment';
 
-var domainStats = require('../utils/domainsStats').domainStats;
+import domainStats from '../utils/domainsStats';
 
-var Domains = React.createClass({
+let Domains = React.createClass({
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
     domains: React.PropTypes.object.isRequired,
-    alignment: React.PropTypes.object.isRequred
+    alignment: React.PropTypes.object.isRequired
   },
 
   componentWillMount: function () {

@@ -142,10 +142,7 @@ export default class Clade extends React.Component {
 
     return (
       <Overlay show={this.state.popoverVisible}
-               target={ props => {
-                 console.log("Getting target for overlay", this, this.refs.clickable, props);
-                 return ReactDOM.findDOMNode(this.refs.clickable)
-               } }>
+               target={ props => ReactDOM.findDOMNode(this.refs.clickable)}>
         <Popover id={id} title={title}>
           <NodePopover node={node}
                        collapseClade={this.collapseClade.bind(this)}
