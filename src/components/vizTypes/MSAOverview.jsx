@@ -62,7 +62,7 @@ export default class MSAOverview extends React.Component {
     let alignments = this.props.nodes.map(this.renderNode.bind(this));
     let consensus = this.renderNode(this.props.rootNode);
     return (
-      <g>
+      <g className="viz-wrapper" transform={this.props.transform}>
         <g className="consensus-wrapper">
           <svg width={this.props.width}
                height={this.props.controlsHeight}

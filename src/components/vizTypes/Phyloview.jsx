@@ -23,7 +23,7 @@ export default class MSAOverview extends React.Component {
   render() {
     let neighborhoods = this.props.nodes.map(this.renderNode.bind(this));
     return (
-      <g>
+      <g className="viz-wrapper" transform={this.props.transform}>
         <g className="phyloview-controls">
         </g>
         <g className="phyloview-wrapper" transform={`translate(0,${this.props.controlsHeight})`}>

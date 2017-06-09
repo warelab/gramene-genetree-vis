@@ -111,14 +111,6 @@ export default class MSASequence extends React.Component {
     let consensus = this.renderNode(this.props.rootNode);
     return (
       <g>
-        <g className="consensus-wrapper">
-          <svg width={this.props.width}
-               height={this.props.controlsHeight}
-               viewBox={this.getViewBox(true)}
-               preserveAspectRatio="none">
-            {consensus}
-          </svg>
-        </g>
         <foreignObject x={this.props.xOffset}
                        y={this.props.controlsHeight}
                        width={this.props.width}
@@ -128,6 +120,16 @@ export default class MSASequence extends React.Component {
             {alignments}
           </div>
         </foreignObject>
+        <g className="viz-wrapper" transform={this.props.transform}>
+          <g className="consensus-wrapper">
+            <svg width={this.props.width}
+                 height={this.props.controlsHeight}
+                 viewBox={this.getViewBox(true)}
+                 preserveAspectRatio="none">
+              {consensus}
+            </svg>
+          </g>
+        </g>
       </g>
     )
   }

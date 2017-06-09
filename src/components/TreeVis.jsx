@@ -57,7 +57,8 @@ export default class TreeVis extends React.Component {
               height: app.treeHeight,
               margin: app.margin,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
-              stats: app.domainStats
+              stats: app.domainStats,
+              transform: app.transformViz
             });
           }
         }
@@ -76,7 +77,8 @@ export default class TreeVis extends React.Component {
               xOffset: app.margin + app.treeWidth + app.labelWidth,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               stats: app.domainStats,
-              colorScheme: app.state.colorScheme
+              colorScheme: app.state.colorScheme,
+              transform: app.transformViz
             });
           }
         }
@@ -92,7 +94,8 @@ export default class TreeVis extends React.Component {
               height: app.treeHeight,
               margin: app.margin,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
-              neighborhoods: app.state.neighborhoods
+              neighborhoods: app.state.neighborhoods,
+              transform: app.transformViz
             });
           }
         }
@@ -353,9 +356,7 @@ export default class TreeVis extends React.Component {
             <g className="tree-wrapper" transform={this.transformTree}>
               {genetree}
             </g>
-            <g className="viz-wrapper" transform={this.transformViz}>
-              {theViz}
-           </g>
+            {theViz}
           </svg>
         </div>
       </div>
