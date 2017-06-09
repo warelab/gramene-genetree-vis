@@ -2,7 +2,7 @@ import React from 'react';
 
 const arrowLength = 10;
 const arrowHeight = 4;
-const neighborhoodHeight = 18;
+const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
   let lineLength = props.width;
