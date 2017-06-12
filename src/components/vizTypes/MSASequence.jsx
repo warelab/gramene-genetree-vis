@@ -4,6 +4,7 @@ import PositionedDomains from '../PositionedDomains.jsx';
 import PositionedExonJunctions from '../PositionedExonJunctions.jsx';
 import alignmentTools from '../../utils/calculateAlignment';
 import positionDomains from '../../utils/positionDomains';
+import interact from 'interact.js';
 
 export default class MSASequence extends React.Component {
   constructor(props) {
@@ -14,10 +15,39 @@ export default class MSASequence extends React.Component {
   componentWillMount() {
     this.consensusLength = this.props.rootNode.model.consensus.sequence.length;
     this.charWidth = 7.2065;
-    this.MSARange = {
-      MSAStart: 0,
-      MSAStop: this.consensusLength
-    };
+    this.windowWidth = this.props.width*this.props.width/(this.charWidth*this.consensusLength);
+  }
+
+  dragMoveListener(event) {
+    let target = event.target,
+      // keep the dragged position in the data-x/data-y attributes
+      x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+      y = (parseFloat(target.getAttribute('data-y')) || 0) + 0 ; //event.dy;
+    if (x < 0) {
+      x = 0;
+    }
+    if (x > this.props.width - this.windowWidth) {
+      x = this.props.width - this.windowWidth;
+    }
+    // translate the element
+    target.style.webkitTransform =
+      target.style.transform =
+        'translate(' + x + 'px, ' + y + 'px)';
+    // update the position attributes
+    target.setAttribute('data-x', x);
+    let Xmin = x * this.charWidth * this.consensusLength/this.props.width;
+    let rows = document.getElementsByClassName('MSAlignments-wrapper');
+    rows[0].scrollLeft = Xmin;
+  }
+
+  componentDidMount() {
+    if (this.zoomer) {
+      interact(this.zoomer)
+        .draggable({
+          onmove: this.dragMoveListener.bind(this),
+          onmouseup: () => this.fromZoomer = false
+        })
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -34,44 +64,25 @@ export default class MSASequence extends React.Component {
     return true;
   }
 
-  handleSliderChange(e) {
-    this.MSARange = {
-      MSAStart: e,
-      MSAStop: Math.min(e + Math.floor(this.props.width / this.charWidth), this.consensusLength)
-    };
-    let Xmin = e * this.charWidth;
-    let rows = document.getElementsByClassName('MSAlignments-wrapper');
-    rows[0].scrollLeft = Xmin;
-  }
-
-  getViewBox(forConsensus) {
-    let viewBoxMinX = forConsensus ? 0 : this.MSARange.MSAStart;
+  getViewBox() {
+    let viewBoxMinX = 0;
     let viewBoxMinY = -3;
-    let viewBoxWidth = this.MSARange.MSAStop - this.MSARange.MSAStart;
-    let viewBoxHeight = forConsensus ? this.props.controlsHeight : this.props.height + 2 * this.props.margin + 3;
+    let viewBoxWidth = this.consensusLength;
+    let viewBoxHeight = this.props.controlsHeight;
     return `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
   }
 
   renderNode(node) {
-    if (node.model.gene_stable_id || !node.displayInfo.expanded) {
-      let alignment = alignmentTools.calculateAlignment(node);
-      let pej;
-      if (node.model.exon_junctions) {
-        pej = (
-          <PositionedExonJunctions node={node} width={this.props.width} alignment={alignment}/>
-        )
-      }
-      let domains = positionDomains(node);
-      return (
-        <g key={node.model.node_id}>
-          {pej}
-          <PositionedAlignment node={node} width={this.props.width} stats={this.props.stats} domains={domains}
-                               highlight={false} alignment={alignment}/>
-          <PositionedDomains node={node} width={this.props.width} stats={this.props.stats} domains={domains}
-                             alignment={alignment}/>
-        </g>
-      )
-    }
+    let alignment = alignmentTools.calculateAlignment(node);
+    let domains = positionDomains(node);
+    return (
+      <g key={node.model.node_id}>
+        <PositionedAlignment node={node} width={this.props.width} stats={this.props.stats} domains={domains}
+                             highlight={false} alignment={alignment}/>
+        <PositionedDomains node={node} width={this.props.width} stats={this.props.stats} domains={domains}
+                           alignment={alignment}/>
+      </g>
+    )
   }
 
   renderSequence(node) {
@@ -106,30 +117,48 @@ export default class MSASequence extends React.Component {
 
     }
   }
-  render() {
-    let alignments = this.props.nodes.map(this.renderSequence.bind(this));
-    let consensus = this.renderNode(this.props.rootNode);
+
+  renderControls() {
     return (
       <g>
+        <g className="viz-wrapper" transform={`translate(${this.props.xOffset},3)`}>
+          <svg width={this.props.width}
+               height={this.props.controlsHeight}
+               viewBox={this.getViewBox(true)}
+               preserveAspectRatio="none">
+            {this.renderNode(this.props.rootNode)}
+          </svg>
+        </g>
         <foreignObject x={this.props.xOffset}
-                       y={this.props.controlsHeight}
-                       width={this.props.width}
-                       height={this.props.height + 2 * this.props.margin + 3}>
-          <div className="MSAlignments-wrapper"
-               onLoad={() => this.scrollLeft = this.MSARange.MSAStart * this.charWidth}>
-            {alignments}
+                       y={this.props.yOffset}
+                       width={this.windowWidth}
+                       height={this.props.controlsHeight}>
+          <div className="resize-container">
+            <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
           </div>
         </foreignObject>
-        <g className="viz-wrapper" transform={this.props.transform}>
-          <g className="consensus-wrapper">
-            <svg width={this.props.width}
-                 height={this.props.controlsHeight}
-                 viewBox={this.getViewBox(true)}
-                 preserveAspectRatio="none">
-              {consensus}
-            </svg>
-          </g>
-        </g>
+      </g>
+    )
+  }
+
+  renderMSA() {
+    return (
+      <foreignObject x={this.props.xOffset}
+                     y={this.props.yOffset + this.props.controlsHeight + this.props.margin - 10}
+                     width={this.props.width}
+                     height={this.props.height + 2*this.props.margin + 3}>
+        <div className="MSAlignments-wrapper">
+          {this.props.nodes.map(this.renderSequence.bind(this))}
+        </div>
+      </foreignObject>
+    )
+  }
+
+  render() {
+    return (
+      <g>
+        {this.renderControls()}
+        {this.renderMSA()}
       </g>
     )
   }

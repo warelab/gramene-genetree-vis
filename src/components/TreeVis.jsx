@@ -28,8 +28,8 @@ import positionDomains from '../utils/positionDomains';
 let pruneTree = GrameneTreesClient.extensions.pruneTree;
 let addConsensus = GrameneTreesClient.extensions.addConsensus;
 
-const DEFAULT_MARGIN = 10;
-const DEFAULT_ZOOM_HEIGHT = 30;
+const DEFAULT_MARGIN = 20;
+const DEFAULT_ZOOM_HEIGHT = 20;
 const DEFAULT_LABEL_WIDTH = 200;
 const MIN_TREE_WIDTH = 50;
 const MIN_VIZ_WIDTH = 150;
@@ -75,6 +75,7 @@ export default class TreeVis extends React.Component {
               height: app.treeHeight,
               margin: app.margin,
               xOffset: app.margin + app.treeWidth + app.labelWidth,
+              yOffset: 0,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               stats: app.domainStats,
               colorScheme: app.state.colorScheme,

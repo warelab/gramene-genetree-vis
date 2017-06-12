@@ -20,7 +20,7 @@ ReactDOM.render(
   <TreeVis genetree={exampleGenetree}
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
-           genomesOfInterest={{}}
+           genomesOfInterest={genomesOfInterest}
            width={1200}
            allowGeneSelection={true}
            pivotTree={true}
