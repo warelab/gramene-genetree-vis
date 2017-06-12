@@ -1,7 +1,6 @@
 import React from 'react';
 import PositionedAlignment from '../PositionedAlignment.jsx';
 import PositionedDomains from '../PositionedDomains.jsx';
-import PositionedExonJunctions from '../PositionedExonJunctions.jsx';
 import alignmentTools from '../../utils/calculateAlignment';
 import positionDomains from '../../utils/positionDomains';
 import interact from 'interact.js';
@@ -20,21 +19,18 @@ export default class MSASequence extends React.Component {
 
   dragMoveListener(event) {
     let target = event.target,
-      // keep the dragged position in the data-x/data-y attributes
       x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-      y = (parseFloat(target.getAttribute('data-y')) || 0) + 0 ; //event.dy;
-    if (x < 0) {
-      x = 0;
-    }
-    if (x > this.props.width - this.windowWidth) {
-      x = this.props.width - this.windowWidth;
-    }
+      y = parseFloat(target.getAttribute('data-y')) || 0;
+    // respect boundaries
+    if (x < 0) x = 0;
+    if (x > this.props.width - this.windowWidth) x = this.props.width - this.windowWidth;
     // translate the element
     target.style.webkitTransform =
       target.style.transform =
         'translate(' + x + 'px, ' + y + 'px)';
-    // update the position attributes
+    // update the position attribute
     target.setAttribute('data-x', x);
+    // update the MSA position
     let Xmin = x * this.charWidth * this.consensusLength/this.props.width;
     let rows = document.getElementsByClassName('MSAlignments-wrapper');
     rows[0].scrollLeft = Xmin;
@@ -44,8 +40,7 @@ export default class MSASequence extends React.Component {
     if (this.zoomer) {
       interact(this.zoomer)
         .draggable({
-          onmove: this.dragMoveListener.bind(this),
-          onmouseup: () => this.fromZoomer = false
+          onmove: this.dragMoveListener.bind(this)
         })
     }
   }
@@ -60,6 +55,17 @@ export default class MSASequence extends React.Component {
         // which shrinks as you change className
       }
       return false;
+    }
+    if (nextProps.width !== this.props.width) {
+      let x = parseFloat(this.zoomer.getAttribute('data-x')) || 0;
+      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
+      let xratio = x / (this.props.width - this.windowWidth);
+      this.windowWidth = nextProps.width * nextProps.width / (this.charWidth * this.consensusLength);
+      x = xratio * (nextProps.width - this.windowWidth);
+      this.zoomer.style.webkitTransform =
+        this.zoomer.style.transform =
+          `translate(${x}px,${y}px)`;
+      this.zoomer.setAttribute('data-x',x);
     }
     return true;
   }
@@ -157,8 +163,8 @@ export default class MSASequence extends React.Component {
   render() {
     return (
       <g>
-        {this.renderControls()}
         {this.renderMSA()}
+        {this.renderControls()}
       </g>
     )
   }
