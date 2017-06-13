@@ -4,6 +4,7 @@ import PositionedDomains from '../PositionedDomains.jsx';
 import alignmentTools from '../../utils/calculateAlignment';
 import positionDomains from '../../utils/positionDomains';
 import interact from 'interact.js';
+import _ from 'lodash';
 
 export default class MSASequence extends React.Component {
   constructor(props) {
@@ -14,12 +15,14 @@ export default class MSASequence extends React.Component {
   componentWillMount() {
     this.consensusLength = this.props.rootNode.model.consensus.sequence.length;
     this.charWidth = 7.2065;
+    this.charsAtOnce = this.props.width / this.charWidth;
     this.windowWidth = this.props.width*this.props.width/(this.charWidth*this.consensusLength);
+    this.MSARange = this.props.MSARange;
   }
 
   dragMoveListener(event) {
     let target = event.target,
-      x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+      x = this.props.width * this.MSARange.MSAStart/this.consensusLength + event.dx,
       y = parseFloat(target.getAttribute('data-y')) || 0;
     // respect boundaries
     if (x < 0) x = 0;
@@ -31,18 +34,41 @@ export default class MSASequence extends React.Component {
     // update the position attribute
     target.setAttribute('data-x', x);
     // update the MSA position
-    let Xmin = x * this.charWidth * this.consensusLength/this.props.width;
+    let Xmin = x * this.consensusLength/this.props.width;
     let rows = document.getElementsByClassName('MSAlignments-wrapper');
-    rows[0].scrollLeft = Xmin;
+    rows[0].scrollLeft = Xmin * this.charWidth;
+    this.MSARange.MSAStart = Xmin;
+    this.MSARange.MSAStop = Xmin + this.charsAtOnce;
+    this.props.handleRangeChange(this.MSARange);
   }
 
   componentDidMount() {
     if (this.zoomer) {
+      let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
+      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
+      this.zoomer.style.webkitTransform =
+        this.zoomer.style.transform =
+          `translate(${x}px,${y}px)`;
+      let rows = document.getElementsByClassName('MSAlignments-wrapper');
+      rows[0].scrollLeft = this.MSARange.MSAStart * this.charWidth;
+
       interact(this.zoomer)
         .draggable({
           onmove: this.dragMoveListener.bind(this)
         })
     }
+  }
+
+  componentDidUpdate() {
+    this.windowWidth = this.props.width * this.props.width / (this.charWidth * this.consensusLength);
+    this.charsAtOnce = this.props.width / this.charWidth;
+    let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
+    let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
+    this.zoomer.style.webkitTransform =
+      this.zoomer.style.transform =
+        `translate(${x}px,${y}px)`;
+    let rows = document.getElementsByClassName('MSAlignments-wrapper');
+    rows[0].scrollLeft = this.MSARange.MSAStart * this.charWidth;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -55,17 +81,6 @@ export default class MSASequence extends React.Component {
         // which shrinks as you change className
       }
       return false;
-    }
-    if (nextProps.width !== this.props.width) {
-      let x = parseFloat(this.zoomer.getAttribute('data-x')) || 0;
-      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-      let xratio = x / (this.props.width - this.windowWidth);
-      this.windowWidth = nextProps.width * nextProps.width / (this.charWidth * this.consensusLength);
-      x = xratio * (nextProps.width - this.windowWidth);
-      this.zoomer.style.webkitTransform =
-        this.zoomer.style.transform =
-          `translate(${x}px,${y}px)`;
-      this.zoomer.setAttribute('data-x',x);
     }
     return true;
   }

@@ -34,6 +34,7 @@ const DEFAULT_LABEL_WIDTH = 200;
 const MIN_TREE_WIDTH = 50;
 const MIN_VIZ_WIDTH = 150;
 const windowResizeDebounceMs = 250;
+const rangeChangeDebounceMs = 150;
 
 export default class TreeVis extends React.Component {
   constructor(props) {
@@ -42,7 +43,11 @@ export default class TreeVis extends React.Component {
       geneOfInterest: this.props.initialGeneOfInterest,
       displayMode: 'domains',
       visibleNodes: undefined,
-      colorScheme: 'clustal'
+      colorScheme: 'clustal',
+      MSARange: {
+        MSAStart: 0,
+        MSAStop: 0
+      }
     };
     this.displayModes = [
       {
@@ -56,8 +61,12 @@ export default class TreeVis extends React.Component {
               width: app.vizWidth,
               height: app.treeHeight,
               margin: app.margin,
+              xOffset: app.margin + app.treeWidth + app.labelWidth,
+              yOffset: 0,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               stats: app.domainStats,
+              MSARange: app.state.MSARange,
+              handleRangeChange: _.debounce(app.updateMSARange.bind(app),rangeChangeDebounceMs),
               transform: app.transformViz
             });
           }
@@ -79,6 +88,8 @@ export default class TreeVis extends React.Component {
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               stats: app.domainStats,
               colorScheme: app.state.colorScheme,
+              MSARange: app.state.MSARange,
+              handleRangeChange: _.debounce(app.updateMSARange.bind(app),rangeChangeDebounceMs),
               transform: app.transformViz
             });
           }
@@ -103,6 +114,10 @@ export default class TreeVis extends React.Component {
       }
     ];
     this.displayModeIdx = _.keyBy(this.displayModes,'id');
+  }
+
+  updateMSARange(MSARange) {
+    this.setState(MSARange);
   }
 
   componentWillMount() {
@@ -137,6 +152,10 @@ export default class TreeVis extends React.Component {
     this.geneTreeRoot.displayInfo = {
       expanded: false
     };
+    let MSARange = this.state.MSARange;
+    MSARange.MSAStop = this.geneTreeRoot.model.consensus.sequence.length;
+    this.setState(MSARange);
+
     calculateXIndex(this.geneTreeRoot);
     layoutNodes(this.geneTreeRoot, 0, this.treeHeight);
 
