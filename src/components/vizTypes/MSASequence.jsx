@@ -158,6 +158,7 @@ export default class MSASequence extends React.Component {
             <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
           </div>
         </foreignObject>
+
       </g>
     )
   }

@@ -5,7 +5,7 @@ import PositionedExonJunctions from '../PositionedExonJunctions.jsx';
 import alignmentTools from '../../utils/calculateAlignment';
 import positionDomains from '../../utils/positionDomains';
 import interact from 'interact.js';
-import _ from 'lodash';
+import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 export default class MSAOverview extends React.Component {
   constructor(props) {
@@ -135,6 +135,9 @@ export default class MSAOverview extends React.Component {
   }
 
   renderControls() {
+    const tooltip = (
+      <Tooltip id="tooltip">resize and drag</Tooltip>
+    );
     return (
       <g>
         <g className="consensus-wrapper" transform={`translate(${this.props.xOffset},3)`}>
@@ -149,9 +152,11 @@ export default class MSAOverview extends React.Component {
                        y={this.props.yOffset}
                        width={this.props.width}
                        height={this.props.controlsHeight}>
-          <div className="resize-container">
-            <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
-          </div>
+          <OverlayTrigger placement="left" overlay={tooltip}>
+            <div className="resize-container">
+              <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
+            </div>
+          </OverlayTrigger>
         </foreignObject>
       </g>
     )
