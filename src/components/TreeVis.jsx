@@ -159,11 +159,11 @@ export default class TreeVis extends React.Component {
     calculateXIndex(this.geneTreeRoot);
     layoutNodes(this.geneTreeRoot, 0, this.treeHeight);
 
-    let ma = alignmentTools.calculateAlignment(this.genetree);
-    if (!_.isEmpty(this.props.genomesOfInterest)) {
-      let gaps = alignmentTools.findGaps(ma);
-      alignmentTools.removeGaps(gaps, this.genetree);
-    }
+    // let ma = alignmentTools.calculateAlignment(this.genetree);
+    // if (!_.isEmpty(this.props.genomesOfInterest)) {
+    //   let gaps = alignmentTools.findGaps(ma);
+    //   alignmentTools.removeGaps(gaps, this.genetree);
+    // }
     this.domainHist = positionDomains(this.genetree, true);
     if (this.props.enablePhyloview) {
       let that = this;

@@ -13,7 +13,7 @@ let Domains = React.createClass({
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
     domains: React.PropTypes.object.isRequired,
-    alignment: React.PropTypes.object.isRequired
+    alignments: React.PropTypes.object.isRequired
   },
 
   componentWillMount: function () {

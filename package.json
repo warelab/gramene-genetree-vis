@@ -15,7 +15,7 @@
   "dependencies": {
     "d3": "^3.5.14",
     "gramene-search-client": "^3.0.4",
-    "gramene-trees-client": "^2.5.0",
+    "gramene-trees-client": "^2.5.2",
     "interact.js": "^1.2.8",
     "lodash": "^4.17.4",
     "numeral": "^1.5.6",

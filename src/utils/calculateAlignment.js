@@ -32,6 +32,48 @@ function cigarToHistogram(cigar) {
   return {hist: positions, size: size, nSeqs: 1, blocks: blocks};
 }
 
+function calculateAlignmentFromConsensus(node) {
+  var nodeId = node.model.node_id;
+  if (alignments[nodeId]) return alignments[nodeId];
+  // these blocks are likely to be smaller and more numerous
+  let consensus = node.model.consensus;
+  let deltaDepth = {};
+  // find first non-zero frequency
+  let i=0;
+  while (consensus.frequency[i] === 0) i++;
+  deltaDepth[i] = consensus.frequency[i];
+  let blocks = [];
+  let block = {
+    start: i,
+    end: consensus.consensusLength
+  };
+  for(let j=i+1; j<consensus.consensusLength; j++) {
+    if (consensus.frequency[j] !== consensus.frequency[i]) {
+      deltaDepth[j] = consensus.frequency[j] - consensus.frequency[i];
+      if (consensus.frequency[i] === 0) {
+        block.start = j;
+      }
+      if (consensus.frequency[j] === 0) {
+        block.end = j;
+        blocks.push(_.cloneDeep(block));
+      }
+      i=j;
+    }
+  }
+  if (consensus.frequency[i]) {
+    deltaDepth[consensus.consensusLength] = 0 - consensus.frequency[i];
+    block.end = consensus.consensusLength;
+    blocks.push(_.cloneDeep(block));
+  }
+  alignments[nodeId] = {
+    hist: deltaDepth,
+    blocks: blocks,//rebuildBlocksFromAlignment(deltaDepth),
+    size: consensus.consensusLength,
+    nSeqs: consensus.nSeqs
+  };
+  return alignments[nodeId];
+}
+
 function calculateAlignment(node) {
   var nodeId = node.model.node_id;
   if (alignments[nodeId]) return alignments[nodeId];
@@ -226,7 +268,7 @@ function resolveOverlaps(dl) {
 }
 
 module.exports = {
-  calculateAlignment: calculateAlignment,
+  calculateAlignment: calculateAlignmentFromConsensus,
   findGaps: findGaps,
   removeGaps: removeGaps,
   getOffsets: getOffsets,

@@ -49,6 +49,7 @@ export default class MSASequence extends React.Component {
       this.zoomer.style.webkitTransform =
         this.zoomer.style.transform =
           `translate(${x}px,${y}px)`;
+      this.zoomer.style.width = this.windowWidth + 'px';
       let rows = document.getElementsByClassName('MSAlignments-wrapper');
       rows[0].scrollLeft = this.MSARange.MSAStart * this.charWidth;
 
@@ -152,8 +153,8 @@ export default class MSASequence extends React.Component {
         </g>
         <foreignObject x={this.props.xOffset}
                        y={this.props.yOffset}
-                       width={this.windowWidth}
-                       height={this.props.controlsHeight}>
+                       width={this.props.width}
+                       height={this.props.controlsHeight + 6}>
           <div className="resize-container">
             <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
           </div>

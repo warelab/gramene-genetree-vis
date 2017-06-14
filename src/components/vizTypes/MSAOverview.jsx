@@ -125,10 +125,19 @@ export default class MSAOverview extends React.Component {
       return (
         <g key={node.model.node_id}>
           {pej}
-          <PositionedAlignment node={node} width={this.props.width} stats={this.props.stats} domains={domains}
-                               highlight={false} alignment={alignment}/>
-          <PositionedDomains node={node} width={this.props.width} stats={this.props.stats} domains={domains}
-                             alignment={alignment}/>
+          <PositionedAlignment
+            node={node}
+            width={this.props.width}
+            stats={this.props.stats}
+            domains={domains}
+            highlight={false}
+            alignment={alignment}/>
+          <PositionedDomains
+            node={node}
+            width={this.props.width}
+            stats={this.props.stats}
+            alignment={alignment}
+            domains={domains}/>
         </g>
       )
     }
@@ -151,7 +160,7 @@ export default class MSAOverview extends React.Component {
         <foreignObject x={this.props.xOffset}
                        y={this.props.yOffset}
                        width={this.props.width}
-                       height={this.props.controlsHeight}>
+                       height={this.props.controlsHeight + 6}>
           <OverlayTrigger placement="left" overlay={tooltip}>
             <div className="resize-container">
               <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
