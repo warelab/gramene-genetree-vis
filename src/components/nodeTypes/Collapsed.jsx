@@ -14,9 +14,9 @@ const Collapsed = props => {
 };
 
 function text(node) {
-  let texts, homologs, orthologs, paralogs;
+  let texts, homologs, /*orthologs,*/ paralogs;
   homologs = node.leafNodes().length;
-  orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
+  //orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
   paralogs = _.get(node, 'displayInfo.paralogs.length') || 0;
   texts = [node.model.taxon_name + ': ' + homologs + ' genes'];
 

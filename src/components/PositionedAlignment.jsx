@@ -1,10 +1,8 @@
-'use strict';
-
-var React = require('react');
+import React, {Component} from 'react';
+import Alignment from './Alignment.jsx';
 var microsoftBrowser = require('../utils/microsoftBrowser');
-var Alignment = require('./Alignment.jsx');
 
-var PositionedAlignment = React.createClass({
+export default class PositionedAlignment extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
@@ -13,13 +11,14 @@ var PositionedAlignment = React.createClass({
     highlight: React.PropTypes.string.isRequired,
     domains: React.PropTypes.object.isRequired,
     alignment: React.PropTypes.object.isRequired
-  },
-  
-  getInitialState: function () {
-    return {};
-  },
+  }
 
-  transform: function (isStyle) {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  transform(isStyle) {
     var x, y, px;
 
     px = isStyle ? 'px' : '';
@@ -28,9 +27,9 @@ var PositionedAlignment = React.createClass({
     y = this.props.node.x;// - 7;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
-  },
+  }
 
-  render: function () {
+  render() {
     var props = {};
     if(microsoftBrowser) {
       props.transform = this.transform(false);
@@ -45,6 +44,5 @@ var PositionedAlignment = React.createClass({
       </g>
     )
   }
-});
+};
 
-module.exports = PositionedAlignment;

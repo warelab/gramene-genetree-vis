@@ -6,7 +6,7 @@ const INTERNAL_NODE_SIZE = 4;
 const ONE_CHILD_SIZE_RATIO = 0.8;
 
 const Internal = props => {
-  const hasOneChild = props.node.children.length == 1;
+  const hasOneChild = props.node.children.length === 1;
   const xy = hasOneChild ? Internal.xy * ONE_CHILD_SIZE_RATIO : Internal.xy;
   const wh = hasOneChild ? Internal.wh * ONE_CHILD_SIZE_RATIO : Internal.wh;
 

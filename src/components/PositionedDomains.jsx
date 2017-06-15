@@ -1,24 +1,23 @@
-'use strict';
-
-var React = require('react');
+import React, {Component} from 'react';
+import Domains from './Domains.jsx';
 var microsoftBrowser = require('../utils/microsoftBrowser');
-var Domains = require('./Domains.jsx');
 
-var PositionedDomains = React.createClass({
+class PositionedDomains extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
     domains: React.PropTypes.object.isRequired,
-    alignments: React.PropTypes.object.isRequired
-  },
-  
-  getInitialState: function () {
-    return {};
-  },
+    alignment: React.PropTypes.object.isRequired
+  }
 
-  transform: function (isStyle) {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  transform(isStyle) {
     var x, y, px;
 
     px = isStyle ? 'px' : '';
@@ -27,9 +26,9 @@ var PositionedDomains = React.createClass({
     y = this.props.node.x - 2;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
-  },
+  }
 
-  render: function () {
+  render() {
     var props = {};
     if(microsoftBrowser) {
       props.transform = this.transform(false);
@@ -44,6 +43,6 @@ var PositionedDomains = React.createClass({
       </g>
     )
   }
-});
+};
 
-module.exports = PositionedDomains;
+export default PositionedDomains;

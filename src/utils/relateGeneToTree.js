@@ -5,10 +5,13 @@ let calculateIdentity = require('gramene-trees-client').extensions.identity;
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
   if (pivotTree) {
     let node = genetree.indices.gene_stable_id[geneOfInterest._id];
+
+    const indexCallback = (n) => n === node;
+
     while (!node.isRoot()) {
       const parent = node.parent;
       const children = parent.children;
-      const nodeIdx = _.findIndex(children, (n) => n === node);
+      const nodeIdx = _.findIndex(children, indexCallback);
 
       // move this node to the front of the children array.
       if (nodeIdx) {

@@ -1,11 +1,11 @@
-'use strict';
+import React, {Component} from 'react';
 var scale = require('d3').scale.linear;
 var _ = require('lodash');
-var React = require('react');
+
 var alignmentTools = require('../utils/calculateAlignment');
 
 
-var Alignment = React.createClass({
+class Alignment extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
@@ -14,9 +14,9 @@ var Alignment = React.createClass({
     domains: React.PropTypes.object.idRequired,
     highlight: React.PropTypes.string.isRequired,
     alignment: React.PropTypes.object.isRequred
-  },
-  
-  getColorMap: function(alignment, stats) {
+  }
+
+  getColorMap(alignment, stats) {
     var regionColor = [];
     var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
@@ -52,9 +52,9 @@ var Alignment = React.createClass({
       })
     }
     return regionColor;
-  },
-  
-  renderHighlight: function () {
+  }
+
+  renderHighlight() {
     if (this.props.highlight) {
       var hlStyle = {fill: this.props.highlight, stroke: false};
       var u = this.props.alignment.size / this.props.width;
@@ -68,9 +68,9 @@ var Alignment = React.createClass({
               style={hlStyle}/>
       );
     }
-  },
-  
-  render: function () {
+  }
+
+  render() {
     var alignment = _.cloneDeep(this.props.alignment);
     var regionColor = this.getColorMap(alignment, this.props.stats);
 
@@ -79,19 +79,21 @@ var Alignment = React.createClass({
     var offsets = alignmentTools.getOffsets(alignment.hist);
     var depth=0;
     var regionIdx=0;
+
+    var renderBlock = function (block) {
+      var style = {fill: block.color, stroke: false};
+      var s = block.start;
+      var w = block.end - block.start;
+      k++;
+      var rect = (
+        <rect key={k} width={w} height="14" x={s} style={style} />
+      );
+      return rect;
+    };
+
     for(var i=0; i<offsets.length - 1; i++) {
       depth += alignment.hist[offsets[i]];
       if (depth > 0) {
-        var renderBlock = function (block) {
-          var style = {fill: block.color, stroke: false};
-          var s = block.start;
-          var w = block.end - block.start;
-          k++;
-          var rect = (
-            <rect key={k} width={w} height="14" x={s} style={style} />
-          );
-          return rect;
-        };
         // find the region containing the start of this alignment block
         while (offsets[i] >= regionColor[regionIdx].end) {
           regionIdx++;
@@ -126,6 +128,6 @@ var Alignment = React.createClass({
       </g>
     );
   }
-});
+};
 
-module.exports = Alignment;
+export default Alignment;

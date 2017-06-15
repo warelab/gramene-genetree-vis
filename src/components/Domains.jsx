@@ -1,43 +1,42 @@
-'use strict';
-import React from 'react';
+import React, { Component } from 'react';
 import numeral from 'numeral';
 import {OverlayTrigger, Popover} from "react-bootstrap";
 import {resolveOverlaps} from '../utils/calculateAlignment';
 
 import domainStats from '../utils/domainsStats';
 
-let Domains = React.createClass({
+class Domains extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     stats: React.PropTypes.object.isRequired,
     domains: React.PropTypes.object.isRequired,
-    alignments: React.PropTypes.object.isRequired
-  },
+    alignment: React.PropTypes.object.isRequired
+  }
 
-  componentWillMount: function () {
+  componentWillMount() {
     if (this.props.node.hasChildren()) {
       this.cladeStats = domainStats(this.props.node);
     }
-  },
+  }
 
-  componentWillUpdate: function () {
+  componentWillUpdate() {
     if (this.props.node.hasChildren()) {
       this.cladeStats = domainStats(this.props.node);
     }
-  },
+  }
 
-  render: function () {
+  render() {
     return (
       <g className="domains">
         {this.renderDomains()}
       </g>
     );
-  },
+  }
 
 
-  renderDomains: function () {
+  renderDomains() {
     let nonOverlappingDomains = resolveOverlaps(this.props.domains);
     return nonOverlappingDomains.map(function (domain, idx) {
       var w = domain.end - domain.start + 1;
@@ -60,12 +59,12 @@ let Domains = React.createClass({
         </OverlayTrigger>
       )
     }.bind(this));
-  },
+  }
 
-  renderPopover: function (domain) {
+  renderPopover(domain) {
     var title = `${domain.id} - ${domain.name}`;
     return <Popover id={domain.name} title={title}>{this.renderPopoverContent(domain)}</Popover>;
-  },
+  }
 
   renderPopoverContent(domain) {
     if (this.props.node.isRoot()) {
@@ -77,7 +76,7 @@ let Domains = React.createClass({
     else {
       return this.renderGeneNodePopoverContent(domain);
     }
-  },
+  }
 
   renderRootNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
@@ -90,7 +89,8 @@ let Domains = React.createClass({
         <p className="stats">{treeStatement}</p>
       </div>
     );
-  },
+  }
+
   renderInternalNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
     var cladeStats = this.cladeStats[domain.id];
@@ -105,7 +105,7 @@ let Domains = React.createClass({
         <p className="stats">{cladeStatement}</p>
       </div>
     );
-  },
+  }
 
   renderGeneNodePopoverContent(domain) {
     var stats = this.props.stats[domain.id];
@@ -118,7 +118,7 @@ let Domains = React.createClass({
       </div>
     );
   }
-});
+};
 
 function createStatement(stats, whatIsThis) {
   var geneCount = stats.genesWithDomain;
@@ -139,4 +139,4 @@ function createStatement(stats, whatIsThis) {
   return statement;
 }
 
-module.exports = Domains;
+export default Domains;

@@ -25,7 +25,7 @@ function getNodeType(node) {
     return 'Internal';
   }
 }
-  
+
 function getNodeComponent(node) {
   switch(getNodeType(node)) {
     case 'Gene': return Gene;

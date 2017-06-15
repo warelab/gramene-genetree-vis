@@ -162,7 +162,7 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
     centerGenes.identity = neighborhood.center_identity;
     if(centerGenes.orientation === '-') {
       genes.reverse();
-      genes.map( (gene) => {
+      genes.forEach( (gene) => {
         gene.orientation = gene.orientation === '-' ? '+' : '-';
       });
       neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
