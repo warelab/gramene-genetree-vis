@@ -1,11 +1,11 @@
 import React from 'react';
 
-const arrowLength = 10;
-const arrowHeight = 4;
 const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
-  let lineLength = props.width;
+  const arrowLength = 10*props.totalLength/props.width;
+  const arrowHeight = 4;
+  let lineLength = props.totalLength;
   let lineStart = 0;
   let lineEnd = lineLength;
   let arrowHead;
@@ -45,7 +45,7 @@ export default class Neighborhood extends React.Component {
     });
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width}/>
+        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width} totalLength={this.props.totalLength}/>
         {genes}
       </g>
     );
