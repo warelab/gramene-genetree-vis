@@ -9,9 +9,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "d3": "^3.5.14",
     "gramene-search-client": "^3.0.4",
-    "gramene-trees-client": "^2.5.0",
+    "gramene-trees-client": "^2.5.3",
     "interact.js": "^1.2.8",
     "less": "^2.7.2",
     "lodash": "^4.17.4",
