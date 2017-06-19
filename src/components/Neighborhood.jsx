@@ -61,7 +61,7 @@ const ComparaGene = props => {
 
 const NonCodingGroup = props => {
   let x = +props.x;
-  // let n = props.genes.length;
+  let n = props.genes.length;
   return (
     <line
       x1={x - 0.3} y1={20}
@@ -119,7 +119,7 @@ export default class Neighborhood extends React.Component {
     let nonCodingGenes = [];
     for (let x in nonCodingGeneGroup) {
       console.log(x, nonCodingGeneGroup[x]);
-      nonCodingGenes.push(<NonCodingGroup x={x} key={x}/>);
+      nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]}/>);
     }
     return (
       <g className="Neighborhood" >
