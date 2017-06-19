@@ -1,13 +1,11 @@
-'use strict';
+import React from 'react';
 
-var React = require('react');
-
-const arrowLength = 10;
-const arrowHeight = 4;
-const neighborhoodHeight = 18;
+const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
-  let lineLength = props.width;
+  const arrowLength = 10*props.totalLength/props.width;
+  const arrowHeight = 4;
+  let lineLength = props.totalLength;
   let lineStart = 0;
   let lineEnd = lineLength;
   let arrowHead;
@@ -20,7 +18,6 @@ const NeighborhoodArrow = props => {
     const tipY = neighborhoodHeight / 2;
     const points = `${tipX},${tipY} ${tailX},${tipY + arrowHeight} ${tailX},${tipY - arrowHeight}`;
     arrowHead = <polygon points={points}/>
-    lineLength -= arrowLength;
   }
   return (
     <g>
@@ -28,35 +25,29 @@ const NeighborhoodArrow = props => {
         x1={lineStart} y1={neighborhoodHeight / 2}
         x2={lineEnd} y2={neighborhoodHeight / 2}
         stroke="black"
-        strokeWidth="2"
+        strokeWidth="1"
       />
       {arrowHead}
     </g>
   );
 };
 
-var Neighborhood = React.createClass({
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    neighborhood: React.PropTypes.object.isRequired
-  },
-    
-  render: function () {
+export default class Neighborhood extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
+
+  render() {
     let neighborhood = this.props.neighborhood;
 
     let genes = neighborhood.genes.map((gene, i) => {
-
-
     });
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width}/>
+        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width} totalLength={this.props.totalLength}/>
         {genes}
       </g>
     );
   }
-});
-
-module.exports = Neighborhood;
+}

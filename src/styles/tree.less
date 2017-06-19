@@ -1,0 +1,309 @@
+@transition_time: 20ms;
+
+/* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
+@hover_scale_factor: 2;
+@hover_stroke_width: 2;
+@collapsed_node_stroke_width: 1;
+
+@default_node_fill: #fff;
+@default_node_stroke: #777;
+
+@ortholog_stroke_color: orange;
+@paralog_stroke_color: green;
+@representative_fill_color: @ortholog_stroke_color;
+@self_color: red;
+
+@speciation_color: #000080;
+@duplication_color: #cd0000;
+
+@font_size: 11px;
+@font_weight_highlight: bolder;
+
+@invisible: 0;
+@visible: 1;
+
+.genetree-vis {
+
+  .node, .edge {
+    cursor: pointer;
+  }
+
+  .tree-wrapper {
+    /* transitions for mouse hover, etc, interactions */
+    * {
+      transition: all @transition_time ease-in-out;
+    }
+
+    /* transitions for expanding/contracting clades */
+    .clade {
+      transition: transform @transition_time ease-in-out;
+
+      .edge-rect {
+        transition: scaleY @transition_time ease-in-out, scaleX @transition_time ease-in-out, transform @transition_time ease-in-out;
+      }
+    }
+  }
+
+  .interaction-helper {
+    opacity: @invisible;
+  }
+
+  .node circle {
+    stroke: @default_node_stroke;
+    fill: @default_node_fill;
+  }
+
+  .speciation rect {
+    fill: @speciation_color;
+  }
+
+  .duplication rect {
+    fill: @duplication_color;
+  }
+
+  .node:hover, .edge:hover {
+    .internal,
+    .gene circle,
+    ~ .clade .node rect,
+    + .node rect {
+      transform: scale(@hover_scale_factor);
+    }
+
+    ~ .clade .interaction-rect {
+      opacity: @visible;
+      fill-opacity: @visible;
+    }
+
+    ~ .clade circle,
+    + .node circle,
+    .collapsed path,
+    ~ .clade .collapsed path,
+    + .node .collapsed path {
+      stroke-width: @hover_stroke_width;
+    }
+
+    ~ .clade text, text {
+      font-weight: @font_weight_highlight;
+    }
+  }
+
+  .node {
+    .gene.ortholog_one2one circle,
+    .gene.ortholog_one2many circle,
+    .gene.ortholog_many2many circle {
+      stroke: @ortholog_stroke_color;
+    }
+
+    .gene.within_species_paralog circle {
+      stroke: @paralog_stroke_color;
+    }
+
+    .gene.self {
+      circle {
+        stroke: @self_color;
+        fill: @self_color;
+      }
+      text {
+        font-weight: @font_weight_highlight;
+      }
+    }
+
+    .gene.representative circle {
+      stroke: @ortholog_stroke_color;
+      fill: @representative_fill_color;
+    }
+
+    text {
+      font-size: @font_size;
+      fill-opacity: @visible;
+      text-anchor: start;
+    }
+  }
+
+  .collapsed {
+    path {
+      stroke-width: @collapsed_node_stroke_width;
+    }
+  }
+
+  .domains rect {
+    cursor: pointer;
+    stroke-opacity: 0
+  }
+
+  .domains rect:hover {
+    cursor: pointer;
+    stroke-opacity: 1.0
+  }@transition_time: 20ms;
+
+  /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
+  @hover_scale_factor: 2;
+  @hover_stroke_width: 2;
+  @collapsed_node_stroke_width: 1;
+
+  @default_node_fill: #fff;
+  @default_node_stroke: #777;
+
+  @ortholog_stroke_color: orange;
+  @paralog_stroke_color: green;
+  @representative_fill_color: @ortholog_stroke_color;
+  @self_color: red;
+
+  @speciation_color: #000080;
+  @duplication_color: #cd0000;
+
+  @font_size: 11px;
+  @font_weight_highlight: bolder;
+
+  @invisible: 0;
+  @visible: 1;
+
+  .genetree-vis {
+
+    .node, .edge {
+      cursor: pointer;
+    }
+
+    .tree-wrapper {
+      /* transitions for mouse hover, etc, interactions */
+      * {
+        transition: all @transition_time ease-in-out;
+      }
+
+      /* transitions for expanding/contracting clades */
+      .clade {
+        transition: transform @transition_time ease-in-out;
+
+        .edge-rect {
+          transition: scaleY @transition_time ease-in-out, scaleX @transition_time ease-in-out, transform @transition_time ease-in-out;
+        }
+      }
+    }
+
+    .interaction-helper {
+      opacity: @invisible;
+    }
+
+    .node circle {
+      stroke: @default_node_stroke;
+      fill: @default_node_fill;
+    }
+
+    .speciation rect {
+      fill: @speciation_color;
+    }
+
+    .duplication rect {
+      fill: @duplication_color;
+    }
+
+    .node:hover, .edge:hover {
+      .internal,
+      .gene circle,
+      ~ .clade .node rect,
+      + .node rect {
+        transform: scale(@hover_scale_factor);
+      }
+
+      ~ .clade .interaction-rect {
+        opacity: @visible;
+        fill-opacity: @visible;
+      }
+
+      ~ .clade circle,
+      + .node circle,
+      .collapsed path,
+      ~ .clade .collapsed path,
+      + .node .collapsed path {
+        stroke-width: @hover_stroke_width;
+      }
+
+      ~ .clade text, text {
+        font-weight: @font_weight_highlight;
+      }
+    }
+
+    .node {
+      .gene.ortholog_one2one circle,
+      .gene.ortholog_one2many circle,
+      .gene.ortholog_many2many circle {
+        stroke: @ortholog_stroke_color;
+      }
+
+      .gene.within_species_paralog circle {
+        stroke: @paralog_stroke_color;
+      }
+
+      .gene.self {
+        circle {
+          stroke: @self_color;
+          fill: @self_color;
+        }
+        text {
+          font-weight: @font_weight_highlight;
+        }
+      }
+
+      .gene.representative circle {
+        stroke: @ortholog_stroke_color;
+        fill: @representative_fill_color;
+      }
+
+      text {
+        font-size: @font_size;
+        fill-opacity: @visible;
+        text-anchor: start;
+      }
+    }
+
+    .collapsed {
+      path {
+        stroke-width: @collapsed_node_stroke_width;
+      }
+    }
+
+    .domains rect {
+      cursor: pointer;
+      stroke-opacity: 0
+    }
+
+    .domains rect:hover {
+      cursor: pointer;
+      stroke-opacity: 1.0
+    }
+
+    .tooltip-title-button {
+      margin-top: -4px;
+    }
+  }
+}
+
+.popover-title .tooltip-title-button {
+  margin-top: -4px!important;
+  margin-right: 4px!important;
+}
+
+.msa-slider {
+  position: relative;
+  padding-top: 10px;
+  padding-bottom: 0px;
+  margin-bottom: -10px;
+}
+
+.resize-drag {
+  background:rgba(0,0,0,0.0);
+  border: 4px solid #7c8383;
+  color: red;
+  font-size: 1px;
+  font-family: sans-serif;
+  border-radius: 8px;
+
+  /* This makes things *much* easier */
+  box-sizing: border-box;
+}
+
+.resize-container {
+  width: 100%;
+  height: 100%;
+}
+

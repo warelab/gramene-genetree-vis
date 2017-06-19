@@ -162,7 +162,7 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
     centerGenes.identity = neighborhood.center_identity;
     if(centerGenes.orientation === '-') {
       genes.reverse();
-      genes.map( (gene) => {
+      genes.forEach( (gene) => {
         gene.orientation = gene.orientation === '-' ? '+' : '-';
       });
       neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
@@ -184,7 +184,7 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 }
 
 
-export function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
+export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
   let queryString = `gene_tree:${genetree.model._id}`;
   if (!_.isEmpty(genomesOfInterest)) {
     let taxa = Object.keys(genomesOfInterest).join(' ');

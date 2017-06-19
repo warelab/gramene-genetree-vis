@@ -1,4 +1,4 @@
-var _ = require('lodash');
+import _ from 'lodash';
 
 const PIXELS_PER_X_INDEX = 18;
 const DEFAULT_SVG_HEIGHT = 250;
@@ -12,4 +12,4 @@ function calculateSvgHeight(genetree) {
   }
 }
 
-module.exports = calculateSvgHeight;
+export default calculateSvgHeight;

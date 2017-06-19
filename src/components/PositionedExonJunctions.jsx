@@ -1,22 +1,21 @@
-'use strict';
-
-var React = require('react');
+import React, {Component} from 'react';
+import ExonJunctions from './ExonJunctions.jsx';
 var microsoftBrowser = require('../utils/microsoftBrowser');
-var ExonJunctions = require('./ExonJunctions.jsx');
 
-var PositionedExonJunctions = React.createClass({
+export default class PositionedExonJunctions extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     alignment: React.PropTypes.object.isRequired
-  },
-  
-  getInitialState: function () {
-    return {};
-  },
+  }
 
-  transform: function (isStyle) {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  transform(isStyle) {
     var x, y, px;
 
     px = isStyle ? 'px' : '';
@@ -25,9 +24,9 @@ var PositionedExonJunctions = React.createClass({
     y = this.props.node.x - 2;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
-  },
+  }
 
-  render: function () {
+  render() {
     var props = {};
     if(microsoftBrowser) {
       props.transform = this.transform(false);
@@ -42,6 +41,4 @@ var PositionedExonJunctions = React.createClass({
       </g>
     )
   }
-});
-
-module.exports = PositionedExonJunctions;
+};

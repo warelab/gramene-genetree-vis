@@ -1,7 +1,7 @@
-var _ = require('lodash');
+import _ from 'lodash';
 
 function taxonomyColor(node) {
-  var stats, colorScale, score;
+  let stats, colorScale, score;
   stats = _.get(node, 'relationToGeneOfInterest.taxonomy');
   if (stats) {
     score = stats.lcaDistance + stats.pathDistance;
@@ -10,4 +10,4 @@ function taxonomyColor(node) {
   }
 }
 
-module.exports = taxonomyColor;
+export default taxonomyColor;

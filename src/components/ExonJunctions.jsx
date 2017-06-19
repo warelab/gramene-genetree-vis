@@ -1,6 +1,4 @@
-'use strict';
-
-var React = require('react');
+import React, {Component} from 'react';
 
 function remap(seqPos, blocks) {
   var posInSeq = 0;
@@ -15,18 +13,19 @@ function remap(seqPos, blocks) {
   return 0;
 }
 
-var ExonJunctions = React.createClass({
+
+export default class ExonJunctions extends Component {
   props: {
     id: React.PropTypes.number.isRequired,
     node: React.PropTypes.object.isRequired,
     width: React.PropTypes.number.isRequired,
     alignment: React.PropTypes.object.isRequired
-  },
-    
-  render: function () {
+  }
+
+  render() {
     var node = this.props.node;
     var alignment = this.props.alignment;
-    
+
     var k=0;
     var bins = node.model.exon_junctions.map(function(ej) {
       var ejPos = remap(ej, alignment.blocks);
@@ -37,13 +36,11 @@ var ExonJunctions = React.createClass({
         <rect key={k} width="1" height="18" x={top} style={style} />
       )
     });
-    
+
     return (
       <g className="exonJunctions" >
         {bins}
       </g>
     );
   }
-});
-
-module.exports = ExonJunctions;
+};

@@ -1,14 +1,17 @@
-var _ = require('lodash');
-var scale = require('d3').scale.linear;
-var calculateIdentity = require('gramene-trees-client').extensions.identity;
+import _ from 'lodash';
+let scale = require('d3').scale.linear;
+let calculateIdentity = require('gramene-trees-client').extensions.identity;
 
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
   if (pivotTree) {
     let node = genetree.indices.gene_stable_id[geneOfInterest._id];
+
+    const indexCallback = (n) => n === node;
+
     while (!node.isRoot()) {
       const parent = node.parent;
       const children = parent.children;
-      const nodeIdx = _.findIndex(children, (n) => n === node);
+      const nodeIdx = _.findIndex(children, indexCallback);
 
       // move this node to the front of the children array.
       if (nodeIdx) {
@@ -18,22 +21,22 @@ function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTr
     }
   }
   // (re)initialize relationships
-  genetree.walk(function (node) {
-    node.relationToGeneOfInterest = {};
-  });
+  // genetree.walk(function (node) {
+  //   node.relationToGeneOfInterest = {};
+  // });
   addHomologyInformationToNodes(genetree, geneOfInterest);
   addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy);
 }
 
 function addHomologyInformationToNodes(genetree, theGene) {
-  var homologs, representatives;
   if (theGene) {
-    var theGeneNode = genetree.indices.gene_stable_id[theGene._id];
-    homologs = indexHomologs(theGene);
-    representatives = indexReps(theGene);
+    let theGeneNode = genetree.indices.gene_stable_id[theGene._id];
+    let homologs = indexHomologs(theGene);
+    let representatives = indexReps(theGene);
     genetree.walk(function (node) {
-      var nodeId, homology;
-      nodeId = node.model.gene_stable_id;
+      let homology;
+      let nodeId = node.model.gene_stable_id;
+      node.relationToGeneOfInterest = {};
       if (nodeId) {
         if (nodeId === theGene._id) {
           homology = 'self';
@@ -52,7 +55,7 @@ function addHomologyInformationToNodes(genetree, theGene) {
 // IN -> key: homologyType, value: [geneId]
 // OUT-> key: geneId, value: homologyType
 function indexHomologs(theGene) {
-  var homologs = _.get(theGene, 'homology.homologous_genes');
+  let homologs = _.get(theGene, 'homology.homologous_genes');
   return _.transform(homologs, function (result, value, key) {
     _.forEach(value, function (id) {
       result[id] = key;
@@ -64,7 +67,7 @@ function indexHomologs(theGene) {
 // IN -> key: representativeType, value: gene doc
 // OUT-> key: geneId, value: representativeType
 function indexReps(theGene) {
-  var representative = _.get(theGene, 'homology.gene_tree.representative');
+  let representative = _.get(theGene, 'homology.gene_tree.representative');
   return _.transform(representative, function (result, rep, repType) {
     result[rep.id] = repType;
     return result;
@@ -73,40 +76,36 @@ function indexReps(theGene) {
 
 function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) {
   /*const*/ var OUTGROUP_FLAG = -1;
-  var theGeneTaxonId, theTaxonNode, theTaxonPath,
-    theTaxonPathIds, relationLUT, distances, maxima;
 
-  theGeneTaxonId = geneOfInterest.taxon_id;
+  let theGeneTaxonId = geneOfInterest.taxon_id;
 
   if (theGeneTaxonId && taxonomy) {
-    theTaxonNode = taxonomy.indices.id[theGeneTaxonId];
-    theTaxonPath = theTaxonNode.getPath();
-    theTaxonPathIds = _.keyBy(theTaxonPath, 'model.id');
-    relationLUT = {};
-    maxima = {
+    let theTaxonNode = taxonomy.indices.id[theGeneTaxonId];
+    let theTaxonPath = theTaxonNode.getPath();
+    let theTaxonPathIds = _.keyBy(theTaxonPath, 'model.id');
+    let relationLUT = {};
+    let maxima = {
       lcaDistance: 0,
       pathDistance: 0
     };
 
     genetree.walk(function (node) {
-      var nodeTaxonId, nodeTaxon, pathDistance, lcaDistance, lca;
-      nodeTaxonId = node.model.taxon_id || node.model.node_taxon_id;
+      let nodeTaxonId = node.model.taxon_id || node.model.node_taxon_id;
 
       // have we already seen this?
       if (relationLUT[nodeTaxonId]) {
         node.relationToGeneOfInterest.taxonomy = relationLUT[nodeTaxonId];
       }
       else {
-        if (nodeTaxonId === theGeneTaxonId) {
-          lcaDistance = 0;
-          pathDistance = 0;
-        }
-        else {
+        let lcaDistance = 0;
+        let pathDistance = 0;
+        let lca;
+        if (nodeTaxonId !== theGeneTaxonId) {
           if ((lca = theTaxonPathIds[nodeTaxonId])) {
             pathDistance = 0;
           }
           else {
-            nodeTaxon = taxonomy.indices.id[nodeTaxonId];
+            let nodeTaxon = taxonomy.indices.id[nodeTaxonId];
             if(nodeTaxon) {
               lca = theTaxonNode.lcaWith([nodeTaxon]);
               pathDistance = lca.pathTo(nodeTaxon).length - 1;
@@ -124,7 +123,7 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
           }
         }
 
-        distances = {
+        let distances = {
           lcaDistance: lcaDistance,
           pathDistance: pathDistance,
           maxima: maxima
@@ -152,4 +151,4 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
   }
 }
 
-module.exports = relateNodesToGeneOfInterest;
+export default relateNodesToGeneOfInterest;

@@ -1,6 +1,10 @@
-import React from 'react'; // This var is required after JSX->JS transpile.
-import ReactDOM from 'react-dom';
-import TreeVis from './src/components/TreeVis.jsx';
+import React, { Component } from 'react';
+import './App.css';
+import './styles/msa.css';
+import './styles/tree.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import TreeVis from './components/TreeVis.jsx';
 
 let geneFixture = require('./fixtures/Zm00001d018033.json');
 
@@ -16,8 +20,9 @@ let genomesOfInterest = {
   39947 : taxonomy.indices.id[39947]
 };
 
-ReactDOM.render(
-  <TreeVis genetree={exampleGenetree}
+class App extends Component {
+  render() {
+    return <TreeVis genetree={exampleGenetree}
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
            genomesOfInterest={genomesOfInterest}
@@ -26,6 +31,8 @@ ReactDOM.render(
            pivotTree={true}
            enablePhyloview={true}
            numberOfNeighbors={10}
-           />,
-  document.getElementById('tree')
-);
+           />;
+  }
+}
+
+export default App;

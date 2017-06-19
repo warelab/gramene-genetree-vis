@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-var colors = require('d3').scale.category10().range();
+let colors = require('d3').scale.category10().range();
 
-export function domainStats(genetree) {
+export default function domainStats(genetree) {
   const speciesNodes = genetree.leafNodes();
   const numGenes = speciesNodes.length;
   let colorIdx = 0;

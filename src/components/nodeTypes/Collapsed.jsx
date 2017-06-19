@@ -1,91 +1,58 @@
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
-var React = require('react');
-var _ = require('lodash');
+import taxonomyColor from '../../utils/taxonomyColor';
 
-var taxonomyColor = require('../../utils/taxonomyColor');
+const Collapsed = props => {
+  return (
+    <g className="collapsed">
+      {triangle(props.node)}
+      {text(props.node)}
+    </g>
+  )
+};
 
-var Collapsed = React.createClass({
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired
-  },
+function text(node) {
+  let texts, homologs, /*orthologs,*/ paralogs;
+  homologs = node.leafNodes().length;
+  //orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
+  paralogs = _.get(node, 'displayInfo.paralogs.length') || 0;
+  texts = [node.model.taxon_name + ': ' + homologs + ' genes'];
 
-  getInitialState: function() {
-    return {};
-  },
+  addToTexts(paralogs, 'paralog');
+  //addToTexts(orthologs, 'ortholog');
 
-  select: function() {
-
-  },
-
-  hover: function() {
-
-  },
-
-  unhover: function() {
-
-  },
-
-  className: function () {
-    var className;
-
-    className = 'collapsed';
-
-    return className;
-  },
-
-  text: function () {
-    var node, texts, homologs, orthologs, paralogs;
-    node = this.props.node;
-    homologs = node.leafNodes().length;
-    orthologs = _.get(node, 'displayInfo.orthologs.length') || 0;
-    paralogs = _.get(node, 'displayInfo.paralogs.length') || 0;
-    texts = [this.props.node.model.taxon_name + ': ' + homologs + ' genes'];
-
-    addToTexts(paralogs, 'paralog');
-    //addToTexts(orthologs, 'ortholog');
-
-    function addToTexts(count, type) {
-      var text, countText;
-      if(count) {
-        countText = count === homologs ? 'all' : count;
-        text = countText + ' ' + type;
-        if (count > 1) text += 's';
-        texts.push(text);
-      }
+  function addToTexts(count, type) {
+    let text, countText;
+    if(count) {
+      countText = count === homologs ? 'all' : count;
+      text = countText + ' ' + type;
+      if (count > 1) text += 's';
+      texts.push(text);
     }
-
-    return <text x="36"
-                 dy=".35em">{texts.join(', ')}</text>;
-  },
-
-  style: function () {
-    var color = taxonomyColor(this.props.node);
-    return {fill: color, stroke: color};
-  },
-
-  triangle: function () {
-    var d = 'M0,0 30,8 30,-8 0,0';
-
-    return (
-      <path d={d} style={this.style()}/>
-    )
-  },
-
-  render: function () {
-    return (
-      <g className={this.className()}
-        onMouseOver={this.hover}
-        onMouseOut={this.unhover}
-        onClick={this.select} >
-        {this.triangle()}
-        {this.text()}
-      </g>
-    )
   }
-});
 
-module.exports = Collapsed;
+  return <text x="36"
+               dy=".35em">{texts.join(', ')}</text>;
+}
+
+function style(node) {
+  let color = taxonomyColor(node);
+  return {fill: color, stroke: color};
+}
+
+function triangle(node) {
+  let d = 'M0,0 30,8 30,-8 0,0';
+
+  return (
+    <path d={d} style={style(node)}/>
+  )
+}
+
+Collapsed.propTypes = {
+  node: PropTypes.object.isRequired,
+  onHover: PropTypes.func.isRequired
+};
+
+export default Collapsed;
