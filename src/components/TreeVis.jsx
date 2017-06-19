@@ -32,6 +32,7 @@ const DEFAULT_MARGIN = 20;
 const DEFAULT_ZOOM_HEIGHT = 20;
 const DEFAULT_LABEL_WIDTH = 200;
 const MIN_TREE_WIDTH = 50;
+const MAX_TREE_WIDTH = 200;
 const MIN_VIZ_WIDTH = 150;
 const windowResizeDebounceMs = 250;
 const rangeChangeDebounceMs = 150;
@@ -102,11 +103,15 @@ export default class TreeVis extends React.Component {
           if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
             return React.createElement(Phyloview, {
               nodes: app.state.visibleNodes,
+              queryNode: app.genetree.indices.gene_stable_id[app.state.geneOfInterest._id],
               width: app.vizWidth,
               height: app.treeHeight,
               margin: app.margin,
+              xOffset: app.margin + app.treeWidth + app.labelWidth,
+              yOffset: 0,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               neighborhoods: app.state.neighborhoods,
+              numberOfNeighbors: app.props.numberOfNeighbors,
               transform: app.transformViz
             });
           }
@@ -200,7 +205,8 @@ export default class TreeVis extends React.Component {
     this.labelWidth = this.props.labelWidth || DEFAULT_LABEL_WIDTH;
     const w = this.width - this.labelWidth - (2 * this.margin);
     this.treeWidth = (.25 * w < MIN_TREE_WIDTH) ? MIN_TREE_WIDTH : Math.floor(.25 * w);
-    this.vizWidth = (.75 * w < MIN_VIZ_WIDTH) ? MIN_VIZ_WIDTH : Math.floor(.75 * w);
+    if (this.treeWidth > MAX_TREE_WIDTH) this.treeWidth = MAX_TREE_WIDTH;
+    this.vizWidth = (w - this.treeWidth < MIN_VIZ_WIDTH) ? MIN_VIZ_WIDTH : w - this.treeWidth;
     if (this.treeWidth + this.vizWidth + this.labelWidth + 2 * this.margin > this.width) {
       console.log('Is this too small to see everything?');
       this.width = this.treeWidth + this.vizWidth + this.labelWidth + 2 * this.margin;
