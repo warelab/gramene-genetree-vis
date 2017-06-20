@@ -1,6 +1,7 @@
 {
   "name": "gramene-genetree-vis",
   "version": "3.1.4",
+  "main": "lib/index.js",
   "description": "Visualize a genetree using d3",
   "repository": {
     "type": "git",
@@ -27,12 +28,16 @@
     "react-toggle-switch": "^2.1.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "npm-run-all": "^4.0.2",
     "react-scripts": "1.0.7"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lib": "babel src/node_modules --out-dir lib --copy-files",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

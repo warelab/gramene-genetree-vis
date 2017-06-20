@@ -4,7 +4,7 @@ import './styles/msa.css';
 import './styles/tree.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import TreeVis from './components/TreeVis.jsx';
+import TreeVis from 'components/TreeVis';
 
 let geneFixture = require('./fixtures/Zm00001d018033.json');
 
