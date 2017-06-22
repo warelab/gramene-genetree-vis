@@ -1,6 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 
+import Gene from './Gene';
+
+var d3Scale = require('d3-scale');
+
 const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
@@ -48,7 +52,30 @@ const NeighborhoodArrow = props => {
 };
 
 const ComparaGene = props => {
-  let gene = props.gene;
+
+    const gene = props.gene;
+
+    const geneWidth = 0.6;
+    const geneHeight = 16;
+console.log("CG IS ", gene);
+    return (
+      <Gene
+        width={ geneWidth }
+        height={ geneHeight }
+        key={gene.id}
+        gene={gene}
+        x={ gene.x - geneWidth / 2 }
+        y={ geneHeight / 4 }
+        fillColor={ props.color }
+        strokeColor={ 'blue' }
+        //clickHandler={ this.props.geneClickHandler }
+        //tooltipHandler={ this.props.geneTooltipHandler }
+        //highlighted={ this.props.highlights[gene.tree_id] || this.props.geneHighlights[gene.id] ? true : false }
+      />
+  );
+
+console.log("CG ", props);
+  //let gene = props.gene;
   return (
     <line
       x1={gene.x - 0.3} y1={4}
@@ -60,8 +87,36 @@ const ComparaGene = props => {
 };
 
 const NonCodingGroup = props => {
+console.log("NCG ", props);
   let x = +props.x;
   let n = props.genes.length;
+
+  return (
+    <g>
+      <rect
+        x={ x - 0.3 }
+        y={4}
+        width={0.6}
+        height={16}
+        fill="white"/>
+      <g transform="scale(1,1)">
+        <text
+          x={x}
+          y={16}
+          font-size={'1px'}
+          line-height={'1px'}>
+            8
+        </text>
+      </g>
+      <line
+        x1={x - 0.3} y1={20}
+        x2={x + 0.3} y2={4}
+        stroke="red"
+        strokeWidth="0.1"
+      />
+    </g>
+  );
+
   return (
     <line
       x1={x - 0.3} y1={20}
@@ -71,6 +126,98 @@ const NonCodingGroup = props => {
     />
   )
 };
+
+function initTreeColors(primary_neighborhood) {
+  let treeMap = {};
+  let treeIdx = 0;
+console.log("PN", primary_neighborhood);
+  var center_idx = Number(primary_neighborhood.center_idx);
+  var right_of_idx = primary_neighborhood.genes.length - 1 - center_idx;
+
+  var domain;
+  var range = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'darkviolet'];
+
+  //brute force the stupid edge cases.
+
+  if (center_idx > 0 && right_of_idx > 0) {
+    domain = [
+      0,
+      center_idx / 3,
+      center_idx * 2 / 3,
+      center_idx,
+      center_idx + right_of_idx / 3,
+      center_idx + right_of_idx * 2 / 3,
+      primary_neighborhood.genes.length - 1
+    ];
+
+    //handle all the idiot edge cases if there are fewer than 7 genes
+    if (center_idx == 1) {
+      domain = domain.slice(3);
+      domain.unshift(0);
+      range = range.slice(2);
+    }
+    else if (center_idx == 2) {
+      domain = domain.slice(3);
+      domain.unshift(0, center_idx / 2);
+      range = range.slice(1);
+    }
+
+    if (center_idx == primary_neighborhood.genes.length - 2) {
+      domain = domain.slice(0, domain.length - 3);
+      domain.push(primary_neighborhood.genes.length - 1);
+      range = range.slice(0, range.length - 2);
+    }
+    else if (center_idx == primary_neighborhood.genes.length - 3) {
+      domain = domain.slice(0, domain.length - 3);
+      domain.push(center_idx + right_of_idx / 2, primary_neighborhood.genes.length - 1);
+      range = range.slice(0, domain.length);
+    }
+    //done idiot edge cases
+
+  }
+  else if (center_idx == 0) {
+    domain = [
+      center_idx,
+      center_idx + right_of_idx * 1 / 3,
+      center_idx + right_of_idx * 2 / 3,
+      primary_neighborhood.genes.length - 1
+    ];
+    range = ['green', 'blue', 'indigo', 'darkviolet'];
+  }
+  else {
+    domain = [
+      0,
+      center_idx * 1 / 3,
+      center_idx * 2 / 3,
+      center_idx
+    ];
+    range = ['red', 'orange', 'yellow', 'green'];
+  }
+
+  var scale = d3Scale.scaleLinear()
+    .domain(domain)
+    .range(range);
+
+  return {scale, treeMap, treeIdx};
+}
+
+function treeIDToColor(tree_id, offsetIdx, geneIdx, treeMap, scale) {
+  if (tree_id == undefined) {
+    return 'dimgray';
+  }
+  else if (treeMap[tree_id] == undefined) {
+    if (offsetIdx == 0) {
+      treeMap[tree_id] = geneIdx;
+    }
+    else {
+      return 'lightgray';
+    }
+  }
+
+  var color = scale(treeMap[tree_id]);
+
+  return color;
+}
 
 export default class Neighborhood extends React.Component {
   constructor(props) {
@@ -85,6 +232,12 @@ export default class Neighborhood extends React.Component {
     let center_x = this.props.totalLength / 2;
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
+    let treeInfo = {};
+    if (neighborhood) {
+    console.log("NEIGH", neighborhood);
+      treeInfo = initTreeColors(neighborhood);
+    }
+    console.log("PROPS", this.props, treeInfo);
 
     if (neighborhood.strand === 'reverse') {
       neighborhood.genes.forEach(function(gene) {
@@ -102,10 +255,17 @@ export default class Neighborhood extends React.Component {
       });
     }
     else { // forward
-      neighborhood.genes.forEach(function(gene) {
+      neighborhood.genes.forEach(function(gene, gene_idx) {
         gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x}/>);
+          const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
+          comparaGenes.push(
+            <ComparaGene
+              gene={gene}
+              key={gene.x}
+              color={treeColor}
+              />
+            );
         }
         else { // non coding
           gene.x = center_x + (centralGene.compara_idx - gene.compara_idx + 0.5);
