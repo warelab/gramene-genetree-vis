@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 export default class Gene extends Component {
 
@@ -18,7 +19,6 @@ export default class Gene extends Component {
       },
       bigSolidPointyRectangle : {
         shape : function(opts) {
-console.log("BSPR");
           let boxRatio = 0.75;//2 / 3;
           let arrowRatio = 1 - boxRatio;
 
@@ -162,8 +162,12 @@ console.log("BSPR");
       }
     );
 
-		return (
+    const tooltip = this.props.tooltip
+      ? <Tooltip id="tooltip">{ this.props.tooltip }</Tooltip>
+      : null;
 
+		return (
+    <OverlayTrigger placement={ this.props.tooltipPlacement } overlay={tooltip}>
       <g transform={"translate(" + (this.props.gene.orientation == '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation == '+' ? 1 : -1) + ",1)"}>
         <path d={d} fill = {this.props.fillColor}
           strokeWidth = { this.strokeWidth(this.props.highlighted, this.props.highlightWidth) }
@@ -175,48 +179,10 @@ console.log("BSPR");
           mask = {shapeStuff.mask ? shapeStuff.mask() : ''}
           />
       </g>
+      </OverlayTrigger>
 
 		);
 
-    /*let ad = ` \
-      M${this.props.x},${this.props.y + this.height() / 3} \
-      l${this.props.width * 3 / 4},0 \
-      l0,${- this.height() / 3} \
-      l${this.props.width / 4},${this.height() / 2} \
-      l${- this.props.width / 4},${this.height() / 2} \
-      l0,${- this.height() / 3} \
-      l${- this.props.width * 3 / 4},0 \
-      Z`;
-
-
-    let rd = `M${this.props.x},${this.props.y + this.cornerRadius()} \
-      a${this.cornerRadius()},${this.cornerRadius()} 0 0 1 ${this.cornerRadius()},${-this.cornerRadius()}
-      l${this.props.width - this.cornerRadius() * 2},0 \
-      a${this.cornerRadius()},${this.cornerRadius()} 0 0 1 ${this.cornerRadius()},${this.cornerRadius()}
-      l0,${this.height() - this.cornerRadius() * 2} \
-      a${this.cornerRadius()},${this.cornerRadius()} 0 0 1 ${-this.cornerRadius()},${this.cornerRadius()} \
-      l${- this.props.width + this.cornerRadius() * 2},0 \
-      a${this.cornerRadius()},${this.cornerRadius()} 0 0 1 ${-this.cornerRadius()},${- this.cornerRadius()} \
-      Z`;
-
-		return (
-
-      <g transform={"translate(" + (this.props.gene.orientation == '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation == '+' ? 1 : -1) + ",1)"}>
-        <path d={rd} fill = {this.props.color}
-          strokeWidth = {this.props.highlighted ? this.props.highlightWidth : ''}
-          stroke = { this.props.highlighted ? this.props.highlightColor : '' }
-          onClick= { this.handleClick }
-          opacity = "0.9"
-          />
-      <path d={ad} fill = {"black"}
-          strokeWidth = {this.props.highlighted ? this.props.highlightWidth : ''}
-          stroke = { this.props.highlighted ? this.props.highlightColor : '' }
-          onClick= { this.handleClick }
-          opacity = "0.2"
-          />
-      </g>
-
-		);*/
 	}
 
 	handleClick() {
@@ -239,8 +205,9 @@ console.log("BSPR");
 }
 
 Gene.defaultProps = {
-  y : 0,
-  orientation : "-",
-  highlightWidth : 4,
-  highlightColor : 'cyan',
+  y               : 0,
+  orientation     : "-",
+  highlightWidth  : 4,
+  highlightColor  : 'cyan',
+  tooltipPlacement: 'bottom',
 }

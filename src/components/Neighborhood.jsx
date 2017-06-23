@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 import Gene from './Gene';
 
@@ -53,68 +54,76 @@ const NeighborhoodArrow = props => {
 
 const ComparaGene = props => {
 
-    const gene = props.gene;
+  const gene = props.gene;
 
-    const geneWidth = 0.6;
-    const geneHeight = 16;
-console.log("CG IS ", gene);
-    return (
-      <Gene
-        width={ geneWidth }
-        height={ geneHeight }
-        key={gene.id}
-        gene={gene}
-        x={ gene.x - geneWidth / 2 }
-        y={ geneHeight / 4 }
-        fillColor={ props.color }
-        strokeColor={ 'blue' }
-        //clickHandler={ this.props.geneClickHandler }
-        //tooltipHandler={ this.props.geneTooltipHandler }
-        //highlighted={ this.props.highlights[gene.tree_id] || this.props.geneHighlights[gene.id] ? true : false }
-      />
+  const geneWidth = 0.6;
+  const geneHeight = 16;
+
+  const tooltipFields = [
+    ['Gene ID',     gene.id],
+    ['Gene Name',   gene.name],
+    //['Taxonomy',    this.props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
+    ['Region',      gene.region + ':' + gene.start + '-' + gene.end],
+    ['Tree ID',     gene.tree_id],
+    //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
+    ['Biotype',     gene.biotype],
+    ['Description', gene.description]
+  ];
+
+  const tooltip = (
+    <table>
+      <tbody>
+        {tooltipFields.map( (tip, i ) => {
+          return (
+            <tr key = {i} style={{verticalAlign : 'top'}}>
+              <th>{tip[0]}</th>
+              <td style={{color : 'lightgray'}}>{tip[1]}</td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
   );
 
-console.log("CG ", props);
-  //let gene = props.gene;
   return (
-    <line
-      x1={gene.x - 0.3} y1={4}
-      x2={gene.x + 0.3} y2={20}
-      stroke="green"
-      strokeWidth="0.1"
+    <Gene
+      width={ geneWidth }
+      height={ geneHeight }
+      key={gene.id}
+      gene={gene}
+      x={ gene.x - geneWidth / 2 }
+      y={ geneHeight / 4 }
+      fillColor={ props.color }
+      strokeColor={ 'blue' }
+      tooltip={ tooltip }
     />
-  )
+  );
+
 };
 
 const NonCodingGroup = props => {
-console.log("NCG ", props);
+
   let x = +props.x;
   let n = props.genes.length;
 
+  const ncgWidth = 0.35;
+  const ncgHeight = 16;
+
+  const tooltip = (
+    <Tooltip id="tooltip">Non-coding group with { n } gene{ n > 1 ? 's' : ''}</Tooltip>
+  );
+
   return (
-    <g>
+    <OverlayTrigger placement="top" overlay={tooltip}>
       <rect
-        x={ x - 0.3 }
+        x={ x - ncgWidth / 2 }
         y={4}
-        width={0.6}
+        width={ ncgWidth }
         height={16}
-        fill="white"/>
-      <g transform="scale(1,1)">
-        <text
-          x={x}
-          y={16}
-          font-size={'1px'}
-          line-height={'1px'}>
-            8
-        </text>
-      </g>
-      <line
-        x1={x - 0.3} y1={20}
-        x2={x + 0.3} y2={4}
-        stroke="red"
-        strokeWidth="0.1"
-      />
-    </g>
+        rx={ncgWidth / 6}
+        ry={ncgHeight / 6}
+        fill="gray"/>
+    </OverlayTrigger>
   );
 
   return (
@@ -130,7 +139,7 @@ console.log("NCG ", props);
 function initTreeColors(primary_neighborhood) {
   let treeMap = {};
   let treeIdx = 0;
-console.log("PN", primary_neighborhood);
+
   var center_idx = Number(primary_neighborhood.center_idx);
   var right_of_idx = primary_neighborhood.genes.length - 1 - center_idx;
 
@@ -234,10 +243,8 @@ export default class Neighborhood extends React.Component {
 
     let treeInfo = {};
     if (neighborhood) {
-    console.log("NEIGH", neighborhood);
       treeInfo = initTreeColors(neighborhood);
     }
-    console.log("PROPS", this.props, treeInfo);
 
     if (neighborhood.strand === 'reverse') {
       neighborhood.genes.forEach(function(gene) {
@@ -278,7 +285,6 @@ export default class Neighborhood extends React.Component {
     }
     let nonCodingGenes = [];
     for (let x in nonCodingGeneGroup) {
-      console.log(x, nonCodingGeneGroup[x]);
       nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]}/>);
     }
     return (
