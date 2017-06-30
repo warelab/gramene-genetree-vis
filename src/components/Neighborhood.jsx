@@ -85,20 +85,33 @@ const ComparaGene = props => {
     </table>
   );
 
+  const centerStrokeLine = props.center
+    ?  <line
+        x1={gene.x} y1={geneHeight / 4}
+        x2={gene.x} y2={geneHeight / 4 + geneHeight}
+        stroke="red"
+        strokeWidth="0.05"
+      />
+    : null;
+
   return (
-    <Gene
-      width={ geneWidth }
-      height={ geneHeight }
-      key={gene.id}
-      gene={gene}
-      x={ gene.x - geneWidth / 2 }
-      y={ geneHeight / 4 }
-      fillColor={ props.color }
-      highlightColor={ 'red' }
-      tooltip={ tooltip }
-      highlighted={props.center}
-      opacity={props.center ? gene.identity : undefined}
-    />
+    <g>
+      <Gene
+        width={ geneWidth }
+        height={ geneHeight }
+        key={gene.id}
+        gene={gene}
+        x={ gene.x - geneWidth / 2 }
+        y={ geneHeight / 4 }
+        fillColor={ props.color }
+        highlightColor={ 'red' }
+        tooltip={ tooltip }
+        //highlighted={props.center}
+        opacity={props.center ? gene.identity : undefined}
+      />
+      { centerStrokeLine }
+
+    </g>
   );
 
 };
