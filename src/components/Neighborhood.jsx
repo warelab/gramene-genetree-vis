@@ -87,8 +87,8 @@ const ComparaGene = props => {
 
   const centerStrokeLine = props.center
     ?  <line
-        x1={gene.x} y1={geneHeight / 4}
-        x2={gene.x} y2={geneHeight / 4 + geneHeight}
+        x1={gene.x} y1={geneHeight / 4 - 2}
+        x2={gene.x} y2={geneHeight / 4 + geneHeight + 2}
         stroke="red"
         strokeWidth="0.05"
       />
