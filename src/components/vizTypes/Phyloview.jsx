@@ -209,7 +209,7 @@ export default class MSAOverview extends React.Component {
     );
     return (
       <g ref={ g => {
-        interact(g)
+        // interact(g)
         /*
           // the on tap code to click the viewer around, which doesn't quite work.
           // (it'll fall off the right edge)
