@@ -59,6 +59,10 @@ const ComparaGene = props => {
   const geneWidth = 0.6;
   const geneHeight = 16;
 
+  const identityScale = d3Scale.scaleLinear()
+    .domain([1,0])
+    .range([props.color, 'white']);
+
   const tooltipFields = [
     ['Gene ID',     gene.id],
     ['Gene Name',   gene.name],
@@ -103,11 +107,11 @@ const ComparaGene = props => {
         gene={gene}
         x={ gene.x - geneWidth / 2 }
         y={ geneHeight / 4 }
-        fillColor={ props.color }
+        fillColor={ props.center ? identityScale(gene.identity) : props.color }
         highlightColor={ 'red' }
         tooltip={ tooltip }
         //highlighted={props.center}
-        opacity={props.center ? gene.identity : undefined}
+        opacity={undefined}
       />
       { centerStrokeLine }
 
