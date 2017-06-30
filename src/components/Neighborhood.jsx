@@ -4,8 +4,6 @@ import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 import Gene from './Gene';
 
-var d3Scale = require('d3-scale');
-
 const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
@@ -136,81 +134,8 @@ const NonCodingGroup = props => {
   )
 };
 
-function initTreeColors(primary_neighborhood) {
-  let treeMap = {};
-  let treeIdx = 0;
-
-  var center_idx = Number(primary_neighborhood.center_idx);
-  var right_of_idx = primary_neighborhood.genes.length - 1 - center_idx;
-
-  var domain;
-  var range = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'darkviolet'];
-
-  //brute force the stupid edge cases.
-
-  if (center_idx > 0 && right_of_idx > 0) {
-    domain = [
-      0,
-      center_idx / 3,
-      center_idx * 2 / 3,
-      center_idx,
-      center_idx + right_of_idx / 3,
-      center_idx + right_of_idx * 2 / 3,
-      primary_neighborhood.genes.length - 1
-    ];
-
-    //handle all the idiot edge cases if there are fewer than 7 genes
-    if (center_idx == 1) {
-      domain = domain.slice(3);
-      domain.unshift(0);
-      range = range.slice(2);
-    }
-    else if (center_idx == 2) {
-      domain = domain.slice(3);
-      domain.unshift(0, center_idx / 2);
-      range = range.slice(1);
-    }
-
-    if (center_idx == primary_neighborhood.genes.length - 2) {
-      domain = domain.slice(0, domain.length - 3);
-      domain.push(primary_neighborhood.genes.length - 1);
-      range = range.slice(0, range.length - 2);
-    }
-    else if (center_idx == primary_neighborhood.genes.length - 3) {
-      domain = domain.slice(0, domain.length - 3);
-      domain.push(center_idx + right_of_idx / 2, primary_neighborhood.genes.length - 1);
-      range = range.slice(0, domain.length);
-    }
-    //done idiot edge cases
-
-  }
-  else if (center_idx == 0) {
-    domain = [
-      center_idx,
-      center_idx + right_of_idx * 1 / 3,
-      center_idx + right_of_idx * 2 / 3,
-      primary_neighborhood.genes.length - 1
-    ];
-    range = ['green', 'blue', 'indigo', 'darkviolet'];
-  }
-  else {
-    domain = [
-      0,
-      center_idx * 1 / 3,
-      center_idx * 2 / 3,
-      center_idx
-    ];
-    range = ['red', 'orange', 'yellow', 'green'];
-  }
-
-  var scale = d3Scale.scaleLinear()
-    .domain(domain)
-    .range(range);
-
-  return {scale, treeMap, treeIdx};
-}
-
 function treeIDToColor(tree_id, offsetIdx, geneIdx, treeMap, scale) {
+
   if (tree_id == undefined) {
     return 'dimgray';
   }
@@ -235,22 +160,21 @@ export default class Neighborhood extends React.Component {
   }
 
   render() {
+
     let neighborhood = this.props.neighborhood;
     let comparaGenes = [];
     let nonCodingGeneGroup = {};
     let center_x = this.props.totalLength / 2;
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
-    let treeInfo = {};
-    if (neighborhood) {
-      treeInfo = initTreeColors(neighborhood);
-    }
+    let treeInfo = this.props.treeInfo;
 
     if (neighborhood.strand === 'reverse') {
-      neighborhood.genes.forEach(function(gene) {
+      neighborhood.genes.forEach(function(gene, gene_idx) {
         gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x}/>);
+          const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
+          comparaGenes.push(<ComparaGene gene={gene} key={gene.x} color={treeColor} />);
         }
         else { // non coding
           gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
@@ -282,7 +206,9 @@ export default class Neighborhood extends React.Component {
           nonCodingGeneGroup[gene.x].push(gene);
         }
       });
+
     }
+
     let nonCodingGenes = [];
     for (let x in nonCodingGeneGroup) {
       nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]}/>);
