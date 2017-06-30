@@ -173,7 +173,7 @@ export default class Gene extends Component {
           strokeWidth = { this.strokeWidth(this.props.highlighted, this.props.highlightWidth) }
           stroke = { this.stroke(this.props.highlighted, this.props.highlightColor, this.props.strokeColor) }
           onClick= { this.handleClick }
-          opacity = "0.9"
+          opacity = { this.props.opacity }
           onMouseOver = { this.tooltipOver.bind(this) }
           onMouseOut  = { this.tooltipOut.bind(this) }
           mask = {shapeStuff.mask ? shapeStuff.mask() : ''}
@@ -207,7 +207,8 @@ export default class Gene extends Component {
 Gene.defaultProps = {
   y               : 0,
   orientation     : "-",
-  highlightWidth  : 4,
+  highlightWidth  : 0.05,
   highlightColor  : 'cyan',
   tooltipPlacement: 'bottom',
+  opacity : "0.9"
 }

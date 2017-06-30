@@ -94,8 +94,10 @@ const ComparaGene = props => {
       x={ gene.x - geneWidth / 2 }
       y={ geneHeight / 4 }
       fillColor={ props.color }
-      strokeColor={ 'blue' }
+      highlightColor={ 'red' }
       tooltip={ tooltip }
+      highlighted={props.center}
+      opacity={props.center ? gene.identity : undefined}
     />
   );
 
@@ -117,9 +119,9 @@ const NonCodingGroup = props => {
     <OverlayTrigger placement="top" overlay={tooltip}>
       <rect
         x={ x - ncgWidth / 2 }
-        y={4}
+        y={6}
         width={ ncgWidth }
-        height={16}
+        height={12}
         rx={ncgWidth / 6}
         ry={ncgHeight / 6}
         fill={ props.scale(n) } />
@@ -170,7 +172,7 @@ export default class Neighborhood extends React.Component {
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
     let maxNCGGenes = 0;
-
+console.log("RENDER NEIGH", neighborhood);
     let treeInfo = this.props.treeInfo;
 
     if (neighborhood.strand === 'reverse') {
@@ -178,7 +180,7 @@ export default class Neighborhood extends React.Component {
         gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
           const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x} color={treeColor} />);
+          comparaGenes.push(<ComparaGene gene={gene} key={gene.x} color={treeColor} center={gene_idx===neighborhood.center_idx} />);
         }
         else { // non coding
           gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
@@ -202,6 +204,7 @@ export default class Neighborhood extends React.Component {
               gene={gene}
               key={gene.x}
               color={treeColor}
+              center={gene_idx===neighborhood.center_idx}
               />
             );
         }
