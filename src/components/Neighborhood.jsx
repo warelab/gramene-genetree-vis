@@ -4,6 +4,8 @@ import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 import Gene from './Gene';
 
+var d3Scale = require('d3-scale');
+
 const neighborhoodHeight = 24;
 
 const NeighborhoodArrow = props => {
@@ -120,7 +122,7 @@ const NonCodingGroup = props => {
         height={16}
         rx={ncgWidth / 6}
         ry={ncgHeight / 6}
-        fill="gray"/>
+        fill={ props.scale(n) } />
     </OverlayTrigger>
   );
 
@@ -167,6 +169,8 @@ export default class Neighborhood extends React.Component {
     let center_x = this.props.totalLength / 2;
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
+    let maxNCGGenes = 0;
+
     let treeInfo = this.props.treeInfo;
 
     if (neighborhood.strand === 'reverse') {
@@ -182,6 +186,9 @@ export default class Neighborhood extends React.Component {
             nonCodingGeneGroup[gene.x] = [];
           }
           nonCodingGeneGroup[gene.x].push(gene);
+          if (nonCodingGeneGroup[gene.x].length > maxNCGGenes) {
+            maxNCGGenes = nonCodingGeneGroup[gene.x].length;
+          }
         }
       });
     }
@@ -204,14 +211,22 @@ export default class Neighborhood extends React.Component {
             nonCodingGeneGroup[gene.x] = [];
           }
           nonCodingGeneGroup[gene.x].push(gene);
+          if (nonCodingGeneGroup[gene.x].length > maxNCGGenes) {
+            maxNCGGenes = nonCodingGeneGroup[gene.x].length;
+          }
         }
       });
 
     }
 
     let nonCodingGenes = [];
+
+    const ncgScale = d3Scale.scaleLinear()
+      .domain([maxNCGGenes,1])
+      .range(['#333333', 'lightgray']);
+
     for (let x in nonCodingGeneGroup) {
-      nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]}/>);
+      nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]} scale={ncgScale} />);
     }
     return (
       <g className="Neighborhood" >
