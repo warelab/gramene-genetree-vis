@@ -82,7 +82,9 @@ function initTreeColors(primary_neighborhood) {
 export default class MSAOverview extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      highlighted : {}
+    }
   }
 
   componentWillMount() {
@@ -197,6 +199,14 @@ export default class MSAOverview extends React.Component {
             totalLength={this.totalLength}
             neighborhood={neighborhood}
             treeInfo={treeInfo}
+            highlighted={this.state.highlighted}
+            clickHandler={
+              (gene_id, tree_id) => {
+                let highlighted = {...this.state.highlighted};
+                highlighted[tree_id] = !highlighted[tree_id];
+                this.setState({ highlighted });
+              }
+            }
           />
         </g>
       )
@@ -209,10 +219,11 @@ export default class MSAOverview extends React.Component {
     );
     return (
       <g ref={ g => {
-        interact(g)
+        g
         /*
           // the on tap code to click the viewer around, which doesn't quite work.
           // (it'll fall off the right edge)
+        interact(g)
         .on('tap', (event) => {
 
             let target = event.target;

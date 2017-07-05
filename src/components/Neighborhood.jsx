@@ -94,21 +94,50 @@ const ComparaGene = props => {
       />
     : null;
 
-  return (
-    <g>
-      <Gene
-        width={ geneWidth }
-        height={ geneHeight }
+  const highlighted = props.highlighted[gene.tree_id];
+
+  const littleBoat = highlighted
+    ?  <Gene
+        width={ geneWidth - 0.1 }
+        height={ geneHeight - 4 }
         key={gene.id}
         gene={gene}
-        x={ gene.x - geneWidth / 2 }
-        y={ geneHeight / 4 }
+        x={ gene.x - geneWidth / 2 + 0.04 }
+        y={ geneHeight / 4 + 2}
         fillColor={ props.color }
         highlightColor={ 'red' }
         tooltip={ tooltip }
         //highlighted={props.center}
         opacity={props.center ? gene.identity : undefined}
+        clickHandler={ () => {
+          if (props.clickHandler) {
+            props.clickHandler(gene.id, gene.tree_id
+          )}
+        }}
       />
+    : null
+
+  return (
+    <g>
+      <Gene
+        width={ geneWidth}
+        height={ geneHeight}
+        key={'H-' + gene.id}
+        gene={gene}
+        x={ gene.x - (geneWidth) / 2 }
+        y={ geneHeight / 4 }
+        fillColor={ highlighted ? 'cyan' : props.color }
+        highlightColor={ 'red' }
+        tooltip={ tooltip }
+        //highlighted={props.center}
+        opacity={1}
+        clickHandler={ () => {
+          if (props.clickHandler) {
+            props.clickHandler(gene.id, gene.tree_id
+          )}
+        }}
+      />
+      { littleBoat }
       { centerStrokeLine }
 
     </g>
@@ -185,15 +214,24 @@ export default class Neighborhood extends React.Component {
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
     let maxNCGGenes = 0;
-console.log("RENDER NEIGH", neighborhood);
+
     let treeInfo = this.props.treeInfo;
 
     if (neighborhood.strand === 'reverse') {
-      neighborhood.genes.forEach(function(gene, gene_idx) {
+      neighborhood.genes.forEach(( gene, gene_idx) => {
         gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
           const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x} color={treeColor} center={gene_idx===neighborhood.center_idx} />);
+          comparaGenes.push(
+            <ComparaGene
+              gene={gene}
+              key={gene.x}
+              color={treeColor}
+              center={gene_idx===neighborhood.center_idx}
+              clickHandler={this.props.clickHandler}
+              highlighted={this.props.highlighted}
+            />
+          );
         }
         else { // non coding
           gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
@@ -208,7 +246,7 @@ console.log("RENDER NEIGH", neighborhood);
       });
     }
     else { // forward
-      neighborhood.genes.forEach(function(gene, gene_idx) {
+      neighborhood.genes.forEach( (gene, gene_idx) => {
         gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
           const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
@@ -218,6 +256,8 @@ console.log("RENDER NEIGH", neighborhood);
               key={gene.x}
               color={treeColor}
               center={gene_idx===neighborhood.center_idx}
+              clickHandler={this.props.clickHandler}
+              highlighted={this.props.highlighted}
               />
             );
         }
