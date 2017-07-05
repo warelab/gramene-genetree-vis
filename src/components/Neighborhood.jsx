@@ -59,6 +59,10 @@ const ComparaGene = props => {
   const geneWidth = 0.6;
   const geneHeight = 16;
 
+  const identityScale = d3Scale.scaleLinear()
+    .domain([1,0])
+    .range([props.color, 'white']);
+
   const tooltipFields = [
     ['Gene ID',     gene.id],
     ['Gene Name',   gene.name],
@@ -87,8 +91,8 @@ const ComparaGene = props => {
 
   const centerStrokeLine = props.center
     ?  <line
-        x1={gene.x} y1={geneHeight / 4}
-        x2={gene.x} y2={geneHeight / 4 + geneHeight}
+        x1={gene.x} y1={geneHeight / 4 - 2}
+        x2={gene.x} y2={geneHeight / 4 + geneHeight + 2}
         stroke="red"
         strokeWidth="0.05"
       />
@@ -126,11 +130,14 @@ const ComparaGene = props => {
         gene={gene}
         x={ gene.x - (geneWidth) / 2 }
         y={ geneHeight / 4 }
-        fillColor={ highlighted ? 'cyan' : props.color }
+        fillColor={
+          highlighted
+          ? 'cyan'
+          : props.center ? identityScale(gene.identity) : props.color }
         highlightColor={ 'red' }
         tooltip={ tooltip }
         //highlighted={props.center}
-        opacity={1}
+        opacity={undefined}
         clickHandler={ () => {
           if (props.clickHandler) {
             props.clickHandler(gene.id, gene.tree_id
