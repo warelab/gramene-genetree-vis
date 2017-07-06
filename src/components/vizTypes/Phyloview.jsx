@@ -198,6 +198,7 @@ export default class MSAOverview extends React.Component {
             width={this.props.width}
             totalLength={this.totalLength}
             neighborhood={neighborhood}
+            maxNCGGenes={this.props.maxNCGGenes}
             treeInfo={treeInfo}
             highlighted={this.state.highlighted}
             clickHandler={

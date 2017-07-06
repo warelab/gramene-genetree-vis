@@ -220,8 +220,6 @@ export default class Neighborhood extends React.Component {
     let center_x = this.props.totalLength / 2;
     let centralGene = neighborhood.genes[neighborhood.center_idx];
 
-    let maxNCGGenes = 0;
-
     let treeInfo = this.props.treeInfo;
 
     if (neighborhood.strand === 'reverse') {
@@ -246,9 +244,6 @@ export default class Neighborhood extends React.Component {
             nonCodingGeneGroup[gene.x] = [];
           }
           nonCodingGeneGroup[gene.x].push(gene);
-          if (nonCodingGeneGroup[gene.x].length > maxNCGGenes) {
-            maxNCGGenes = nonCodingGeneGroup[gene.x].length;
-          }
         }
       });
     }
@@ -274,9 +269,6 @@ export default class Neighborhood extends React.Component {
             nonCodingGeneGroup[gene.x] = [];
           }
           nonCodingGeneGroup[gene.x].push(gene);
-          if (nonCodingGeneGroup[gene.x].length > maxNCGGenes) {
-            maxNCGGenes = nonCodingGeneGroup[gene.x].length;
-          }
         }
       });
 
@@ -285,7 +277,7 @@ export default class Neighborhood extends React.Component {
     let nonCodingGenes = [];
 
     const ncgScale = d3Scale.scaleLinear()
-      .domain([maxNCGGenes,1])
+      .domain([this.props.maxNCGGenes,1])
       .range(['#333333', 'lightgray']);
 
     for (let x in nonCodingGeneGroup) {

@@ -111,6 +111,7 @@ export default class TreeVis extends React.Component {
               yOffset: 0,
               controlsHeight: DEFAULT_ZOOM_HEIGHT,
               neighborhoods: app.state.neighborhoods,
+              maxNCGGenes: app.state.nonCodingGroupLengthDistribution.length - 1,
               numberOfNeighbors: app.props.numberOfNeighbors,
               transform: app.transformViz
             });

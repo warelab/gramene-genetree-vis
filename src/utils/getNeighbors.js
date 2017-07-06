@@ -114,9 +114,10 @@ function lookupFacetInfo(neighborhoodResponse) {
 }
 
 function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNeighbors, sortedIdsAndIdentities) {
-  var allGenes = allGenesAndFacets.genes;
+  let allGenes = allGenesAndFacets.genes;
   const neighborhoods = [];
   const geneDocs = _.keyBy(centralGenes.response.docs, 'id');
+  let spanDistribution = [];
   sortedIdsAndIdentities.forEach(function (geneIdAndIdentity) {
     const geneId = geneIdAndIdentity.id;
     const doc = geneDocs[geneId];
@@ -149,10 +150,43 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
           geneNeighborhood.genes.push(allGenes[i]);
         }
       }
+      // non-coding group length histogram
+      let spanStart=0;
+      let spanIsNonCoding = false;
+      geneNeighborhood.genes.forEach(function(g,i) {
+        if (!g.gene_tree) {
+          if (!spanIsNonCoding) { // start of non-coding group
+            spanStart = i;
+            spanIsNonCoding = true;
+          }
+        }
+        else {
+          if (spanIsNonCoding) { // end of non-coding group
+            let offset = i-spanStart;
+            if (spanDistribution[offset]) {
+              spanDistribution[offset]++;
+            }
+            else {
+              spanDistribution[offset] = 1;
+            }
+            spanIsNonCoding = false;
+          }
+        }
+      });
+      // catch the edge case where the neighborhood ends with non-coding genes
+      if (spanIsNonCoding) {
+        let offset = geneNeighborhood.genes.length-spanStart;
+        if (spanDistribution[offset]) {
+          spanDistribution[offset]++;
+        }
+        else {
+          spanDistribution[offset] = 1;
+        }
+      }
       neighborhoods.push(geneNeighborhood);
     }
   });
-  return {neighborhoods: neighborhoods, facets: allGenesAndFacets.facets};
+  return {neighborhoods: neighborhoods, facets: allGenesAndFacets.facets, nonCodingGroupLengthDistribution: spanDistribution};
 }
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {
