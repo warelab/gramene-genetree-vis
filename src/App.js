@@ -7,12 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import TreeVis from './components/TreeVis.jsx';
 
-let geneFixture = require('./fixtures/maize_waxy_gene.json');
+let geneFixture = require('./fixtures/Zm00001d018033.json');
 
 let GrameneTrees = require('gramene-trees-client');
 
-let exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/maize_waxy_tree.json'));
-let taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/maize_taxonomy.json'));
+let exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/waxytree.json'));
+let taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
 let genomesOfInterest = {
   3702 : taxonomy.indices.id[3702],
@@ -26,7 +26,7 @@ class App extends Component {
     return <TreeVis genetree={exampleGenetree}
            initialGeneOfInterest={geneFixture}
            taxonomy={taxonomy}
-           genomesOfInterest={{}}
+           genomesOfInterest={genomesOfInterest}
            width={1200}
            allowGeneSelection={true}
            pivotTree={true}
