@@ -187,23 +187,16 @@ const NonCodingGroup = props => {
   )
 };
 
-function treeIDToColor(tree_id, offsetIdx, geneIdx, treeMap, scale) {
+function treeIDToColor(tree_id, treeMap, scale) {
 
-  if (tree_id == undefined) {
+  if (tree_id === undefined) {
     return 'dimgray';
   }
-  else if (treeMap[tree_id] == undefined) {
-    if (offsetIdx == 0) {
-      treeMap[tree_id] = geneIdx;
-    }
-    else {
-      return 'lightgray';
-    }
+  else if (treeMap[tree_id] === undefined) {
+    return 'lightgray';
   }
 
-  var color = scale(treeMap[tree_id]);
-
-  return color;
+  return scale(treeMap[tree_id]);
 }
 
 export default class Neighborhood extends React.Component {
@@ -226,7 +219,7 @@ export default class Neighborhood extends React.Component {
       neighborhood.genes.forEach(( gene, gene_idx) => {
         gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
-          const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
+          const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
           comparaGenes.push(
             <ComparaGene
               gene={gene}
@@ -251,7 +244,7 @@ export default class Neighborhood extends React.Component {
       neighborhood.genes.forEach( (gene, gene_idx) => {
         gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
         if (gene.gene_tree) {
-          const treeColor = treeIDToColor(gene.tree_id, 0, gene_idx, treeInfo.treeMap, treeInfo.scale);
+          const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
           comparaGenes.push(
             <ComparaGene
               gene={gene}

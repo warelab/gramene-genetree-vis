@@ -380,7 +380,7 @@ export default class TreeVis extends React.Component {
     let theViz = this.displayModeIdx[this.state.displayMode].getComponent(this);
     if (!theViz) {
       theViz = React.createElement(Spinner, {
-          xOffset: this.margin + this.treeWidth + this.labelWidth,
+          xOffset: this.margin + this.treeWidth + this.labelWidth + this.vizWidth/2 - 200,
           yOffset: this.treeHeight / 2
         });
     }
