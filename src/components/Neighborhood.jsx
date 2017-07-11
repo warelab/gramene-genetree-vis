@@ -7,11 +7,12 @@ import Gene from './Gene';
 var d3Scale = require('d3-scale');
 
 const neighborhoodHeight = 24;
+const scaleFactor = 20;
 
 const NeighborhoodArrow = props => {
-  const arrowLength = 10*props.totalLength/props.width;
+  const arrowLength = scaleFactor * 10*props.totalLength/props.width;
   const arrowHeight = 4;
-  let lineLength = props.totalLength;
+  let lineLength = scaleFactor * props.totalLength;
   let lineStart = 0;
   let lineEnd = lineLength;
   let arrowHead;
@@ -26,13 +27,13 @@ const NeighborhoodArrow = props => {
     arrowHead = <polygon points={points}/>
   }
   let tickMarks = [];
-  for(let i=1;i<lineLength; i++) {
+  for(let i=1*scaleFactor;i<lineLength; i+=scaleFactor) {
     let tick = (
       <line
         x1={i} y1={4}
         x2={i} y2={20}
         stroke="black"
-        strokeWidth="0.01"
+        strokeWidth="0.5"
         key={i}
       />
     );
@@ -56,7 +57,7 @@ const ComparaGene = props => {
 
   const gene = props.gene;
 
-  const geneWidth = 0.6;
+  const geneWidth = 0.6 * scaleFactor;
   const geneHeight = 16;
 
   const identityScale = d3Scale.scaleLinear()
@@ -91,35 +92,14 @@ const ComparaGene = props => {
 
   const centerStrokeLine = props.center
     ?  <line
-        x1={gene.x} y1={geneHeight / 4 - 2}
-        x2={gene.x} y2={geneHeight / 4 + geneHeight + 2}
+        x1={gene.x*scaleFactor} y1={geneHeight / 4 - 2}
+        x2={gene.x*scaleFactor} y2={geneHeight / 4 + geneHeight + 2}
         stroke="red"
-        strokeWidth="0.05"
+        strokeWidth="1"
       />
     : null;
 
   const highlighted = props.highlighted[gene.tree_id];
-
-  const littleBoat = highlighted
-    ?  <Gene
-        width={ geneWidth - 0.1 }
-        height={ geneHeight - 4 }
-        key={gene.id}
-        gene={gene}
-        x={ gene.x - geneWidth / 2 + 0.04 }
-        y={ geneHeight / 4 + 2}
-        fillColor={ props.color }
-        highlightColor={ 'red' }
-        tooltip={ tooltip }
-        //highlighted={props.center}
-        opacity={props.center ? gene.identity : undefined}
-        clickHandler={ () => {
-          if (props.clickHandler) {
-            props.clickHandler(gene.id, gene.tree_id
-          )}
-        }}
-      />
-    : null
 
   return (
     <g>
@@ -128,23 +108,19 @@ const ComparaGene = props => {
         height={ geneHeight}
         key={'H-' + gene.id}
         gene={gene}
-        x={ gene.x - (geneWidth) / 2 }
+        x={ gene.x*scaleFactor - (geneWidth) / 2 }
         y={ geneHeight / 4 }
-        fillColor={
-          highlighted
-          ? 'cyan'
-          : props.center ? identityScale(gene.identity) : props.color }
-        highlightColor={ 'red' }
+        fillColor={ props.center ? identityScale(gene.identity) : props.color }
+        highlightColor={ highlighted ? 'cyan' : props.color }
         tooltip={ tooltip }
-        //highlighted={props.center}
+        highlighted={highlighted || props.center}
         opacity={undefined}
         clickHandler={ () => {
           if (props.clickHandler) {
-            props.clickHandler(gene.id, gene.tree_id
-          )}
+            props.clickHandler(gene.id, gene.tree_id)
+          }
         }}
       />
-      { littleBoat }
       { centerStrokeLine }
 
     </g>
@@ -154,10 +130,10 @@ const ComparaGene = props => {
 
 const NonCodingGroup = props => {
 
-  let x = +props.x;
+  let x = +props.x * scaleFactor;
   let n = props.genes.length;
 
-  const ncgWidth = 0.35;
+  const ncgWidth = 0.3 * scaleFactor;
   const ncgHeight = 16;
 
   const tooltip = (
@@ -179,10 +155,10 @@ const NonCodingGroup = props => {
 
   return (
     <line
-      x1={x - 0.3} y1={20}
-      x2={x + 0.3} y2={4}
+      x1={x - 6} y1={20}
+      x2={x + 6} y2={4}
       stroke="red"
-      strokeWidth="0.1"
+      strokeWidth="1"
     />
   )
 };

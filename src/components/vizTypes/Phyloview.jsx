@@ -149,7 +149,7 @@ export default class MSAOverview extends React.Component {
     let viewBoxMinY = 0;
     let viewBoxWidth = forConsensus ? this.totalLength : this.viewRange.max - this.viewRange.min;
     let viewBoxHeight = forConsensus ? this.props.controlsHeight : this.props.height + 2 * this.props.margin;
-    return `${viewBoxMinX} ${viewBoxMinY} ${viewBoxWidth} ${viewBoxHeight}`;
+    return `${viewBoxMinX*20} ${viewBoxMinY} ${viewBoxWidth*20} ${viewBoxHeight}`;
   }
 
   getNeighborhood(node) {

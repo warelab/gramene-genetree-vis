@@ -207,7 +207,7 @@ export default class Gene extends Component {
 Gene.defaultProps = {
   y               : 0,
   orientation     : "-",
-  highlightWidth  : 0.05,
+  highlightWidth  : 1,
   highlightColor  : 'cyan',
   tooltipPlacement: 'bottom',
   opacity : "0.9"

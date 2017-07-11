@@ -43,7 +43,7 @@ export default class TreeVis extends React.Component {
     super(props);
     this.state = {
       geneOfInterest: this.props.initialGeneOfInterest,
-      displayMode: 'phyloview',
+      displayMode: 'domains',
       visibleNodes: undefined,
       colorScheme: 'clustal',
       MSARange: {
