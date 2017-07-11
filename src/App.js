@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import './styles/msa.css';
 import './styles/tree.css';
+import './styles/spinner.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import TreeVis from './components/TreeVis.jsx';

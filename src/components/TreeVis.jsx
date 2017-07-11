@@ -5,6 +5,7 @@ import GeneTree from './GeneTree.jsx';
 import MSAOverview from './vizTypes/MSAOverview.jsx';
 import MSASequence from './vizTypes/MSASequence.jsx';
 import Phyloview from './vizTypes/Phyloview.jsx';
+import Spinner from './Spinner.jsx';
 import _ from 'lodash';
 import {client as GrameneClient} from 'gramene-search-client';
 import GrameneTreesClient from 'gramene-trees-client';
@@ -377,7 +378,12 @@ export default class TreeVis extends React.Component {
     );
 
     let theViz = this.displayModeIdx[this.state.displayMode].getComponent(this);
-
+    if (!theViz) {
+      theViz = React.createElement(Spinner, {
+          xOffset: this.margin + this.treeWidth + this.labelWidth,
+          yOffset: this.treeHeight / 2
+        });
+    }
     return (
       <div>
         {this.renderToolbar(this.state.displayMode)}
