@@ -1,0 +1,141 @@
+[
+  {"_id":1,"id":"NCBITaxon:1","namespace":"ncbi_taxonomy","ancestors":[1],"synonym":["all"],"xref":["GC_ID:1"],"name":"root","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":2759,"is_a":[131567],"id":"NCBITaxon:2759","name":"Eukaryota","property_value":"has_rank NCBITaxon:superkingdom","ancestors":[1,2759,131567],"namespace":"ncbi_taxonomy","synonym":["Eucarya","Eucaryotae","eucaryotes","Eukarya","Eukaryotae","eukaryotes","eukaryotes"],"xref":["GC_ID:1","PMID:23020233"],"num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":3193,"name":"Embryophyta","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,33090,35493,131221,131567],"synonym":["higher plants","land plants","land plants","plants"],"xref":["GC_ID:1"],"is_a":[131221],"id":"NCBITaxon:3193","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":3398,"id":"NCBITaxon:3398","is_a":[58024],"synonym":["Angiospermae","angiosperms","flowering plants","flowering plants"],"xref":["GC_ID:1","PMID:25249442"],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,78536,131221,131567],"namespace":"ncbi_taxonomy","name":"Magnoliophyta","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":3602,"is_a":[403667],"alt_id":["NCBITaxon:39206"],"id":"NCBITaxon:3602","name":"Vitaceae","property_value":"has_rank NCBITaxon:family","ancestors":[1,2759,3193,3398,3602,33090,35493,58023,58024,71240,71275,78536,91827,91834,131221,131567,403667,1437183,1437201],"namespace":"ncbi_taxonomy","synonym":["grape family","Vitidaceae"],"xref":["GC_ID:1"],"num_genes":29971,"subset":["gramene","compara"]}
+,
+  {"_id":3603,"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3602,3603,33090,35493,58023,58024,71240,71275,78536,91827,91834,131221,131567,403667,1437183,1437201],"xref":["GC_ID:1"],"property_value":"has_rank NCBITaxon:genus","name":"Vitis","id":"NCBITaxon:3603","is_a":[3602],"num_genes":29971,"subset":["gramene","compara"]}
+,
+  {"_id":3699,"is_a":[91836],"id":"NCBITaxon:3699","property_value":"has_rank NCBITaxon:order","name":"Brassicales","synonym":["Capparales"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,3699,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":3700,"id":"NCBITaxon:3700","alt_id":["NCBITaxon:25773"],"is_a":[3699],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3699,3700,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,1437183,1437201],"xref":["GC_ID:1"],"synonym":["Cruciferae","mustard family"],"property_value":"has_rank NCBITaxon:family","name":"Brassicaceae","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":3701,"name":"Arabidopsis","property_value":"has_rank NCBITaxon:genus","xref":["GC_ID:1"],"synonym":["Cardaminopsis"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3699,3700,3701,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,980083,1437183,1437201],"is_a":[980083],"alt_id":["NCBITaxon:45250"],"id":"NCBITaxon:3701","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":3702,"is_a":[3701],"id":"NCBITaxon:3702","name":"Arabidopsis thaliana","property_value":"has_rank NCBITaxon:species","ancestors":[1,2759,3193,3398,3699,3700,3701,3702,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,980083,1437183,1437201],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"synonym":["Arabidopsis thaliana (thale cress)","Arabidopsis_thaliana","Arbisopsis thaliana","mouse-ear cress","thale cress","thale-cress"],"system_name":"arabidopsis_thaliana","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":3803,"id":"NCBITaxon:3803","is_a":[72025],"ancestors":[1,2759,3193,3398,3803,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","synonym":["Leguminosae","pea family"],"xref":["GC_ID:1"],"name":"Fabaceae","property_value":"has_rank NCBITaxon:family","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":3814,"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3803,3814,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,1437183,1437201],"synonym":["Faboideae"],"xref":["GC_ID:1"],"property_value":"has_rank NCBITaxon:subfamily","name":"Papilionoideae","id":"NCBITaxon:3814","alt_id":["NCBITaxon:24958"],"is_a":[3803],"num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":3846,"id":"NCBITaxon:3846","is_a":[163735],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,3803,3814,3846,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,163735,1437183,1437201],"namespace":"ncbi_taxonomy","property_value":"has_rank NCBITaxon:genus","name":"Glycine","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":3847,"property_value":"has_rank NCBITaxon:species","name":"Glycine max","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3803,3814,3846,3847,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,163735,1437183,1437201,1462606],"xref":["GC_ID:1"],"synonym":["Glycine max; cv. Wye","soybean","soybeans"],"is_a":[1462606],"id":"NCBITaxon:3847","system_name":"glycine_max","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":4447,"name":"Liliopsida","property_value":"has_rank NCBITaxon:class","ancestors":[1,2759,3193,3398,4447,33090,35493,58023,58024,78536,131221,131567,1437183],"namespace":"ncbi_taxonomy","synonym":["monocots","monocots","Monocotyledoneae","monocotyledons"],"xref":["GC_ID:1","PMID:25249442"],"is_a":[1437183],"id":"NCBITaxon:4447","num_genes":377516,"subset":["gramene","compara"]}
+,
+  {"_id":4479,"name":"Poaceae","property_value":"has_rank NCBITaxon:family","xref":["GC_ID:1"],"synonym":["Bambusaceae","Gramineae","grass family"],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,1437183,1437197],"namespace":"ncbi_taxonomy","is_a":[38820],"alt_id":["NCBITaxon:1661618"],"id":"NCBITaxon:4479","num_genes":377516,"subset":["gramene","compara"]}
+,
+  {"_id":4527,"is_a":[1648021],"alt_id":["NCBITaxon:77587"],"id":"NCBITaxon:4527","name":"Oryza","property_value":"has_rank NCBITaxon:genus","xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4527,4734,33090,35493,38820,58023,58024,78536,131221,131567,147367,147380,359160,1437183,1437197,1648021],"namespace":"ncbi_taxonomy","num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":4530,"is_a":[4527],"id":"NCBITaxon:4530","alt_id":["NCBITaxon:389215"],"property_value":"has_rank NCBITaxon:species","name":"Oryza sativa","xref":["GC_ID:1","PMID:15654106","PMID:17617555","PMID:17907810","PMID:19706531"],"synonym":["red rice","rice"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4527,4530,4734,33090,35493,38820,58023,58024,78536,131221,131567,147367,147380,359160,1437183,1437197,1648021],"num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":4554,"is_a":[1293361],"id":"NCBITaxon:4554","property_value":"has_rank NCBITaxon:genus","name":"Setaria <grass>","synonym":["Setaria"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4554,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147428,1293361,1437183,1437197,1648036],"namespace":"ncbi_taxonomy","num_genes":35471,"subset":["gramene","compara"]}
+,
+  {"_id":4555,"is_a":[4554],"id":"NCBITaxon:4555","property_value":"has_rank NCBITaxon:species","name":"Setaria italica","synonym":["Chaetochloa italica","foxtail millet","Panicum italicum","Setaria viridis subsp. italica"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4554,4555,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147428,1293361,1437183,1437197,1648036],"namespace":"ncbi_taxonomy","system_name":"setaria_italica","num_genes":35471,"subset":["gramene","compara"]}
+,
+  {"_id":4557,"name":"Sorghum","property_value":"has_rank NCBITaxon:genus","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4557,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648028,1648033],"xref":["GC_ID:1"],"is_a":[1648028],"id":"NCBITaxon:4557","num_genes":33312,"subset":["gramene","compara"]}
+,
+  {"_id":4558,"xref":["GC_ID:1"],"synonym":["Andropogon sorghum","broomcorn","milo","sorghum","Sorghum bicolor milo","Sorghum bicolor subsp. bicolor","Sorghum nervosum","Sorghum saccharatum","Sorghum vulgare","Sorghum_bicolor"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4557,4558,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648028,1648033],"name":"Sorghum bicolor","property_value":"has_rank NCBITaxon:species","id":"NCBITaxon:4558","is_a":[4557],"system_name":"sorghum_bicolor","num_genes":33312,"subset":["gramene","compara"]}
+,
+  {"_id":4575,"is_a":[1648029],"id":"NCBITaxon:4575","name":"Zea","property_value":"has_rank NCBITaxon:genus","synonym":["Euchlaena"],"xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033],"num_genes":191101,"subset":["gramene","compara"]}
+,
+  {"_id":4577,"alt_id":["NCBITaxon:4578"],"id":"NCBITaxon:4577","is_a":[4575],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4577,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033],"synonym":["maize","Zea mays mays","Zea mays var. japonica"],"xref":["GC_ID:1"],"name":"Zea mays","property_value":"has_rank NCBITaxon:species","num_genes":191101,"subset":["gramene","compara"]}
+,
+  {"_id":4734,"name":"commelinids","synonym":["Commelinidae","Commeliniflorae"],"xref":["GC_ID:1","PMID:26350789"],"ancestors":[1,2759,3193,3398,4447,4734,33090,35493,58023,58024,78536,131221,131567,1437183,1437197],"namespace":"ncbi_taxonomy","is_a":[1437197],"id":"NCBITaxon:4734","num_genes":377516,"subset":["gramene","compara"]}
+,
+  {"_id":15367,"id":"NCBITaxon:15367","is_a":[147385],"synonym":["false bromes"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4734,15367,33090,35493,38820,58023,58024,78536,131221,131567,147368,147385,359160,1437183,1437197],"namespace":"ncbi_taxonomy","property_value":"has_rank NCBITaxon:genus","name":"Brachypodium","num_genes":26552,"subset":["gramene","compara"]}
+,
+  {"_id":15368,"is_a":[15367],"id":"NCBITaxon:15368","property_value":"has_rank NCBITaxon:species","name":"Brachypodium distachyon","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,15367,15368,33090,35493,38820,58023,58024,78536,131221,131567,147368,147385,359160,1437183,1437197],"synonym":["annual false brome","false brome","purple false brome","stiff brome"],"xref":["GC_ID:1"],"system_name":"brachypodium_distachyon","num_genes":26552,"subset":["gramene","compara"]}
+,
+  {"_id":29760,"name":"Vitis vinifera","property_value":"has_rank NCBITaxon:species","xref":["GC_ID:1"],"synonym":["Vitis vinifera subsp. vinifera","wine grape"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3602,3603,29760,33090,35493,58023,58024,71240,71275,78536,91827,91834,131221,131567,403667,1437183,1437201],"is_a":[3603],"id":"NCBITaxon:29760","system_name":"vitis_vinifera","num_genes":29971,"subset":["gramene","compara"]}
+,
+  {"_id":33090,"is_a":[2759],"id":"NCBITaxon:33090","name":"Viridiplantae","property_value":"has_rank NCBITaxon:kingdom","xref":["GC_ID:1"],"synonym":["Chlorobionta","Chlorophyta/Embryophyta group","chlorophyte/embryophyte group","green plants","green plants"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,33090,131567],"num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":35493,"name":"Streptophyta","property_value":"has_rank NCBITaxon:phylum","namespace":"ncbi_taxonomy","ancestors":[1,2759,33090,35493,131567],"xref":["GC_ID:1"],"is_a":[33090],"id":"NCBITaxon:35493","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":38820,"xref":["GC_ID:1","PMID:26350789"],"ancestors":[1,2759,3193,3398,4447,4734,33090,35493,38820,58023,58024,78536,131221,131567,1437183,1437197],"namespace":"ncbi_taxonomy","property_value":"has_rank NCBITaxon:order","name":"Poales","id":"NCBITaxon:38820","alt_id":["NCBITaxon:4478","NCBITaxon:4727"],"is_a":[4734],"num_genes":377516,"subset":["gramene","compara"]}
+,
+  {"_id":39947,"name":"Oryza sativa Japonica Group","xref":["GC_ID:1","PMID:15654106","PMID:17617555","PMID:17907810","PMID:19706531"],"synonym":["Japanese rice","Japonica rice","Oryza sativa (japonica culticar-group)","Oryza sativa (japonica cultivar-group)","Oryza sativa japonica","Oryza sativa ssp. japonica","Oryza sativa subsp. japonica"],"ancestors":[1,2759,3193,3398,4447,4479,4527,4530,4734,33090,35493,38820,39947,58023,58024,78536,131221,131567,147367,147380,359160,1437183,1437197,1648021],"namespace":"ncbi_taxonomy","is_a":[4530],"id":"NCBITaxon:39947","system_name":"oryza_sativa","num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":58023,"is_a":[3193],"id":"NCBITaxon:58023","name":"Tracheophyta","xref":["GC_ID:1"],"synonym":["vascular plants","vascular plants"],"ancestors":[1,2759,3193,33090,35493,58023,131221,131567],"namespace":"ncbi_taxonomy","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":58024,"id":"NCBITaxon:58024","is_a":[78536],"ancestors":[1,2759,3193,33090,35493,58023,58024,78536,131221,131567],"namespace":"ncbi_taxonomy","synonym":["seed plants","seed plants"],"xref":["GC_ID:1"],"name":"Spermatophyta","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":71240,"id":"NCBITaxon:71240","alt_id":["NCBITaxon:3399"],"is_a":[1437183],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,78536,131221,131567,1437183],"xref":["GC_ID:1","PMID:25249442","PMID:26724406"],"synonym":["dicots","Dicotyledoneae","dicotyledons","eudicots","Magnoliopsida"],"name":"eudicotyledons","num_genes":116978,"subset":["gramene","compara"]}
+,
+  {"_id":71275,"synonym":["Rosidae"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,78536,91827,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","name":"rosids","property_value":"has_rank NCBITaxon:subclass","id":"NCBITaxon:71275","is_a":[1437201],"num_genes":116978,"subset":["gramene","compara"]}
+,
+  {"_id":72025,"is_a":[91835],"id":"NCBITaxon:72025","name":"Fabales","property_value":"has_rank NCBITaxon:order","xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,1437183,1437201],"num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":78536,"name":"Euphyllophyta","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,33090,35493,58023,78536,131221,131567],"synonym":["euphyllophytes"],"xref":["GC_ID:1"],"is_a":[58023],"id":"NCBITaxon:78536","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":91827,"is_a":[71240],"alt_id":["NCBITaxon:1437200"],"id":"NCBITaxon:91827","name":"Gunneridae","synonym":["core eudicots","core eudicotyledons"],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,78536,91827,131221,131567,1437183],"namespace":"ncbi_taxonomy","num_genes":116978,"subset":["gramene","compara"]}
+,
+  {"_id":91834,"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,78536,91827,91834,131221,131567,1437183,1437201],"xref":["GC_ID:1"],"name":"rosids incertae sedis","alt_id":["NCBITaxon:72024"],"id":"NCBITaxon:91834","is_a":[71275],"num_genes":29971,"subset":["gramene","compara"]}
+,
+  {"_id":91835,"is_a":[71275],"id":"NCBITaxon:91835","alt_id":["NCBITaxon:41939","NCBITaxon:4293"],"name":"fabids","xref":["GC_ID:1"],"synonym":["eurosids I"],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,78536,91827,91835,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":91836,"name":"malvids","is_a":[71275],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"id":"NCBITaxon:91836","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":131221,"synonym":["Charophyta/Embryophyta group","charophyte/embryophyte group"],"xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,33090,35493,131221,131567],"name":"Streptophytina","property_value":"has_rank NCBITaxon:subphylum","id":"NCBITaxon:131221","is_a":[35493],"num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":131567,"id":"NCBITaxon:131567","is_a":[1],"xref":["GC_ID:1"],"synonym":["biota"],"ancestors":[1,131567],"namespace":"ncbi_taxonomy","name":"cellular organisms","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":147367,"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147367,359160,1437183,1437197],"synonym":["Ehrhartoideae"],"xref":["GC_ID:1"],"name":"Oryzoideae","property_value":"has_rank NCBITaxon:subfamily","alt_id":["NCBITaxon:1647564"],"id":"NCBITaxon:147367","is_a":[359160],"num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":147368,"property_value":"has_rank NCBITaxon:subfamily","name":"Pooideae","xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147368,359160,1437183,1437197],"namespace":"ncbi_taxonomy","is_a":[359160],"id":"NCBITaxon:147368","num_genes":26552,"subset":["gramene","compara"]}
+,
+  {"_id":147369,"is_a":[147370],"id":"NCBITaxon:147369","alt_id":["NCBITaxon:219388"],"property_value":"has_rank NCBITaxon:subfamily","name":"Panicoideae","xref":["GC_ID:1"],"synonym":["Centothecoideae"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,1437183,1437197],"num_genes":259884,"subset":["gramene","compara"]}
+,
+  {"_id":147370,"xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147370,1437183,1437197],"id":"NCBITaxon:147370","is_a":[4479],"name":"PACMAD clade","num_genes":259884,"subset":["gramene","compara"]}
+,
+  {"_id":147380,"property_value":"has_rank NCBITaxon:tribe","name":"Oryzeae","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147367,147380,359160,1437183,1437197],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"is_a":[147367],"id":"NCBITaxon:147380","num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":147385,"name":"Brachypodieae","property_value":"has_rank NCBITaxon:tribe","xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147368,147385,359160,1437183,1437197],"namespace":"ncbi_taxonomy","is_a":[147368],"id":"NCBITaxon:147385","num_genes":26552,"subset":["gramene","compara"]}
+,
+  {"_id":147428,"name":"Paniceae","property_value":"has_rank NCBITaxon:tribe","namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147428,1437183,1437197,1648036],"xref":["GC_ID:1"],"is_a":[1648036],"id":"NCBITaxon:147428","num_genes":35471,"subset":["gramene","compara"]}
+,
+  {"_id":147429,"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648033],"namespace":"ncbi_taxonomy","property_value":"has_rank NCBITaxon:tribe","name":"Andropogoneae","id":"NCBITaxon:147429","is_a":[1648033],"num_genes":224413,"subset":["gramene","compara"]}
+,
+  {"_id":163735,"id":"NCBITaxon:163735","is_a":[3814],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3803,3814,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,163735,1437183,1437201],"xref":["GC_ID:1"],"name":"Phaseoleae","property_value":"has_rank NCBITaxon:tribe","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":359160,"id":"NCBITaxon:359160","is_a":[4479],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,359160,1437183,1437197],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"synonym":["BEP clade"],"name":"BOP clade","num_genes":117632,"subset":["gramene","compara"]}
+,
+  {"_id":403667,"is_a":[91834],"id":"NCBITaxon:403667","name":"Vitales","property_value":"has_rank NCBITaxon:order","xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,71275,78536,91827,91834,131221,131567,403667,1437183,1437201],"num_genes":29971,"subset":["gramene","compara"]}
+,
+  {"_id":980083,"id":"NCBITaxon:980083","is_a":[3700],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,3699,3700,33090,35493,58023,58024,71240,71275,78536,91827,91836,131221,131567,980083,1437183,1437201],"xref":["GC_ID:1"],"property_value":"has_rank NCBITaxon:tribe","name":"Camelineae","num_genes":32833,"subset":["gramene","compara"]}
+,
+  {"_id":1293361,"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147428,1293361,1437183,1437197,1648036],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"name":"Cenchrinae","property_value":"has_rank NCBITaxon:subtribe","id":"NCBITaxon:1293361","is_a":[147428],"num_genes":35471,"subset":["gramene","compara"]}
+,
+  {"_id":1437183,"xref":["GC_ID:1","PMID:25249442"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,33090,35493,58023,58024,78536,131221,131567,1437183],"id":"NCBITaxon:1437183","is_a":[3398],"name":"Mesangiospermae","num_genes":494494,"subset":["gramene","compara"]}
+,
+  {"_id":1437197,"id":"NCBITaxon:1437197","is_a":[4447],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,33090,35493,58023,58024,78536,131221,131567,1437183,1437197],"xref":["GC_ID:1","PMID:26350789"],"name":"Petrosaviidae","property_value":"has_rank NCBITaxon:subclass","num_genes":377516,"subset":["gramene","compara"]}
+,
+  {"_id":1437201,"name":"Pentapetalae","is_a":[91827],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,33090,35493,58023,58024,71240,78536,91827,131221,131567,1437183,1437201],"namespace":"ncbi_taxonomy","id":"NCBITaxon:1437201","num_genes":116978,"subset":["gramene","compara"]}
+,
+  {"_id":1462606,"property_value":"has_rank NCBITaxon:subgenus","name":"Soja","xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,3803,3814,3846,33090,35493,58023,58024,71240,71275,72025,78536,91827,91835,131221,131567,163735,1437183,1437201,1462606],"namespace":"ncbi_taxonomy","is_a":[3846],"id":"NCBITaxon:1462606","num_genes":54174,"subset":["gramene","compara"]}
+,
+  {"_id":1648021,"id":"NCBITaxon:1648021","is_a":[147380],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147367,147380,359160,1437183,1437197,1648021],"xref":["GC_ID:1"],"property_value":"has_rank NCBITaxon:subtribe","name":"Oryzinae","num_genes":91080,"subset":["gramene","compara"]}
+,
+  {"_id":1648028,"id":"NCBITaxon:1648028","is_a":[147429],"xref":["GC_ID:1"],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648028,1648033],"property_value":"has_rank NCBITaxon:subtribe","name":"Sorghinae","num_genes":33312,"subset":["gramene","compara"]}
+,
+  {"_id":1648029,"id":"NCBITaxon:1648029","is_a":[147429],"xref":["GC_ID:1"],"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033],"namespace":"ncbi_taxonomy","name":"Tripsacinae","property_value":"has_rank NCBITaxon:subtribe","num_genes":191101,"subset":["gramene","compara"]}
+,
+  {"_id":1648033,"ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,1437183,1437197,1648033],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"id":"NCBITaxon:1648033","name":"Andropogonodae","is_a":[147369],"num_genes":224413,"subset":["gramene","compara"]}
+,
+  {"_id":1648036,"is_a":[147369],"name":"Panicodae","ancestors":[1,2759,3193,3398,4447,4479,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,1437183,1437197,1648036],"namespace":"ncbi_taxonomy","xref":["GC_ID:1"],"id":"NCBITaxon:1648036","num_genes":35471,"subset":["gramene","compara"]}
+,
+  {"_id":4577000,"alt_id":["NCBITaxon:4578"],"id":"NCBITaxon:4577000","is_a":[4577],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4577,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033,4577000],"synonym":["maize","Zea mays mays","Zea mays var. japonica"],"xref":["GC_ID:1"],"name":"Zea mays","property_value":"has_rank NCBITaxon:species","system_name":"zea_mays","num_genes":44474,"subset":["gramene","compara"]}
+,
+  {"_id":4577001,"alt_id":["NCBITaxon:4578"],"id":"NCBITaxon:4577001","is_a":[4577],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4577,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033,4577001],"synonym":["maize","Zea mays mays","Zea mays var. japonica"],"xref":["GC_ID:1"],"name":"Zea mays PH207","property_value":"has_rank NCBITaxon:species","system_name":"zea_maysph207","num_genes":40557,"subset":["gramene","compara"]}
+,
+  {"_id":4577002,"alt_id":["NCBITaxon:4578"],"id":"NCBITaxon:4577002","is_a":[4577],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4577,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033,4577002],"synonym":["maize","Zea mays mays","Zea mays var. japonica"],"xref":["GC_ID:1"],"name":"Zea mays W22","property_value":"has_rank NCBITaxon:species","system_name":"zea_maysw22","num_genes":40690,"subset":["gramene","compara"]}
+,
+  {"_id":4577003,"alt_id":["NCBITaxon:4578"],"id":"NCBITaxon:4577003","is_a":[4577],"namespace":"ncbi_taxonomy","ancestors":[1,2759,3193,3398,4447,4479,4575,4577,4734,33090,35493,38820,58023,58024,78536,131221,131567,147369,147370,147429,1437183,1437197,1648029,1648033,4577003],"synonym":["maize","Zea mays mays","Zea mays var. japonica"],"xref":["GC_ID:1"],"name":"teosinte TIL11","property_value":"has_rank NCBITaxon:species","system_name":"zea_parviglumis","num_genes":65380,"subset":["gramene","compara"]}
+]
