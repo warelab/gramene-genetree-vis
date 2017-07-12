@@ -96,30 +96,34 @@ export default class TreeVis extends React.Component {
             });
           }
         }
-      },
-      {
-        id: 'phyloview',
-        label: 'Neighborhood conservation',
-        getComponent: function(app) {
-          if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
-            return React.createElement(Phyloview, {
-              nodes: app.state.visibleNodes,
-              queryNode: app.genetree.indices.gene_stable_id[app.state.geneOfInterest._id],
-              width: app.vizWidth,
-              height: app.treeHeight,
-              margin: app.margin,
-              xOffset: app.margin + app.treeWidth + app.labelWidth,
-              yOffset: 0,
-              controlsHeight: DEFAULT_ZOOM_HEIGHT,
-              neighborhoods: app.state.neighborhoods,
-              maxNCGGenes: app.state.nonCodingGroupLengthDistribution.length - 1,
-              numberOfNeighbors: app.props.numberOfNeighbors,
-              transform: app.transformViz
-            });
-          }
-        }
       }
     ];
+    if (this.props.enablePhyloview) {
+      this.displayModes.push(
+        {
+          id: 'phyloview',
+          label: 'Neighborhood conservation',
+          getComponent: function (app) {
+            if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
+              return React.createElement(Phyloview, {
+                nodes: app.state.visibleNodes,
+                queryNode: app.genetree.indices.gene_stable_id[app.state.geneOfInterest._id],
+                width: app.vizWidth,
+                height: app.treeHeight,
+                margin: app.margin,
+                xOffset: app.margin + app.treeWidth + app.labelWidth,
+                yOffset: 0,
+                controlsHeight: DEFAULT_ZOOM_HEIGHT,
+                neighborhoods: app.state.neighborhoods,
+                maxNCGGenes: app.state.nonCodingGroupLengthDistribution.length - 1,
+                numberOfNeighbors: app.props.numberOfNeighbors,
+                transform: app.transformViz
+              });
+            }
+          }
+        }
+      );
+    }
     this.displayModeIdx = _.keyBy(this.displayModes,'id');
   }
 
