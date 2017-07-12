@@ -25,10 +25,14 @@ function internalNodeButtons({node, collapseClade, expandClade}) {
   const expandNodeButton = btn('Expand node', () => expandClade(node,false), "success");
 
   return (
+    <div>
       <ButtonGroup style={{marginBottom: 3}}>
         {expandNodeButton} {expandCladeButton}
+      </ButtonGroup>
+      <ButtonGroup style={{marginBottom: 3}}>
         {collapseNodeButton} {collapseCladeButton}
       </ButtonGroup>
+    </div>
   )
 }
 

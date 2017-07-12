@@ -31,7 +31,7 @@ class App extends Component {
            allowGeneSelection={true}
            pivotTree={true}
            enablePhyloview={true}
-           numberOfNeighbors={20}
+           numberOfNeighbors={10}
            />;
   }
 }
