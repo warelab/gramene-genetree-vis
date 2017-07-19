@@ -101,6 +101,7 @@ const ComparaGene = props => {
 
   const highlighted = props.highlighted[gene.tree_id];
 
+  const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
   return (
     <g>
       <Gene
@@ -110,7 +111,7 @@ const ComparaGene = props => {
         gene={gene}
         x={ gene.x*scaleFactor - (geneWidth) / 2 }
         y={ geneHeight / 4 }
-        fillColor={ props.center ? identityScale(gene.identity) : props.color }
+        fillColor={ props.center ? identityScale(identity) : props.color }
         highlightColor={ highlighted ? 'cyan' : props.color }
         tooltip={ tooltip }
         highlighted={highlighted || props.center}

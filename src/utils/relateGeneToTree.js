@@ -36,7 +36,9 @@ function addHomologyInformationToNodes(genetree, theGene) {
     genetree.walk(function (node) {
       let homology;
       let nodeId = node.model.gene_stable_id;
-      node.relationToGeneOfInterest = {};
+      if (!node.hasOwnProperty('relationToGeneOfInterest')) {
+        node.relationToGeneOfInterest = {};
+      }
       if (nodeId) {
         if (nodeId === theGene._id) {
           homology = 'self';

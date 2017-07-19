@@ -124,7 +124,7 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
     if (doc) {
       const geneNeighborhood = {
         center_gene_id: doc.id,
-        center_identity: geneIdAndIdentity.identity,
+        center_relationToGeneOfInterest: geneIdAndIdentity.relationToGeneOfInterest,
         center_idx: 0, // tbd
         genes: [] // tbd
       };
@@ -193,7 +193,7 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
   let neighborhoods = neighborhoodsAndFacets.neighborhoods.map( (neighborhood) => {
     const {genes, center_idx} = neighborhood;
     const centerGenes = genes[center_idx];
-    centerGenes.identity = neighborhood.center_identity;
+    centerGenes.relationToGeneOfInterest = neighborhood.center_relationToGeneOfInterest;
     if(centerGenes.orientation === '-') {
       genes.reverse();
       genes.forEach( (gene) => {
@@ -231,7 +231,7 @@ export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfIn
     genetree.leafNodes().map((n) => {
       return {
         id: n.model.gene_stable_id,
-        identity: n.relationToGeneOfInterest.identity
+        relationToGeneOfInterest: n.relationToGeneOfInterest
       }
     })
   ])
