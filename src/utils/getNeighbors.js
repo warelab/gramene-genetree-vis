@@ -222,7 +222,7 @@ export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfIn
   let queryString = `gene_tree:${genetree.model._id}`;
   if (!_.isEmpty(genomesOfInterest)) {
     let taxa = Object.keys(genomesOfInterest).join(' ');
-    queryString = `${queryString} AND taxon_id:(${taxa})`;
+    queryString = `${queryString} AND taxonomy__ancestors:(${taxa})`;
   }
   return Q.all([
     centralGenePromise(queryString),
