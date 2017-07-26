@@ -258,7 +258,7 @@ export default class Neighborhood extends React.Component {
 
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width} totalLength={this.props.totalLength}/>
+        <NeighborhoodArrow strand={neighborhood ? neighborhood.strand : undefined} width={this.props.width} totalLength={this.props.totalLength}/>
         {comparaGenes}
         {nonCodingGenes}
       </g>
