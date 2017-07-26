@@ -184,75 +184,78 @@ export default class Neighborhood extends React.Component {
 
   render() {
 
-    let neighborhood = this.props.neighborhood;
     let comparaGenes = [];
-    let nonCodingGeneGroup = {};
-    let center_x = this.props.totalLength / 2;
-    let centralGene = neighborhood.genes[neighborhood.center_idx];
+    let nonCodingGenes = [];
+    let neighborhood = this.props.neighborhood;
+    if (neighborhood) {
+      let nonCodingGeneGroup = {};
+      let center_x = this.props.totalLength / 2;
+      let centralGene = neighborhood.genes[neighborhood.center_idx];
 
-    let treeInfo = this.props.treeInfo;
+      let treeInfo = this.props.treeInfo;
 
-    if (neighborhood.strand === 'reverse') {
-      neighborhood.genes.forEach(( gene, gene_idx) => {
-        gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
-        if (gene.gene_tree) {
-          const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
-          comparaGenes.push(
-            <ComparaGene
-              gene={gene}
-              key={gene.x}
-              color={treeColor}
-              center={gene_idx===neighborhood.center_idx}
-              clickHandler={this.props.clickHandler}
-              highlighted={this.props.highlighted}
-            />
-          );
-        }
-        else { // non coding
-          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
-          if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
-            nonCodingGeneGroup[gene.x] = [];
-          }
-          nonCodingGeneGroup[gene.x].push(gene);
-        }
-      });
-    }
-    else { // forward
-      neighborhood.genes.forEach( (gene, gene_idx) => {
-        gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
-        if (gene.gene_tree) {
-          const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
-          comparaGenes.push(
-            <ComparaGene
-              gene={gene}
-              key={gene.x}
-              color={treeColor}
-              center={gene_idx===neighborhood.center_idx}
-              clickHandler={this.props.clickHandler}
-              highlighted={this.props.highlighted}
+      if (neighborhood.strand === 'reverse') {
+        neighborhood.genes.forEach((gene, gene_idx) => {
+          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
+          if (gene.gene_tree) {
+            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
+            comparaGenes.push(
+              <ComparaGene
+                gene={gene}
+                key={gene.x}
+                color={treeColor}
+                center={gene_idx === neighborhood.center_idx}
+                clickHandler={this.props.clickHandler}
+                highlighted={this.props.highlighted}
               />
             );
-        }
-        else { // non coding
-          gene.x = center_x + (centralGene.compara_idx - gene.compara_idx + 0.5);
-          if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
-            nonCodingGeneGroup[gene.x] = [];
           }
-          nonCodingGeneGroup[gene.x].push(gene);
-        }
-      });
+          else { // non coding
+            gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
+            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
+              nonCodingGeneGroup[gene.x] = [];
+            }
+            nonCodingGeneGroup[gene.x].push(gene);
+          }
+        });
+      }
+      else { // forward
+        neighborhood.genes.forEach((gene, gene_idx) => {
+          gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
+          if (gene.gene_tree) {
+            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
+            comparaGenes.push(
+              <ComparaGene
+                gene={gene}
+                key={gene.x}
+                color={treeColor}
+                center={gene_idx === neighborhood.center_idx}
+                clickHandler={this.props.clickHandler}
+                highlighted={this.props.highlighted}
+              />
+            );
+          }
+          else { // non coding
+            gene.x = center_x + (centralGene.compara_idx - gene.compara_idx + 0.5);
+            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
+              nonCodingGeneGroup[gene.x] = [];
+            }
+            nonCodingGeneGroup[gene.x].push(gene);
+          }
+        });
 
+      }
+
+
+      const ncgScale = d3Scale.scaleLinear()
+        .domain([this.props.maxNCGGenes, 1])
+        .range(['#333333', 'lightgray']);
+
+      for (let x in nonCodingGeneGroup) {
+        nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]} scale={ncgScale}/>);
+      }
     }
 
-    let nonCodingGenes = [];
-
-    const ncgScale = d3Scale.scaleLinear()
-      .domain([this.props.maxNCGGenes,1])
-      .range(['#333333', 'lightgray']);
-
-    for (let x in nonCodingGeneGroup) {
-      nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]} scale={ncgScale} />);
-    }
     return (
       <g className="Neighborhood" >
         <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width} totalLength={this.props.totalLength}/>
