@@ -5,9 +5,12 @@ import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 var d3Scale = require('d3-scale');
 
-function initTreeColors(primary_neighborhood) {
+function initTreeColors(primary_neighborhood) { // flip range if neighborhood is reversed
   var domain;
   var range = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'darkviolet'];
+  if (primary_neighborhood.strand === 'reverse') {
+    range = range.reverse();
+  }
   let treeMap = {}; // key is tree_id value is a number based on relative position in neighborhood
 
   var center_idx = Number(primary_neighborhood.center_idx); // always green

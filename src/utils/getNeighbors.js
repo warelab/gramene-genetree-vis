@@ -195,15 +195,15 @@ function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFac
     const centerGenes = genes[center_idx];
     centerGenes.relationToGeneOfInterest = neighborhood.center_relationToGeneOfInterest;
     if(centerGenes.orientation === '-') {
-      genes.reverse();
+      // genes.reverse();
       genes.forEach( (gene) => {
         gene.orientation = gene.orientation === '-' ? '+' : '-';
       });
-      neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
-      neighborhood.strand = 'forward';
+      // neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
+      neighborhood.strand = 'reverse';
     }
     else {
-      neighborhood.strand = 'reverse';
+      neighborhood.strand = 'forward';
     }
     return neighborhood;
   });
