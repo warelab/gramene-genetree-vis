@@ -55,6 +55,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'domains',
         label: 'Domains',
+        description: 'Alignment overview color coded by InterPro domain',
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSAOverview, {
@@ -77,6 +78,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'msa',
         label: 'Multiple Sequence Alignment',
+        description: 'Multiple Sequence Alignment: drag slider to reposition',
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSASequence, {
@@ -103,6 +105,7 @@ export default class TreeVis extends React.Component {
         {
           id: 'phyloview',
           label: 'Neighborhood conservation',
+          description: 'Neighborhood conservation: flanking genes are color coded by gene family',
           getComponent: function (app) {
             if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
               return React.createElement(Phyloview, {
@@ -361,6 +364,7 @@ export default class TreeVis extends React.Component {
           </Dropdown.Menu>
         </Dropdown>
         {this.colorSchemeDropdown()}
+        <div>{this.displayModeIdx[activeMode].description}</div>
       </ButtonToolbar>
     )
   }
