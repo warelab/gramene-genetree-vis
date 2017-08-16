@@ -264,7 +264,7 @@ export default class MSAOverview extends React.Component {
     return (
       <g>
         {this.renderPhyloview(treeInfo)}
-        {this.renderControls(treeInfo)}
+        {/*{this.renderControls(treeInfo)}*/}
       </g>
     )
   }

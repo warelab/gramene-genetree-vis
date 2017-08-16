@@ -353,20 +353,22 @@ export default class TreeVis extends React.Component {
       )
     });
     return (
-      <ButtonToolbar>
-        <Dropdown id="display-mode-dropdown"
-                  onClick={(e) => e.stopPropagation()}>
-          <Dropdown.Toggle>
-            Display mode
-          </Dropdown.Toggle>
-          <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
-            {choices}
-          </Dropdown.Menu>
-        </Dropdown>
-        {this.colorSchemeDropdown()}
-        <div>{this.displayModeIdx[activeMode].description}</div>
-      </ButtonToolbar>
-    )
+      <div>
+        <ButtonToolbar>
+          <Dropdown id="display-mode-dropdown"
+                    onClick={(e) => e.stopPropagation()}>
+            <Dropdown.Toggle>
+              Display mode
+            </Dropdown.Toggle>
+            <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+              {choices}
+            </Dropdown.Menu>
+         </Dropdown>
+         {this.colorSchemeDropdown()}
+        </ButtonToolbar>
+        <span style={{'margin-left': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>{this.displayModeIdx[activeMode].description}</span>
+      </div>
+        )
   }
 
   render() {
