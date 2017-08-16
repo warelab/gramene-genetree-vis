@@ -16,15 +16,39 @@ const NeighborhoodArrow = props => {
   let lineStart = 0;
   let lineEnd = lineLength;
   let arrowHead;
-  if (props.strand) {
-    const flipped = (props.strand === 'reverse');
+  let color = 'black';
+  let tooltip = '<pre>internal node</pre>';
+  if (props.neighborhood.strand) {
+    const flipped = (props.neighborhood.strand === 'reverse');
     lineStart = flipped ? arrowLength : 0;
     lineEnd = flipped ? lineLength : lineLength - arrowLength;
     const tipX = flipped ? 0 : lineLength;
     const tailX = flipped ? arrowLength : tipX - arrowLength;
     const tipY = neighborhoodHeight / 2;
     const points = `${tipX},${tipY} ${tailX},${tipY + arrowHeight} ${tailX},${tipY - arrowHeight}`;
-    arrowHead = <polygon points={points}/>
+    color = props.neighborhood.region.color;
+    arrowHead = <polygon points={points} stroke={color} fill={color}/>
+    let tooltipFields = [
+      ['region', props.neighborhood.region.name],
+      ['start', props.neighborhood.region.start],
+      ['end', props.neighborhood.region.end]
+    ];
+    tooltip = (
+      <Tooltip id="tooltip">
+      <table>
+        <tbody>
+        {tooltipFields.map( (tip, i ) => {
+          return (
+            <tr key = {i} style={{verticalAlign : 'top'}}>
+              <th>{tip[0]}</th>
+              <td style={{color : 'lightgray'}}>{tip[1]}</td>
+            </tr>
+          )
+        })}
+        </tbody>
+      </table>
+      </Tooltip>
+    );
   }
   let tickMarks = [];
   for(let i=1*scaleFactor;i<lineLength; i+=scaleFactor) {
@@ -41,12 +65,14 @@ const NeighborhoodArrow = props => {
   }
   return (
     <g>
+      <OverlayTrigger placement="left" overlay={tooltip}>
       <line
         x1={lineStart} y1={neighborhoodHeight / 2}
         x2={lineEnd} y2={neighborhoodHeight / 2}
-        stroke="black"
-        strokeWidth="2"
+        stroke={color}
+        strokeWidth="3"
       />
+      </OverlayTrigger>
       {tickMarks}
       {arrowHead}
     </g>
@@ -68,7 +94,7 @@ const ComparaGene = props => {
     ['Gene ID',     gene.id],
     ['Gene Name',   gene.name],
     //['Taxonomy',    this.props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
-    ['Region',      gene.region + ':' + gene.start + '-' + gene.end],
+    ['Region',      `${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     ['Biotype',     gene.biotype],
@@ -196,31 +222,6 @@ export default class Neighborhood extends React.Component {
 
       if (neighborhood.strand === 'reverse') {
         neighborhood.genes.forEach((gene, gene_idx) => {
-          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
-          if (gene.gene_tree) {
-            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
-            comparaGenes.push(
-              <ComparaGene
-                gene={gene}
-                key={gene.x}
-                color={treeColor}
-                center={gene_idx === neighborhood.center_idx}
-                clickHandler={this.props.clickHandler}
-                highlighted={this.props.highlighted}
-              />
-            );
-          }
-          else { // non coding
-            gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
-            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
-              nonCodingGeneGroup[gene.x] = [];
-            }
-            nonCodingGeneGroup[gene.x].push(gene);
-          }
-        });
-      }
-      else { // forward
-        neighborhood.genes.forEach((gene, gene_idx) => {
           gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
           if (gene.gene_tree) {
             const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
@@ -243,6 +244,31 @@ export default class Neighborhood extends React.Component {
             nonCodingGeneGroup[gene.x].push(gene);
           }
         });
+      }
+      else { // forward
+        neighborhood.genes.forEach((gene, gene_idx) => {
+          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
+          if (gene.gene_tree) {
+            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
+            comparaGenes.push(
+              <ComparaGene
+                gene={gene}
+                key={gene.x}
+                color={treeColor}
+                center={gene_idx === neighborhood.center_idx}
+                clickHandler={this.props.clickHandler}
+                highlighted={this.props.highlighted}
+              />
+            );
+          }
+          else { // non coding
+            gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
+            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
+              nonCodingGeneGroup[gene.x] = [];
+            }
+            nonCodingGeneGroup[gene.x].push(gene);
+          }
+        });
 
       }
 
@@ -258,7 +284,7 @@ export default class Neighborhood extends React.Component {
 
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow strand={neighborhood ? neighborhood.strand : undefined} width={this.props.width} totalLength={this.props.totalLength}/>
+        <NeighborhoodArrow neighborhood={neighborhood} width={this.props.width} totalLength={this.props.totalLength}/>
         {comparaGenes}
         {nonCodingGenes}
       </g>

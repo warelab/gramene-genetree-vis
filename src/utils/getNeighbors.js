@@ -1,6 +1,10 @@
 import Q from "q";
 import _ from "lodash";
 import {client as searchInterface} from "gramene-search-client";
+import d3 from 'd3';
+
+const regionColors = d3.scale.category10().range();
+const unanchoredColor = '#d3d3d3';
 
 var facets = {
   roots: {
@@ -42,13 +46,28 @@ function details(collection, idList) {
 );
 }
 
+function getRegionColors() {
+  return searchInterface.grameneClient.then((client) =>
+    client['Data access']['maps']({rows:-1}).then((response) => {
+    let colors = {};
+    response.obj.forEach((map) => {
+      colors[map._id] = {};
+      for(let i=0; i<map.regions.names.length; i++) {
+        colors[map._id][map.regions.names[i]] = map.regions.names[i] === "UNANCHORED" ?
+          unanchoredColor : regionColors[i % regionColors.length];
+        // color gradient for position along chr?
+      }
+    });
+    return colors;
+  }))
+}
 
 function centralGenePromise(queryString) {
   return search({
     q: queryString,
     rows: 10000,
     start: 0,
-    fl: ['compara_idx', 'gene_idx', 'id']
+    fl: ['compara_idx', 'gene_idx', 'id', 'map', 'region']
   });
 }
 
@@ -113,7 +132,7 @@ function lookupFacetInfo(neighborhoodResponse) {
   });
 }
 
-function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNeighbors, sortedIdsAndIdentities) {
+function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, numberOfNeighbors, sortedIdsAndIdentities) {
   let allGenes = allGenesAndFacets.genes;
   const neighborhoods = [];
   const geneDocs = _.keyBy(centralGenes.response.docs, 'id');
@@ -123,6 +142,10 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
     const doc = geneDocs[geneId];
     if (doc) {
       const geneNeighborhood = {
+        region: {
+          name: doc.region,
+          color: color[doc.map][doc.region] || unanchoredColor
+        },
         center_gene_id: doc.id,
         center_relationToGeneOfInterest: geneIdAndIdentity.relationToGeneOfInterest,
         center_idx: 0, // tbd
@@ -137,7 +160,8 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, numberOfNe
       const last_compara = compara_idx + numberOfNeighbors;
       while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
       while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
-
+      geneNeighborhood.region.start = allGenes[first].start;
+      geneNeighborhood.region.end = allGenes[last].end;
       for (let i = first; i <= last; i++) {
         if (!!allGenes[i]
           && allGenes[i].taxon_id === allGenes[idx].taxon_id
@@ -227,6 +251,7 @@ export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfIn
   return Q.all([
     centralGenePromise(queryString),
     getAndIndexGenes(queryString, numberOfNeighbors),
+    getRegionColors(),
     numberOfNeighbors,
     genetree.leafNodes().map((n) => {
       return {
