@@ -5,8 +5,7 @@ import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 var d3Scale = require('d3-scale');
 
-function initTreeColors(primary_neighborhood) { // flip range if neighborhood is reversed
-  var domain;
+function initTreeColors(primary_neighborhood) {
   var range = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'darkviolet'];
   if (primary_neighborhood.strand === 'reverse') {
     range = range.reverse();
@@ -15,41 +14,52 @@ function initTreeColors(primary_neighborhood) { // flip range if neighborhood is
 
   var center_idx = Number(primary_neighborhood.center_idx); // always green
   var center_gene = primary_neighborhood.genes[center_idx];
-  treeMap[center_gene.tree_id] = center_idx;
-  var i,leftest, rightest, nLeft=0, nRight=0;
+  let d = 0;
+  treeMap[center_gene.tree_id] = d;
+  var i, nLeft=0, nRight=0;
   // trees left of center
   for(i=center_idx-1; i >= 0; i--) {
     var gene = primary_neighborhood.genes[i];
     if (gene.tree_id && !treeMap[gene.tree_id]) {
-      treeMap[gene.tree_id] = i;
-      leftest = i;
-      nLeft++;
+      treeMap[gene.tree_id] = --d;
+      nLeft--;
     }
   }
   // trees right of center
+  d=0;
   for(i=center_idx+1;i<primary_neighborhood.genes.length;i++) {
     var gene = primary_neighborhood.genes[i];
     if (gene.tree_id && !treeMap[gene.tree_id]) {
-      treeMap[gene.tree_id] = i;
-      rightest=i;
+      treeMap[gene.tree_id] = ++d;
       nRight++;
     }
   }
 
   var domain = [
-    leftest,
-    leftest + nLeft/3,
-    leftest + 2*nLeft/3,
-    center_idx,
-    center_idx + nRight/3,
-    center_idx + 2*nRight/3,
-    rightest
+    nLeft,
+    2*nLeft/3,
+    nLeft/3,
+    0,
+    nRight/3,
+    2*nRight/3,
+    nRight
   ];
+  if (nLeft === 0) {
+    domain = domain.slice(3);
+    range = range.slice(3);
+  }
+  if (nRight === 0) {
+    domain = domain.reverse().slice(3).reverse();
+    range = range.reverse().slice(3).reverse();
+  }
 
   var scale = d3Scale.scaleLinear()
     .domain(domain)
     .range(range);
 
+  if (domain.length === 1) {
+    scale = function (value) { return "green" }
+  }
   return {scale, treeMap};
 }
 
