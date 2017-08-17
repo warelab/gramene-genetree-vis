@@ -160,8 +160,6 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
       const last_compara = compara_idx + numberOfNeighbors;
       while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
       while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
-      geneNeighborhood.region.start = allGenes[first].start;
-      geneNeighborhood.region.end = allGenes[last].end;
       for (let i = first; i <= last; i++) {
         if (!!allGenes[i]
           && allGenes[i].taxon_id === allGenes[idx].taxon_id
@@ -174,6 +172,8 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
           geneNeighborhood.genes.push(allGenes[i]);
         }
       }
+      geneNeighborhood.region.start = geneNeighborhood.genes[0].start;
+      geneNeighborhood.region.end = geneNeighborhood.genes[geneNeighborhood.genes.length - 1].end;
       // non-coding group length histogram
       let spanStart=0;
       let spanIsNonCoding = false;
