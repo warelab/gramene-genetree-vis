@@ -366,7 +366,7 @@ export default class TreeVis extends React.Component {
          </Dropdown>
          {this.colorSchemeDropdown()}
         </ButtonToolbar>
-        <span style={{'margin-left': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>{this.displayModeIdx[activeMode].description}</span>
+        <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>{this.displayModeIdx[activeMode].description}</span>
       </div>
         )
   }

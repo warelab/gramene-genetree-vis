@@ -51,9 +51,9 @@ function getRegionColors() {
     client['Data access']['maps']({rows:-1}).then((response) => {
     let colors = {};
     response.obj.forEach((map) => {
-      colors[map._id] = {};
+      colors[map.taxon_id] = {};
       for(let i=0; i<map.regions.names.length; i++) {
-        colors[map._id][map.regions.names[i]] = map.regions.names[i] === "UNANCHORED" ?
+        colors[map.taxon_id][map.regions.names[i]] = map.regions.names[i] === "UNANCHORED" ?
           unanchoredColor : regionColors[i % regionColors.length];
         // color gradient for position along chr?
       }
@@ -67,7 +67,7 @@ function centralGenePromise(queryString) {
     q: queryString,
     rows: 10000,
     start: 0,
-    fl: ['compara_idx', 'gene_idx', 'id', 'map', 'region']
+    fl: ['compara_idx', 'gene_idx', 'id', 'taxon_id', 'region']
   });
 }
 
@@ -144,7 +144,7 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
       const geneNeighborhood = {
         region: {
           name: doc.region,
-          color: color[doc.map][doc.region] || unanchoredColor
+          color: color[doc.taxon_id][doc.region] || unanchoredColor
         },
         center_gene_id: doc.id,
         center_relationToGeneOfInterest: geneIdAndIdentity.relationToGeneOfInterest,
