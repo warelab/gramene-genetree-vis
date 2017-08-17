@@ -90,16 +90,21 @@ const ComparaGene = props => {
     .domain([1,0])
     .range([props.color, 'white']);
 
-  const tooltipFields = [
+  const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
+
+  let tooltipFields = [
     ['Gene ID',     gene.id],
     ['Gene Name',   gene.name],
-    //['Taxonomy',    this.props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
+    // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
     ['Region',      `${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     ['Biotype',     gene.biotype],
     ['Description', gene.description]
   ];
+  if (gene.relationToGeneOfInterest) {
+    tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);
+  }
 
   const tooltip = (
     <table>
@@ -127,7 +132,6 @@ const ComparaGene = props => {
 
   const highlighted = props.highlighted[gene.tree_id];
 
-  const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
   return (
     <g>
       <Gene
@@ -137,7 +141,7 @@ const ComparaGene = props => {
         gene={gene}
         x={ gene.x*scaleFactor - (geneWidth) / 2 }
         y={ geneHeight / 4 }
-        fillColor={ props.center ? identityScale(identity) : props.color }
+        fillColor={ gene.relationToGeneOfInterest ? identityScale(identity) : props.color }
         highlightColor={ highlighted ? 'cyan' : props.color }
         tooltip={ tooltip }
         highlighted={highlighted || props.center}
