@@ -353,7 +353,7 @@ export default class TreeVis extends React.Component {
       )
     });
     return (
-      <div>
+      <div className="display-mode">
         <ButtonToolbar>
           <Dropdown id="display-mode-dropdown"
                     onClick={(e) => e.stopPropagation()}>
