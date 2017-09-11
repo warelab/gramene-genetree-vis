@@ -22,8 +22,12 @@
 @invisible: 0;
 @visible: 1;
 
+.display-mode {
+  .btn-toolbar {
+    position: absolute;
+  }
+}
 .genetree-vis {
-
   .node, .edge {
     cursor: pointer;
   }
@@ -134,7 +138,8 @@
   .domains rect:hover {
     cursor: pointer;
     stroke-opacity: 1.0
-  }@transition_time: 20ms;
+  }
+  @transition_time: 20ms;
 
   /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
   @hover_scale_factor: 2;
@@ -163,7 +168,6 @@
     .node, .edge {
       cursor: pointer;
     }
-
     .tree-wrapper {
       /* transitions for mouse hover, etc, interactions */
       * {
@@ -279,8 +283,8 @@
 }
 
 .popover-title .tooltip-title-button {
-  margin-top: -4px!important;
-  margin-right: 4px!important;
+  margin-top: -4px !important;
+  margin-right: 4px !important;
 }
 
 .msa-slider {
@@ -291,7 +295,7 @@
 }
 
 .resize-drag {
-  background:rgba(0,0,0,0.0);
+  background: rgba(0, 0, 0, 0.0);
   border: 4px solid #7c8383;
   color: red;
   font-size: 1px;
@@ -305,8 +309,4 @@
 .resize-container {
   width: 100%;
   height: 100%;
-}
-
-.btn-toolbar {
-  position: absolute;
 }
