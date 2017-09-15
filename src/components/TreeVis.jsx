@@ -20,11 +20,12 @@ import {
   makeNodeVisible,
   makeNodeInvisible
 } from "../utils/visibleNodes";
-import {MenuItem, Dropdown, DropdownButton, ButtonToolbar} from 'react-bootstrap';
+import {MenuItem, Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
 import alignmentTools from '../utils/calculateAlignment';
 import positionDomains from '../utils/positionDomains';
+import LabelConfig from './LabelConfig';
 
 let pruneTree = GrameneTreesClient.extensions.pruneTree;
 let addConsensus = GrameneTreesClient.extensions.addConsensus;
@@ -38,6 +39,17 @@ const MIN_VIZ_WIDTH = 150;
 const windowResizeDebounceMs = 250;
 const rangeChangeDebounceMs = 150;
 
+const localStore = global.localStorage || {};
+function getLabelFields() {
+  let labelFields = localStore.getItem('genetreeLeafLabels');
+  if (labelFields) {
+    return JSON.parse(labelFields);
+  }
+  else {
+    return ['model.gene_stable_id'];
+  }
+}
+
 export default class TreeVis extends React.Component {
   constructor(props) {
     super(props);
@@ -46,6 +58,8 @@ export default class TreeVis extends React.Component {
       displayMode: 'domains',
       visibleNodes: undefined,
       colorScheme: 'clustal',
+      configModal: false,
+      labelFields: getLabelFields(),
       MSARange: {
         MSAStart: 0,
         MSAStop: 0
@@ -313,6 +327,10 @@ export default class TreeVis extends React.Component {
     this.updateVisibleNodes();
   }
 
+  toggleConfigModal() {
+    this.setState({configModal: !this.state.configModal});
+  }
+
   handleModeSelection(e) {
     this.setState({displayMode: e});
   }
@@ -355,6 +373,9 @@ export default class TreeVis extends React.Component {
     return (
       <div className="display-mode">
         <ButtonToolbar>
+          <Button onClick={() => this.toggleConfigModal()}>
+            <span className="glyphicon glyphicon-cog"/>
+          </Button>
           <Dropdown id="display-mode-dropdown"
                     onClick={(e) => e.stopPropagation()}>
             <Dropdown.Toggle>
@@ -371,12 +392,20 @@ export default class TreeVis extends React.Component {
         )
   }
 
+  updateLabelConfig(labelFields) {
+    if (!_.isEqual(labelFields,this.state.labelFields)) {
+      localStore.setItem('genetreeLeafLabels',JSON.stringify(labelFields))
+      this.setState({labelFields});
+    }
+  }
+
   render() {
     if (!this.state.visibleNodes) {
       return <div></div>;
     }
     let genetree = (
       <GeneTree nodes={this.state.visibleNodes}
+                labelFields={this.state.labelFields}
                 onGeneSelect={this.handleGeneSelect.bind(this)}
                 collapseClade={this.collapseClade.bind(this)}
                 expandClade={this.expandClade.bind(this)}
@@ -396,6 +425,22 @@ export default class TreeVis extends React.Component {
     }
     return (
       <div>
+        <Modal
+          show={this.state.configModal}
+          onHide={()=>this.toggleConfigModal()}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Configure labels
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <LabelConfig
+              labelFields={this.state.labelFields}
+              updateLabelFields={(l)=>this.updateLabelConfig(l)}
+            />
+          </Modal.Body>
+        </Modal>
         {this.renderToolbar(this.state.displayMode)}
         <div className="genetree-vis">
           <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>
