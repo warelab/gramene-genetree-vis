@@ -75,18 +75,6 @@ const labelTarget = {
 };
 
 class Label extends Component {
-  static propTypes = {
-    connectDragSource: PropTypes.func.isRequired,
-    connectDropTarget: PropTypes.func.isRequired,
-    index: PropTypes.number.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    id: PropTypes.any.isRequired,
-    text: PropTypes.string.isRequired,
-    moveLabel: PropTypes.func.isRequired,
-    checked: PropTypes.bool.isRequired,
-    toggleLabel: PropTypes.func.isRequired
-  };
-
   render() {
     const { text, isDragging, connectDragSource, connectDropTarget, checked } = this.props;
     const opacity = isDragging ? 0 : 1;
@@ -98,7 +86,21 @@ class Label extends Component {
       </div>,
     ));
   }
+}
+
+Label.propTypes = {
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  id: PropTypes.any.isRequired,
+  text: PropTypes.string.isRequired,
+  moveLabel: PropTypes.func.isRequired,
+  checked: PropTypes.bool.isRequired,
+  toggleLabel: PropTypes.func.isRequired
 };
+
+
 export default flow(
   DropTarget(ItemTypes.LABEL, labelTarget, connect => ({
     connectDropTarget: connect.dropTarget(),
