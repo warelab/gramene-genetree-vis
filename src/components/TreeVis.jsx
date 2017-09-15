@@ -46,7 +46,7 @@ function getLabelFields() {
     return JSON.parse(labelFields);
   }
   else {
-    return ['model.taxon_name','model.gene_display_label','model.protein_stable_id'];
+    return ['model.gene_stable_id'];
   }
 }
 
@@ -393,9 +393,10 @@ export default class TreeVis extends React.Component {
   }
 
   updateLabelConfig(labelFields) {
-    console.log(labelFields);
-    // update localStorage
-    this.setState(labelFields);
+    if (!_.isEqual(labelFields,this.state.labelFields)) {
+      localStore.setItem('genetreeLeafLabels',JSON.stringify(labelFields))
+      this.setState({labelFields});
+    }
   }
 
   render() {

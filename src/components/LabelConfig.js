@@ -39,12 +39,13 @@ class LabelConfig extends Component {
     };
   }
 
-  // componentDidUpdate(prevProps,prevState) {
-  //   let x = this.state.labels.filter((l)=> l.checked).map((l)=>l.field);
-  //   if (!_.isEqual(x, this.props.labelFields)) {
-  //     this.props.updateLabelFields(x);
-  //   }
-  // }
+  componentDidUpdate(prevProps,prevState) {
+    const x = this.state.labels.filter((l)=> l.checked).map((l)=>l.field);
+    const y = prevState.labels.filter((l)=> l.checked).map((l)=>l.field);
+    if (!_.isEqual(x, y)) {
+      this.props.updateLabelFields(x);
+    }
+  }
 
   moveLabel(dragIndex, hoverIndex) {
     const { labels } = this.state;
@@ -61,10 +62,10 @@ class LabelConfig extends Component {
   }
 
   toggleLabel(index) {
-    const { labels } = this.state;
+    let labels = _.cloneDeep(this.state.labels);
     let label = labels[index];
     label.checked = !label.checked;
-    this.setState(labels)
+    this.setState({labels});
   }
 
   render() {
