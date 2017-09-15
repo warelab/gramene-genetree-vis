@@ -163,22 +163,23 @@ export default class Gene extends Component {
     );
 
     const tooltip = this.props.tooltip
-      ? <Tooltip id="tooltip">{ this.props.tooltip }</Tooltip>
+      ?  <Tooltip id="tooltip">{ this.props.tooltip }</Tooltip>
       : null;
 
 		return (
-    <OverlayTrigger placement={ this.props.tooltipPlacement } overlay={tooltip}>
-      <g transform={"translate(" + (this.props.gene.orientation == '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation == '+' ? 1 : -1) + ",1)"}>
-        <path d={d} fill = {this.props.fillColor}
-          strokeWidth = { this.strokeWidth(this.props.highlighted, this.props.highlightWidth) }
-          stroke = { this.stroke(this.props.highlighted, this.props.highlightColor, this.props.strokeColor) }
-          onClick= { this.handleClick }
-          opacity = { this.props.opacity }
-          onMouseOver = { this.tooltipOver.bind(this) }
-          onMouseOut  = { this.tooltipOut.bind(this) }
-          mask = {shapeStuff.mask ? shapeStuff.mask() : ''}
-          />
-      </g>
+      <OverlayTrigger placement={ this.props.tooltipPlacement } overlay={tooltip} trigger='click' rootClose={true}>
+        <g transform={"translate(" + (this.props.gene.orientation == '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation == '+' ? 1 : -1) + ",1)"}>
+          <path d={d} fill = {this.props.fillColor}
+            strokeWidth = { this.strokeWidth(this.props.highlighted, this.props.highlightWidth) }
+            stroke = { this.stroke(this.props.highlighted, this.props.highlightColor, this.props.strokeColor) }
+            //onClick= { this.handleClick }
+            //onDoubleClick={ this.handleClick }
+            opacity = { this.props.opacity }
+            //onMouseOver = { this.tooltipOver.bind(this) }
+            //onMouseOut  = { this.tooltipOut.bind(this) }
+            mask = {shapeStuff.mask ? shapeStuff.mask() : ''}
+            />
+        </g>
       </OverlayTrigger>
 
 		);
