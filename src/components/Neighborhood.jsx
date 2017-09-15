@@ -106,17 +106,17 @@ const ComparaGene = props => {
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     // ['Biotype',     gene.biotype],
-    ['Description', gene.description],
-    ['', (
-      <button className='btn btn-xs btn-default' onClick={() => {
-        if (props.clickHandler) {
-          props.clickHandler(gene.id, gene.tree_id)
-        }
-      }}>
-        {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
-      </button>
-    )]
+    ['Description', gene.description]
   ];
+  let button = (
+    <button className='btn btn-xs btn-default' onClick={() => {
+      if (props.clickHandler) {
+        props.clickHandler(gene.id, gene.tree_id)
+      }
+    }}>
+      {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
+    </button>
+  );
   if (gene.relationToGeneOfInterest) {
     tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);
   }
@@ -132,6 +132,9 @@ const ComparaGene = props => {
             </tr>
           )
         })}
+        <tr style={{verticalAlign: 'top'}}>
+          <td colSpan="2">{button}</td>
+        </tr>s
       </tbody>
     </table>
   );
