@@ -9,6 +9,8 @@ var d3Scale = require('d3-scale');
 const neighborhoodHeight = 24;
 const scaleFactor = 20;
 
+const syntenyURL = 'http://ensembl.gramene.org/Oryza_sativa/Location/Synteny?r=';
+
 const NeighborhoodArrow = props => {
   const arrowLength = scaleFactor * 10*props.totalLength/props.width;
   const arrowHeight = 4;
@@ -34,19 +36,19 @@ const NeighborhoodArrow = props => {
       ['end', props.neighborhood.region.end]
     ];
     tooltip = (
-      <Tooltip id="tooltip">
-      <table>
-        <tbody>
-        {tooltipFields.map( (tip, i ) => {
-          return (
-            <tr key = {i} style={{verticalAlign : 'top'}}>
-              <th>{tip[0]}</th>
-              <td style={{color : 'lightgray'}}>{tip[1]}</td>
-            </tr>
-          )
-        })}
-        </tbody>
-      </table>
+      <Tooltip>
+        <table>
+          <tbody>
+          {tooltipFields.map( (tip, i ) => {
+            return (
+              <tr key = {i} style={{verticalAlign : 'top'}}>
+                <th>{tip[0]}</th>
+                <td style={{color : 'lightgray', textAlign : 'left', paddingLeft : '15px'}}>{tip[1]}</td>
+              </tr>
+            )
+          })}
+          </tbody>
+        </table>
       </Tooltip>
     );
   }
@@ -92,15 +94,26 @@ const ComparaGene = props => {
 
   const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
 
+  const highlighted = props.highlighted[gene.tree_id];
+
   let tooltipFields = [
-    ['Gene ID',     gene.id],
+    ['Gene IDZZZ',     gene.id],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
-    ['Region',      `${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`],
+    ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank'>{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     ['Biotype',     gene.biotype],
-    ['Description', gene.description]
+    ['Description', gene.description],
+    ['', (
+      <button className='btn btn-xs btn-default' onClick={() => {
+        if (props.clickHandler) {
+          props.clickHandler(gene.id, gene.tree_id)
+        }
+      }}>
+        {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
+      </button>
+    )]
   ];
   if (gene.relationToGeneOfInterest) {
     tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);
@@ -113,7 +126,7 @@ const ComparaGene = props => {
           return (
             <tr key = {i} style={{verticalAlign : 'top'}}>
               <th>{tip[0]}</th>
-              <td style={{color : 'lightgray'}}>{tip[1]}</td>
+              <td style={{color : 'lightgray', textAlign : 'left', paddingLeft : '15px'}}>{tip[1]}</td>
             </tr>
           )
         })}
@@ -129,8 +142,6 @@ const ComparaGene = props => {
         strokeWidth="1"
       />
     : null;
-
-  const highlighted = props.highlighted[gene.tree_id];
 
   return (
     <g>
