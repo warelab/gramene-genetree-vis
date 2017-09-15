@@ -134,7 +134,7 @@ const ComparaGene = props => {
         })}
         <tr style={{verticalAlign: 'top'}}>
           <td colSpan="2">{button}</td>
-        </tr>s
+        </tr>
       </tbody>
     </table>
   );
