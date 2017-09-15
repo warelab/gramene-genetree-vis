@@ -7,11 +7,15 @@ import flow from 'lodash.flow';
 import { Checkbox } from 'react-bootstrap';
 
 const style = {
-  border: '1px dashed gray',
+  // border: '1px dashed gray',
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
+  display: 'inline-block',
+  zoom: 1,
+  'vertical-align': 'top',
+  width: '140px'
 };
 
 const labelSource = {
@@ -88,7 +92,9 @@ class Label extends Component {
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
       <div style={{ ...style, opacity }}>
-        <Checkbox onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked}>{text}</Checkbox>
+        <div style={{border:'1px dashed gray',padding:'1rem'}}>
+          <Checkbox onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked}>{text}</Checkbox>
+        </div>
       </div>,
     ));
   }

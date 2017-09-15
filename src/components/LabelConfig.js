@@ -7,7 +7,6 @@ import _ from 'lodash';
 import flow from 'lodash.flow';
 
 const style = {
-  width: 400,
 };
 
 class LabelConfig extends Component {
@@ -73,6 +72,7 @@ class LabelConfig extends Component {
 
     return (
       <div style={style}>
+        <p>drag to reorder</p>
         {labels.map((label, i) => (
           <Label
             key={label.id}
