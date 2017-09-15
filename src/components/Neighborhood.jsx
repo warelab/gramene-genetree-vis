@@ -30,10 +30,12 @@ const NeighborhoodArrow = props => {
     const points = `${tipX},${tipY} ${tailX},${tipY + arrowHeight} ${tailX},${tipY - arrowHeight}`;
     color = props.neighborhood.region.color;
     arrowHead = <polygon points={points} stroke={color} fill={color}/>
+    const region = props.neighborhood.region;
     let tooltipFields = [
-      ['region', props.neighborhood.region.name],
-      ['start', props.neighborhood.region.start],
-      ['end', props.neighborhood.region.end]
+      ['region', region.name],
+      ['start', region.start],
+      ['end', region.end],
+      ['',<a href = {`${syntenyURL}${region.name}:${region.start}-${region.end}`} target='_blank'>{`Synteny browser`}</a>]
     ];
     tooltip = (
       <Tooltip>
@@ -67,7 +69,7 @@ const NeighborhoodArrow = props => {
   }
   return (
     <g>
-      <OverlayTrigger placement="left" overlay={tooltip}>
+      <OverlayTrigger placement="left" overlay={tooltip} trigger='click' rootClose={true}>
       <line
         x1={lineStart} y1={neighborhoodHeight / 2}
         x2={lineEnd} y2={neighborhoodHeight / 2}
@@ -97,13 +99,13 @@ const ComparaGene = props => {
   const highlighted = props.highlighted[gene.tree_id];
 
   let tooltipFields = [
-    ['Gene IDZZZ',     gene.id],
+    ['Gene ID',     <a href={`http://www.gramene.org?idList=${gene.id}`} target='_blank'>{gene.id}</a>],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
     ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank'>{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
-    ['Biotype',     gene.biotype],
+    // ['Biotype',     gene.biotype],
     ['Description', gene.description],
     ['', (
       <button className='btn btn-xs btn-default' onClick={() => {
