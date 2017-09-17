@@ -1,0 +1,316 @@
+{
+  "_id": "Zm00001d018033",
+  "name": "Zm00001d018033",
+  "description": "Zm00001d018033",
+  "biotype": "protein_coding",
+  "taxon_id": 4577000,
+  "system_name": "zea_mays",
+  "db_type": "core",
+  "gene_idx": 25948,
+  "location": {
+    "region": "5",
+    "start": 212494773,
+    "end": 212500400,
+    "strand": -1,
+    "map": "GCA_000005015.6"
+  },
+  "xrefs": [
+    {
+      "db": "UniParc",
+      "ids": [
+        "UPI0008426559"
+      ]
+    },
+    {
+      "db": "Uniprot/SPTREMBL",
+      "ids": [
+        "A0A1D6HKA3"
+      ]
+    },
+    {
+      "db": "protein_id",
+      "ids": [
+        "AQK74861.1"
+      ]
+    },
+    {
+      "db": "KEGG_Enzyme",
+      "ids": [
+        "00500+2.4.1.21"
+      ]
+    },
+    {
+      "db": "MaizeGDB",
+      "ids": [
+        "Zm00001d018033"
+      ]
+    }
+  ],
+  "gene_structure": {
+    "exons": [
+      {
+        "id": "Zm00001d018033_T001.exon1",
+        "start": 1,
+        "end": 228
+      },
+      {
+        "id": "Zm00001d018033_T001.exon2",
+        "start": 706,
+        "end": 1114
+      },
+      {
+        "id": "Zm00001d018033_T001.exon3",
+        "start": 1182,
+        "end": 1246
+      },
+      {
+        "id": "Zm00001d018033_T001.exon4",
+        "start": 1513,
+        "end": 1590
+      },
+      {
+        "id": "Zm00001d018033_T001.exon5",
+        "start": 1683,
+        "end": 1793
+      },
+      {
+        "id": "Zm00001d018033_T001.exon6",
+        "start": 1898,
+        "end": 1942
+      },
+      {
+        "id": "Zm00001d018033_T001.exon7",
+        "start": 2281,
+        "end": 2454
+      },
+      {
+        "id": "Zm00001d018033_T001.exon8",
+        "start": 3383,
+        "end": 5628
+      }
+    ],
+    "transcripts": [
+      {
+        "exons": [
+          "Zm00001d018033_T001.exon1",
+          "Zm00001d018033_T001.exon2",
+          "Zm00001d018033_T001.exon3",
+          "Zm00001d018033_T001.exon4",
+          "Zm00001d018033_T001.exon5",
+          "Zm00001d018033_T001.exon6",
+          "Zm00001d018033_T001.exon7",
+          "Zm00001d018033_T001.exon8"
+        ],
+        "length": 3356,
+        "exon_junctions": [
+          228,
+          637,
+          702,
+          780,
+          891,
+          936,
+          1110
+        ],
+        "cds": {
+          "start": 1,
+          "end": 2067
+        },
+        "translation": {
+          "id": "Zm00001d018033_P001",
+          "length": 688,
+          "features": {
+            "family": {
+              "entries": [
+                {
+                  "name": "MF_00484",
+                  "description": "Glycogen_synth",
+                  "db": "HAMAP",
+                  "interpro": "IPR011835",
+                  "start": 197,
+                  "end": 684
+                },
+                {
+                  "name": "TIGR02095",
+                  "description": "TIGR02095",
+                  "db": "TIGRfam",
+                  "interpro": "IPR011835",
+                  "start": 197,
+                  "end": 682
+                }
+              ]
+            },
+            "domain": {
+              "entries": [
+                {
+                  "name": "PF08323",
+                  "description": "Glyco_transf_5",
+                  "db": "Pfam",
+                  "interpro": "IPR013534",
+                  "start": 198,
+                  "end": 440
+                }
+              ],
+              "architecture": [
+                {
+                  "root": "13534",
+                  "start": 198,
+                  "end": 440,
+                  "interpro": "IPR013534",
+                  "name": "Starch_synth_cat_dom",
+                  "description": "Starch synthase, catalytic domain"
+                }
+              ],
+              "roots": "13534"
+            }
+          }
+        },
+        "id": "Zm00001d018033_T001"
+      }
+    ],
+    "canonical_transcript": "Zm00001d018033_T001"
+  },
+  "annotations": {
+    "domains": {
+      "entries": [
+        {
+          "id": "IPR011835",
+          "name": "GS/SS",
+          "description": "Bacterial/plant glycogen synthase"
+        },
+        {
+          "id": "IPR013534",
+          "name": "Starch_synth_cat_dom",
+          "description": "Starch synthase, catalytic domain"
+        }
+      ]
+    },
+    "GO": {
+      "entries": [
+        {
+          "id": "GO:0004373",
+          "name": "glycogen (starch) synthase activity",
+          "namespace": "molecular_function",
+          "def": "Catalysis of the reaction: UDP-glucose + (1,4)-alpha-D-glucosyl(n) = UDP + (1,4)-alpha-D-glucosyl(n+1).",
+          "subset": [
+            "gosubset_prok"
+          ],
+          "evidence_code": "IEA"
+        }
+      ],
+      "ancestors": [
+        3674,
+        3824,
+        8194,
+        16740,
+        16757,
+        16758,
+        35251,
+        46527
+      ]
+    },
+    "taxonomy": {
+      "entries": [
+        {
+          "_id": 4577000,
+          "name": "Zea mays"
+        }
+      ],
+      "ancestors": [
+        1,
+        2759,
+        3193,
+        3398,
+        4447,
+        4479,
+        4575,
+        4577,
+        4734,
+        33090,
+        35493,
+        38820,
+        58023,
+        58024,
+        78536,
+        131221,
+        131567,
+        147369,
+        147370,
+        147429,
+        1437183,
+        1437197,
+        1648029,
+        1648033
+      ]
+    }
+  },
+  "synonyms": [
+    "GRMZM2G105791"
+  ],
+  "homology": {
+    "gene_tree": {
+      "id": 129786,
+      "root_taxon_id": 3398,
+      "root_taxon_name": "Mesangiospermae",
+      "representative": {
+        "closest": {
+          "id": "Zm00004b015091",
+          "taxon_id": 4577,
+          "description": "W221_015091"
+        },
+        "model": {
+          "id": "AT3G01180",
+          "taxon_id": 3702,
+          "name": "SS2",
+          "description": "Starch synthase 2, chloroplastic/amyloplastic"
+        }
+      }
+    },
+    "homologous_genes": {
+      "ortholog_one2one": [
+        "Zm00008a022973",
+        "Zm00004b015091",
+        "TIL1100028279"
+      ],
+      "ortholog_one2many": [
+        "SORBI_004G238600",
+        "Si016492m.g",
+        "OS02G0744700",
+        "BRADI3G59440",
+        "VIT_14s0108g00940",
+        "AT3G01180"
+      ],
+      "within_species_paralog": [
+        "Zm00001d037234",
+        "Zm00001d014150",
+        "Zm00001d045261",
+        "Zm00001d045462",
+        "Zm00001d019479",
+        "Zm00001d000002",
+        "Zm00001d010821",
+        "Zm00001d052263",
+        "Zm00001d002256",
+        "Zm00001d027242",
+        "Zm00001d029360",
+        "Zm00001d033690",
+        "Zm00001d033937",
+        "Zm00001d026337"
+      ],
+      "ortholog_many2many": [
+        "GLYMA13G05441",
+        "GLYMA18G49480",
+        "GLYMA19G02690"
+      ]
+    }
+  },
+  "bins": {
+    "fixed_100": 756,
+    "fixed_200": 1516,
+    "fixed_500": 3792,
+    "fixed_1000": 7589,
+    "uniform_1Mb": 4498,
+    "uniform_2Mb": 2274,
+    "uniform_5Mb": 939,
+    "uniform_10Mb": 495
+  },
+  "species_idx": 4577000
+}

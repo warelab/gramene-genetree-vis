@@ -5,6 +5,7 @@ import GeneTree from './GeneTree.jsx';
 import MSAOverview from './vizTypes/MSAOverview.jsx';
 import MSASequence from './vizTypes/MSASequence.jsx';
 import Phyloview from './vizTypes/Phyloview.jsx';
+import Spinner from './Spinner.jsx';
 import _ from 'lodash';
 import {client as GrameneClient} from 'gramene-search-client';
 import GrameneTreesClient from 'gramene-trees-client';
@@ -19,11 +20,12 @@ import {
   makeNodeVisible,
   makeNodeInvisible
 } from "../utils/visibleNodes";
-import {MenuItem, Dropdown, DropdownButton, ButtonToolbar} from 'react-bootstrap';
+import {MenuItem, Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
 import alignmentTools from '../utils/calculateAlignment';
 import positionDomains from '../utils/positionDomains';
+import LabelConfig from './LabelConfig';
 
 let pruneTree = GrameneTreesClient.extensions.pruneTree;
 let addConsensus = GrameneTreesClient.extensions.addConsensus;
@@ -37,14 +39,27 @@ const MIN_VIZ_WIDTH = 150;
 const windowResizeDebounceMs = 250;
 const rangeChangeDebounceMs = 150;
 
+const localStore = global.localStorage || {};
+function getLabelFields() {
+  let labelFields = localStore.getItem('genetreeLeafLabels');
+  if (labelFields) {
+    return JSON.parse(labelFields);
+  }
+  else {
+    return ['model.gene_stable_id'];
+  }
+}
+
 export default class TreeVis extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       geneOfInterest: this.props.initialGeneOfInterest,
-      displayMode: 'phyloview',
+      displayMode: 'domains',
       visibleNodes: undefined,
       colorScheme: 'clustal',
+      configModal: false,
+      labelFields: getLabelFields(),
       MSARange: {
         MSAStart: 0,
         MSAStop: 0
@@ -53,7 +68,8 @@ export default class TreeVis extends React.Component {
     this.displayModes = [
       {
         id: 'domains',
-        label: 'Domains',
+        label: 'Alignment overview',
+        description: <div><b>Alignment overview</b>: Proteins color-coded by InterPro domain. Resize slider to navigate.</div>,
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSAOverview, {
@@ -76,6 +92,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'msa',
         label: 'Multiple Sequence Alignment',
+        description: <div><b>Multiple Sequence Alignment</b>: Amino acid MSA. Drag slider to reposition.</div>,
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSASequence, {
@@ -95,29 +112,35 @@ export default class TreeVis extends React.Component {
             });
           }
         }
-      },
-      {
-        id: 'phyloview',
-        label: 'Neighborhood conservation',
-        getComponent: function(app) {
-          if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
-            return React.createElement(Phyloview, {
-              nodes: app.state.visibleNodes,
-              queryNode: app.genetree.indices.gene_stable_id[app.state.geneOfInterest._id],
-              width: app.vizWidth,
-              height: app.treeHeight,
-              margin: app.margin,
-              xOffset: app.margin + app.treeWidth + app.labelWidth,
-              yOffset: 0,
-              controlsHeight: DEFAULT_ZOOM_HEIGHT,
-              neighborhoods: app.state.neighborhoods,
-              numberOfNeighbors: app.props.numberOfNeighbors,
-              transform: app.transformViz
-            });
-          }
-        }
       }
     ];
+    if (this.props.enablePhyloview) {
+      this.displayModes.push(
+        {
+          id: 'phyloview',
+          label: 'Neighborhood conservation',
+          description: <div><b>Neighborhood conservation</b>: +/- 10 flanking genes color-coded by gene family.</div>,
+          getComponent: function (app) {
+            if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
+              return React.createElement(Phyloview, {
+                nodes: app.state.visibleNodes,
+                queryNode: app.genetree.indices.gene_stable_id[app.state.geneOfInterest._id],
+                width: app.vizWidth,
+                height: app.treeHeight,
+                margin: app.margin,
+                xOffset: app.margin + app.treeWidth + app.labelWidth,
+                yOffset: 0,
+                controlsHeight: DEFAULT_ZOOM_HEIGHT,
+                neighborhoods: app.state.neighborhoods,
+                maxNCGGenes: app.state.nonCodingGroupLengthDistribution.length - 1,
+                numberOfNeighbors: app.props.numberOfNeighbors,
+                transform: app.transformViz
+              });
+            }
+          }
+        }
+      );
+    }
     this.displayModeIdx = _.keyBy(this.displayModes,'id');
   }
 
@@ -304,6 +327,10 @@ export default class TreeVis extends React.Component {
     this.updateVisibleNodes();
   }
 
+  toggleConfigModal() {
+    this.setState({configModal: !this.state.configModal});
+  }
+
   handleModeSelection(e) {
     this.setState({displayMode: e});
   }
@@ -344,19 +371,32 @@ export default class TreeVis extends React.Component {
       )
     });
     return (
-      <ButtonToolbar>
-        <Dropdown id="display-mode-dropdown"
-                  onClick={(e) => e.stopPropagation()}>
-          <Dropdown.Toggle>
-            Display mode
-          </Dropdown.Toggle>
-          <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
-            {choices}
-          </Dropdown.Menu>
-        </Dropdown>
-        {this.colorSchemeDropdown()}
-      </ButtonToolbar>
-    )
+      <div className="display-mode">
+        <ButtonToolbar>
+          <Button onClick={() => this.toggleConfigModal()}>
+            <span className="glyphicon glyphicon-cog"/>
+          </Button>
+          <Dropdown id="display-mode-dropdown"
+                    onClick={(e) => e.stopPropagation()}>
+            <Dropdown.Toggle>
+              Display mode
+            </Dropdown.Toggle>
+            <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
+              {choices}
+            </Dropdown.Menu>
+         </Dropdown>
+         {this.colorSchemeDropdown()}
+        </ButtonToolbar>
+        <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>{this.displayModeIdx[activeMode].description}</span>
+      </div>
+        )
+  }
+
+  updateLabelConfig(labelFields) {
+    if (!_.isEqual(labelFields,this.state.labelFields)) {
+      localStore.setItem('genetreeLeafLabels',JSON.stringify(labelFields))
+      this.setState({labelFields});
+    }
   }
 
   render() {
@@ -365,6 +405,7 @@ export default class TreeVis extends React.Component {
     }
     let genetree = (
       <GeneTree nodes={this.state.visibleNodes}
+                labelFields={this.state.labelFields}
                 onGeneSelect={this.handleGeneSelect.bind(this)}
                 collapseClade={this.collapseClade.bind(this)}
                 expandClade={this.expandClade.bind(this)}
@@ -376,9 +417,30 @@ export default class TreeVis extends React.Component {
     );
 
     let theViz = this.displayModeIdx[this.state.displayMode].getComponent(this);
-
+    if (!theViz) {
+      theViz = React.createElement(Spinner, {
+          xOffset: this.margin + this.treeWidth + this.labelWidth + this.vizWidth/2 - 200,
+          yOffset: this.treeHeight / 2
+        });
+    }
     return (
       <div>
+        <Modal
+          show={this.state.configModal}
+          onHide={()=>this.toggleConfigModal()}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Configure labels
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <LabelConfig
+              labelFields={this.state.labelFields}
+              updateLabelFields={(l)=>this.updateLabelConfig(l)}
+            />
+          </Modal.Body>
+        </Modal>
         {this.renderToolbar(this.state.displayMode)}
         <div className="genetree-vis">
           <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>

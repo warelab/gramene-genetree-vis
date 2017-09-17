@@ -8,7 +8,7 @@ const Gene = props => {
       <circle r="3"/>
       <text x="10"
             dy=".35em">
-        {text(props.node)}
+        {text(props).join('; ')}
       </text>
     </g>
   )
@@ -29,12 +29,13 @@ function className(node) {
   return className;
 }
 
-function text(node) {
-  return  _.get(node, 'model.gene_stable_id');
+function text(props) {
+  return props.labelFields.map((field) => { return _.get(props.node, field)}); //'model.gene_stable_id');
 }
 
 Gene.propTypes = {
   node: PropTypes.object.isRequired,
+  labelFields: PropTypes.array.isRequired,
   onHover: PropTypes.func.isRequired,
   taxonomy: PropTypes.object.isRequired
 };

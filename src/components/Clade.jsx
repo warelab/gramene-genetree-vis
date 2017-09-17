@@ -101,6 +101,7 @@ export default class Clade extends React.Component {
 
     return (
       <Node node={node}
+            labelFields={this.props.labelFields}
             onHover={() => this.hover()}
             taxonomy={this.props.taxonomy}/>
     );
@@ -187,6 +188,7 @@ export default class Clade extends React.Component {
 
 Clade.propTypes = {
   node: PropTypes.object.isRequired,
+  labelFields: PropTypes.array.isRequired,
   cladeHovered: PropTypes.bool,
   xOffset: PropTypes.number.isRequired,
   yOffset: PropTypes.number.isRequired

@@ -1,33 +1,67 @@
 import React from 'react';
 import _ from 'lodash';
+import {Tooltip, OverlayTrigger} from 'react-bootstrap';
+
+import Gene from './Gene';
+
+var d3Scale = require('d3-scale');
 
 const neighborhoodHeight = 24;
+const scaleFactor = 20;
+
+const syntenyURL = 'http://ensembl.gramene.org/Oryza_sativa/Location/Synteny?r=';
 
 const NeighborhoodArrow = props => {
-  const arrowLength = 10*props.totalLength/props.width;
+  const arrowLength = scaleFactor * 10*props.totalLength/props.width;
   const arrowHeight = 4;
-  let lineLength = props.totalLength;
+  let lineLength = scaleFactor * props.totalLength;
   let lineStart = 0;
   let lineEnd = lineLength;
   let arrowHead;
-  if (props.strand) {
-    const flipped = (props.strand === 'reverse');
+  let color = 'black';
+  let tooltip = '<pre>internal node</pre>';
+  if (props.neighborhood.strand) {
+    const flipped = (props.neighborhood.strand === 'reverse');
     lineStart = flipped ? arrowLength : 0;
     lineEnd = flipped ? lineLength : lineLength - arrowLength;
     const tipX = flipped ? 0 : lineLength;
     const tailX = flipped ? arrowLength : tipX - arrowLength;
     const tipY = neighborhoodHeight / 2;
     const points = `${tipX},${tipY} ${tailX},${tipY + arrowHeight} ${tailX},${tipY - arrowHeight}`;
-    arrowHead = <polygon points={points}/>
+    color = props.neighborhood.region.color;
+    arrowHead = <polygon points={points} stroke={color} fill={color}/>
+    const region = props.neighborhood.region;
+    let tooltipFields = [
+      ['region', region.name],
+      ['start', region.start],
+      ['end', region.end],
+      ['',<a href = {`${syntenyURL}${region.name}:${region.start}-${region.end}`} target='_blank'>{`Synteny browser`}</a>]
+    ];
+    tooltip = (
+      <Tooltip>
+        <table>
+          <tbody>
+          {tooltipFields.map( (tip, i ) => {
+            return (
+              <tr key = {i} style={{verticalAlign : 'top'}}>
+                <th>{tip[0]}</th>
+                <td style={{color : 'lightgray', textAlign : 'left', paddingLeft : '15px'}}>{tip[1]}</td>
+              </tr>
+            )
+          })}
+          </tbody>
+        </table>
+      </Tooltip>
+    );
   }
   let tickMarks = [];
-  for(let i=1;i<lineLength; i++) {
+  for(let i=1*scaleFactor;i<lineLength; i+=scaleFactor) {
     let tick = (
       <line
         x1={i} y1={4}
         x2={i} y2={20}
         stroke="black"
-        strokeWidth="0.01"
+        strokeWidth="0.5"
         key={i}
       />
     );
@@ -35,12 +69,14 @@ const NeighborhoodArrow = props => {
   }
   return (
     <g>
+      <OverlayTrigger placement="left" overlay={tooltip} trigger='click' rootClose={true}>
       <line
         x1={lineStart} y1={neighborhoodHeight / 2}
         x2={lineEnd} y2={neighborhoodHeight / 2}
-        stroke="black"
-        strokeWidth="2"
+        stroke={color}
+        strokeWidth="3"
       />
+      </OverlayTrigger>
       {tickMarks}
       {arrowHead}
     </g>
@@ -48,29 +84,143 @@ const NeighborhoodArrow = props => {
 };
 
 const ComparaGene = props => {
-  let gene = props.gene;
+
+  const gene = props.gene;
+
+  const geneWidth = 0.6 * scaleFactor;
+  const geneHeight = 16;
+
+  const identityScale = d3Scale.scaleLinear()
+    .domain([1,0])
+    .range([props.color, 'white']);
+
+  const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
+
+  const highlighted = props.highlighted[gene.tree_id];
+
+  let tooltipFields = [
+    ['Gene ID',     <a href={`http://www.gramene.org?idList=${gene.id}`} target='_blank'>{gene.id}</a>],
+    ['Gene Name',   gene.name],
+    // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
+    ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank'>{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
+    ['Tree ID',     gene.tree_id],
+    //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
+    // ['Biotype',     gene.biotype],
+    ['Description', gene.description]
+  ];
+  let button = (
+    <button className='btn btn-xs btn-default' onClick={() => {
+      if (props.clickHandler) {
+        props.clickHandler(gene.id, gene.tree_id)
+      }
+    }}>
+      {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
+    </button>
+  );
+  if (gene.relationToGeneOfInterest) {
+    tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);
+  }
+
+  const tooltip = (
+    <table>
+      <tbody>
+        {tooltipFields.map( (tip, i ) => {
+          return (
+            <tr key = {i} style={{verticalAlign : 'top'}}>
+              <th>{tip[0]}</th>
+              <td style={{color : 'lightgray', textAlign : 'left', paddingLeft : '15px'}}>{tip[1]}</td>
+            </tr>
+          )
+        })}
+        <tr style={{verticalAlign: 'top'}}>
+          <td colSpan="2">{button}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+
+  const centerStrokeLine = props.center
+    ?  <line
+        x1={gene.x*scaleFactor} y1={geneHeight / 4 - 2}
+        x2={gene.x*scaleFactor} y2={geneHeight / 4 + geneHeight + 2}
+        stroke="red"
+        strokeWidth="1"
+      />
+    : null;
+
+  return (
+    <g>
+      <Gene
+        width={ geneWidth}
+        height={ geneHeight}
+        key={'H-' + gene.id}
+        gene={gene}
+        x={ gene.x*scaleFactor - (geneWidth) / 2 }
+        y={ geneHeight / 4 }
+        fillColor={ gene.relationToGeneOfInterest ? identityScale(identity) : props.color }
+        highlightColor={ highlighted ? 'cyan' : props.color }
+        tooltip={ tooltip }
+        highlighted={highlighted || props.center}
+        opacity={undefined}
+        clickHandler={ () => {
+          if (props.clickHandler) {
+            props.clickHandler(gene.id, gene.tree_id)
+          }
+        }}
+      />
+      { centerStrokeLine }
+
+    </g>
+  );
+
+};
+
+const NonCodingGroup = props => {
+
+  let x = +props.x * scaleFactor;
+  let n = props.genes.length;
+
+  const ncgWidth = 0.3 * scaleFactor;
+  const ncgHeight = 16;
+
+  const tooltip = (
+    <Tooltip id="tooltip">Non-coding group with { n } gene{ n > 1 ? 's' : ''}</Tooltip>
+  );
+
+  return (
+    <OverlayTrigger placement="top" overlay={tooltip}>
+      <rect
+        x={ x - ncgWidth / 2 }
+        y={6}
+        width={ ncgWidth }
+        height={12}
+        rx={ncgWidth / 6}
+        ry={ncgHeight / 6}
+        fill={ props.scale(n) } />
+    </OverlayTrigger>
+  );
+
   return (
     <line
-      x1={gene.x - 0.3} y1={4}
-      x2={gene.x + 0.3} y2={20}
-      stroke="green"
-      strokeWidth="0.1"
+      x1={x - 6} y1={20}
+      x2={x + 6} y2={4}
+      stroke="red"
+      strokeWidth="1"
     />
   )
 };
 
-const NonCodingGroup = props => {
-  let x = +props.x;
-  let n = props.genes.length;
-  return (
-    <line
-      x1={x - 0.3} y1={20}
-      x2={x + 0.3} y2={4}
-      stroke="red"
-      strokeWidth="0.1"
-    />
-  )
-};
+function treeIDToColor(tree_id, treeMap, scale) {
+
+  if (tree_id === undefined) {
+    return 'dimgray';
+  }
+  else if (treeMap[tree_id] === undefined) {
+    return 'lightgray';
+  }
+
+  return scale(treeMap[tree_id]);
+}
 
 export default class Neighborhood extends React.Component {
   constructor(props) {
@@ -79,51 +229,82 @@ export default class Neighborhood extends React.Component {
   }
 
   render() {
-    let neighborhood = this.props.neighborhood;
+
     let comparaGenes = [];
-    let nonCodingGeneGroup = {};
-    let center_x = this.props.totalLength / 2;
-    let centralGene = neighborhood.genes[neighborhood.center_idx];
-
-
-    if (neighborhood.strand === 'reverse') {
-      neighborhood.genes.forEach(function(gene) {
-        gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
-        if (gene.gene_tree) {
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x}/>);
-        }
-        else { // non coding
-          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
-          if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
-            nonCodingGeneGroup[gene.x] = [];
-          }
-          nonCodingGeneGroup[gene.x].push(gene);
-        }
-      });
-    }
-    else { // forward
-      neighborhood.genes.forEach(function(gene) {
-        gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
-        if (gene.gene_tree) {
-          comparaGenes.push(<ComparaGene gene={gene} key={gene.x}/>);
-        }
-        else { // non coding
-          gene.x = center_x + (centralGene.compara_idx - gene.compara_idx + 0.5);
-          if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
-            nonCodingGeneGroup[gene.x] = [];
-          }
-          nonCodingGeneGroup[gene.x].push(gene);
-        }
-      });
-    }
     let nonCodingGenes = [];
-    for (let x in nonCodingGeneGroup) {
-      console.log(x, nonCodingGeneGroup[x]);
-      nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]}/>);
+    let neighborhood = this.props.neighborhood;
+    if (neighborhood) {
+      let nonCodingGeneGroup = {};
+      let center_x = this.props.totalLength / 2;
+      let centralGene = neighborhood.genes[neighborhood.center_idx];
+
+      let treeInfo = this.props.treeInfo;
+
+      if (neighborhood.strand === 'reverse') {
+        neighborhood.genes.forEach((gene, gene_idx) => {
+          gene.x = center_x + (centralGene.compara_idx - gene.compara_idx);
+          if (gene.gene_tree) {
+            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
+            comparaGenes.push(
+              <ComparaGene
+                gene={gene}
+                key={gene.x}
+                color={treeColor}
+                center={gene_idx === neighborhood.center_idx}
+                clickHandler={this.props.clickHandler}
+                highlighted={this.props.highlighted}
+              />
+            );
+          }
+          else { // non coding
+            gene.x = center_x + (centralGene.compara_idx - gene.compara_idx + 0.5);
+            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
+              nonCodingGeneGroup[gene.x] = [];
+            }
+            nonCodingGeneGroup[gene.x].push(gene);
+          }
+        });
+      }
+      else { // forward
+        neighborhood.genes.forEach((gene, gene_idx) => {
+          gene.x = center_x - (centralGene.compara_idx - gene.compara_idx);
+          if (gene.gene_tree) {
+            const treeColor = treeIDToColor(gene.tree_id, treeInfo.treeMap, treeInfo.scale);
+            comparaGenes.push(
+              <ComparaGene
+                gene={gene}
+                key={gene.x}
+                color={treeColor}
+                center={gene_idx === neighborhood.center_idx}
+                clickHandler={this.props.clickHandler}
+                highlighted={this.props.highlighted}
+              />
+            );
+          }
+          else { // non coding
+            gene.x = center_x - (centralGene.compara_idx - gene.compara_idx + 0.5);
+            if (!nonCodingGeneGroup.hasOwnProperty(gene.x)) {
+              nonCodingGeneGroup[gene.x] = [];
+            }
+            nonCodingGeneGroup[gene.x].push(gene);
+          }
+        });
+
+      }
+
+
+      const ncgScale = d3Scale.scaleLinear()
+        .domain([this.props.maxNCGGenes, 1])
+        .range(['#333333', 'lightgray']);
+
+      for (let x in nonCodingGeneGroup) {
+        nonCodingGenes.push(<NonCodingGroup x={x} key={x} genes={nonCodingGeneGroup[x]} scale={ncgScale}/>);
+      }
     }
+
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow strand={neighborhood.strand} width={this.props.width} totalLength={this.props.totalLength}/>
+        <NeighborhoodArrow neighborhood={neighborhood} width={this.props.width} totalLength={this.props.totalLength}/>
         {comparaGenes}
         {nonCodingGenes}
       </g>

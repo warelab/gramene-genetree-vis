@@ -19,16 +19,17 @@ function buttons(props) {
 }
 
 function internalNodeButtons({node, collapseClade, expandClade}) {
-  const collapseCladeButton = btn('Collapse clade', () => collapseClade(node,true), "warning");
-  const collapseNodeButton = btn('Collapse node', () => collapseClade(node,false), "warning");
-  const expandCladeButton = btn('Expand clade', () => expandClade(node,true), "success");
-  const expandNodeButton = btn('Expand node', () => expandClade(node,false), "success");
+  const collapseCladeButton = node.displayInfo.expanded ? btn('Collapse', () => collapseClade(node,true), "warning") : undefined;
+  // const collapseNodeButton = btn('Collapse node', () => collapseClade(node,false), "warning");
+  const expandCladeButton = btn('Expand', () => expandClade(node,true), "success");
+  // const expandNodeButton = node.displayInfo.expanded ? undefined : btn('Expand node', () => expandClade(node,false), "success");
 
   return (
+    <div>
       <ButtonGroup style={{marginBottom: 3}}>
-        {expandNodeButton} {expandCladeButton}
-        {collapseNodeButton} {collapseCladeButton}
+        {expandCladeButton} {collapseCladeButton}
       </ButtonGroup>
+    </div>
   )
 }
 

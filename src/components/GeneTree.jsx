@@ -12,6 +12,7 @@ const GeneTree = props => {
 
 GeneTree.propTypes = {
   nodes: PropTypes.array.isRequired,
+  labelFields: PropTypes.array.isRequired,
   onGeneSelect: PropTypes.func.isRequired,
   onNodeHover: PropTypes.func.isRequired,
   taxonomy: PropTypes.object

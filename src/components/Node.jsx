@@ -37,6 +37,7 @@ function getNodeComponent(node) {
 
 Node.propTypes = {
   node: PropTypes.object.isRequired,
+  labelFields: PropTypes.array.isRequired,
   taxonomy: PropTypes.object.isRequired
 };
 
