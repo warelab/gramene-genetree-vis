@@ -1,7 +1,7 @@
-var _ = require('lodash');
-var domains = {};
 import {calculateAlignment, getOffsets} from './calculateAlignment';
 
+var _ = require('lodash');
+var domains = {};
 
 function remap(seqPos, blocks) {
   var posInSeq = 0;
@@ -54,7 +54,7 @@ function mergeDomains(domainList) {
   return merged;
 }
 
-module.exports = function positionDomains(node,reset) {
+export default function positionDomains(node,reset) {
   if (reset) {
     domains = {};
   }

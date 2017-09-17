@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import _ from "lodash";
 import {ButtonGroup, Button, Table} from "react-bootstrap";
 
@@ -17,15 +18,18 @@ function buttons(props) {
       : internalNodeButtons(props);
 }
 
-function internalNodeButtons({node, changeCladeVisibility}) {
-  const cladeButton = node.displayInfo.expanded
-      ? btn("Collapse clade", () => changeCladeVisibility(node,true), "warning")
-      : btn("Expand clade", () => changeCladeVisibility(node,true), "success");
+function internalNodeButtons({node, collapseClade, expandClade}) {
+  const collapseCladeButton = node.displayInfo.expanded ? btn('Collapse', () => collapseClade(node,true), "warning") : undefined;
+  // const collapseNodeButton = btn('Collapse node', () => collapseClade(node,false), "warning");
+  const expandCladeButton = btn('Expand', () => expandClade(node,true), "success");
+  // const expandNodeButton = node.displayInfo.expanded ? undefined : btn('Expand node', () => expandClade(node,false), "success");
 
   return (
+    <div>
       <ButtonGroup style={{marginBottom: 3}}>
-        {cladeButton}
+        {expandCladeButton} {collapseCladeButton}
       </ButtonGroup>
+    </div>
   )
 }
 
@@ -100,9 +104,10 @@ function prop(name, value) {
 }
 
 NodePopover.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  changeCladeVisibility: React.PropTypes.func.isRequired,
-  changeParalogVisibility: React.PropTypes.func.isRequired
+  node: PropTypes.object.isRequired,
+  collapseClade: PropTypes.func.isRequired,
+  expandClade: PropTypes.func.isRequired,
+  changeParalogVisibility: PropTypes.func.isRequired
 };
 
 export default NodePopover;

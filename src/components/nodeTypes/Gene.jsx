@@ -1,47 +1,43 @@
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
-var React = require('react');
-var _ = require('lodash');
+const Gene = props => {
+  return (
+    <g className={className(props.node)}>
+      <circle r="3"/>
+      <text x="10"
+            dy=".35em">
+        {text(props).join('; ')}
+      </text>
+    </g>
+  )
+};
 
-var Gene = React.createClass({
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    onHover: React.PropTypes.func.isRequired,
-    taxonomy: React.PropTypes.object.isRequired
-  },
+function className(node) {
+  let className, homology, repType;
 
-  className: function () {
-    var className, homology, repType;
-
-    className = 'gene';
-    homology = _.get(this.props.node, 'relationToGeneOfInterest.homology');
-    repType = _.get(this.props.node, 'relationToGeneOfInterest.repType');
-    if (homology) {
-      className += ' homolog ' + homology;
-    }
-    if (repType) {
-      className += ' representative';
-    }
-    return className;
-  },
-
-  text: function () {
-    return  _.get(this.props.node, 'model.gene_stable_id');
-  },
-
-  render: function () {
-    return (
-      <g className={this.className()}>
-        <circle r="3"/>
-        <text x="10"
-              dy=".35em">
-          {this.text()}
-        </text>
-      </g>
-    )
+  className = 'gene';
+  homology = _.get(node, 'relationToGeneOfInterest.homology');
+  repType = _.get(node, 'relationToGeneOfInterest.repType');
+  if (homology) {
+    className += ' homolog ' + homology;
   }
-});
+  if (repType) {
+    className += ' representative';
+  }
+  return className;
+}
 
-module.exports = Gene;
+function text(props) {
+  return props.labelFields.map((field) => { return _.get(props.node, field)}); //'model.gene_stable_id');
+}
+
+Gene.propTypes = {
+  node: PropTypes.object.isRequired,
+  labelFields: PropTypes.array.isRequired,
+  onHover: PropTypes.func.isRequired,
+  taxonomy: PropTypes.object.isRequired
+};
+
+export default Gene;

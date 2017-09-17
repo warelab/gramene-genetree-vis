@@ -1,3 +1,3 @@
-var platform = require('platform');
+import platform from 'platform';
 
-module.exports = platform.name === 'IE' || platform.name === 'Microsoft Edge';
+export default platform.name === 'IE' || platform.name === 'Microsoft Edge';
