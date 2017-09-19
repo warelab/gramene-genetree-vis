@@ -49,6 +49,9 @@ function addHomologyInformationToNodes(genetree, theGene) {
         node.relationToGeneOfInterest.identity = calculateIdentity(theGeneNode, node);
         node.relationToGeneOfInterest.homology = homology;
         node.relationToGeneOfInterest.repType = representatives[nodeId];
+        if (!node.model.gene_display_label) {
+          node.model.gene_display_label = `[${nodeId}]`;
+        }
       }
     });
   }
