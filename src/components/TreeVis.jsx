@@ -23,7 +23,6 @@ import {
 import {MenuItem, Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
-import alignmentTools from '../utils/calculateAlignment';
 import positionDomains from '../utils/positionDomains';
 import LabelConfig from './LabelConfig';
 

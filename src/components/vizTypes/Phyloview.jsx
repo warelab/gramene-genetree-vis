@@ -1,7 +1,6 @@
 import React from 'react';
 import PositionedNeighborhood from '../PositionedNeighborhood.jsx';
 import interact from 'interact.js';
-import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 var d3Scale = require('d3-scale');
 
@@ -28,7 +27,7 @@ function initTreeColors(primary_neighborhood) {
   // trees right of center
   d=0;
   for(i=center_idx+1;i<primary_neighborhood.genes.length;i++) {
-    var gene = primary_neighborhood.genes[i];
+    gene = primary_neighborhood.genes[i];
     if (gene.tree_id && !treeMap[gene.tree_id]) {
       treeMap[gene.tree_id] = ++d;
       nRight++;
@@ -198,60 +197,9 @@ export default class MSAOverview extends React.Component {
     }
   }
 
-  renderControls(treeInfo) {
-    const tooltip = (
-      <Tooltip id="tooltip">resize and drag</Tooltip>
-    );
-    return (
-      <g ref={ g => {
-        g
-        /*
-          // the on tap code to click the viewer around, which doesn't quite work.
-          // (it'll fall off the right edge)
-        interact(g)
-        .on('tap', (event) => {
+  render() {
 
-            let target = event.target;
-            let x = event.offsetX;//this.props.width * this.viewRange.min / this.totalLength;
-            let y = (parseFloat(this.zoomer.getAttribute('data-y')) || 0);
-            this.zoomer.style.webkitTransform =
-              this.zoomer.style.transform =
-                `translate(${x}px,${y}px)`;
-            this.zoomer.setAttribute('data-x', x);
-            this.viewRange.min = x * this.totalLength / this.props.width;;
-            this.viewRange.max = ( x + parseInt(this.zoomer.getAttribute('data-width'), 10) ) * this.totalLength / this.props.width;
-            if (this.viewRange.max > 0.98 * this.totalLength) {
-              this.viewRange.max = this.totalLength / this.props.width;
-              this.viewRange.min = (this.totalLength - parseInt(this.zoomer.getAttribute('data-width'), 10)) / this.props.width;
-            }
-            this.neighborhoodsSVG.setAttribute('viewBox', this.getViewBox(false));
-
-
-        })*/
-      } }>
-        <g className="consensus-wrapper" transform={`translate(${this.props.xOffset},3)`}>
-          <svg width={this.props.width}
-               height={this.props.controlsHeight}
-               viewBox={this.getViewBox(true)}
-               preserveAspectRatio="none">
-            {this.renderNode(this.props.queryNode, treeInfo)}
-          </svg>
-        </g>
-        <foreignObject x={this.props.xOffset}
-                       y={this.props.yOffset}
-                       width={this.props.width}
-                       height={this.props.controlsHeight + 6}>
-          <OverlayTrigger placement="left" overlay={tooltip}>
-            <div className="resize-container">
-              <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
-            </div>
-          </OverlayTrigger>
-        </foreignObject>
-      </g>
-    )
-  }
-
-  renderPhyloview(treeInfo) {
+    let treeInfo = initTreeColors(this.getNeighborhood(this.props.queryNode));
 
     return (
       <g className="phyloview-wrapper"
@@ -263,18 +211,6 @@ export default class MSAOverview extends React.Component {
              preserveAspectRatio="none">
           { this.props.nodes.map((node) => { return this.renderNode(node, treeInfo) } ) }
         </svg>
-      </g>
-    )
-  }
-
-  render() {
-
-    let treeInfo = initTreeColors(this.getNeighborhood(this.props.queryNode));
-
-    return (
-      <g>
-        {this.renderPhyloview(treeInfo)}
-        {/*{this.renderControls(treeInfo)}*/}
       </g>
     )
   }

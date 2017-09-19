@@ -38,9 +38,6 @@ export default class Gene extends Component {
       default : {
         shape : function(opts) {
 
-          let boxRatio = 0.75;//2 / 3;
-          let arrowRatio = 1 - boxRatio;
-
           opts.cornerRadius = this.cornerRadius(opts.width, opts.height);
 
           return `M${opts.x},${opts.y + opts.height / 2} \
@@ -144,9 +141,6 @@ export default class Gene extends Component {
 
   cornerRadius (width, height) {
     return Math.floor(Math.min(this.props.width / 7.5, this.props.height / 2));
-    return this.props.cornerRadius != undefined
-      ? this.props.cornerRadius
-      : Math.min(this.props.width / 7.5, this.props.height / 2)
   }
 
 	render () {
@@ -168,7 +162,7 @@ export default class Gene extends Component {
 
 		return (
       <OverlayTrigger placement={ this.props.tooltipPlacement } overlay={tooltip} trigger='click' rootClose={true}>
-        <g transform={"translate(" + (this.props.gene.orientation == '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation == '+' ? 1 : -1) + ",1)"}>
+        <g transform={"translate(" + (this.props.gene.orientation === '+' ? 0 : this.props.x * 2 + this.props.width) + ",0) scale(" + (this.props.gene.orientation === '+' ? 1 : -1) + ",1)"}>
           <path d={d} fill = {this.props.fillColor}
             strokeWidth = { this.strokeWidth(this.props.highlighted, this.props.highlightWidth) }
             stroke = { this.stroke(this.props.highlighted, this.props.highlightColor, this.props.strokeColor) }

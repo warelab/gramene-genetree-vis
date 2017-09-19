@@ -106,7 +106,8 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
         let pathDistance = 0;
         let lca;
         if (nodeTaxonId !== theGeneTaxonId) {
-          if ((lca = theTaxonPathIds[nodeTaxonId])) {
+          lca = theTaxonPathIds[nodeTaxonId];
+          if (lca) {
             pathDistance = 0;
           }
           else {
