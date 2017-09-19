@@ -59,8 +59,8 @@ const NeighborhoodArrow = props => {
       <line
         x1={i} y1={4}
         x2={i} y2={20}
-        stroke="black"
-        strokeWidth="0.5"
+        stroke={color}
+        strokeWidth="0.25"
         key={i}
       />
     );
