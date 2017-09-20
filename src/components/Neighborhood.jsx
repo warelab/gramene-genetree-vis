@@ -74,6 +74,7 @@ const NeighborhoodArrow = props => {
         x2={lineEnd} y2={neighborhoodHeight / 2}
         stroke={color}
         strokeWidth="3"
+        cursor='pointer'
       />
       </OverlayTrigger>
       {tickMarks}

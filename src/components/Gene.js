@@ -172,6 +172,7 @@ export default class Gene extends Component {
             //onMouseOver = { this.tooltipOver.bind(this) }
             //onMouseOut  = { this.tooltipOut.bind(this) }
             mask = {shapeStuff.mask ? shapeStuff.mask() : ''}
+                cursor='pointer'
             />
         </g>
       </OverlayTrigger>
