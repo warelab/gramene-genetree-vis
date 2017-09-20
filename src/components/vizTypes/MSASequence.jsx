@@ -4,7 +4,6 @@ import PositionedDomains from '../PositionedDomains.jsx';
 import alignmentTools from '../../utils/calculateAlignment';
 import positionDomains from '../../utils/positionDomains';
 import interact from 'interact.js';
-import _ from 'lodash';
 
 export default class MSASequence extends React.Component {
   constructor(props) {

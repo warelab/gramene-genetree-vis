@@ -16,22 +16,18 @@ const Node = props => {
 
 function getNodeType(node) {
   if (node.model.gene_stable_id) {
-    return 'Gene';
+    return Gene;
   }
   else if (!node.displayInfo.expanded) {
-    return 'Collapsed';
+    return Collapsed;
   }
   else {
-    return 'Internal';
+    return Internal;
   }
 }
 
 function getNodeComponent(node) {
-  switch(getNodeType(node)) {
-    case 'Gene': return Gene;
-    case 'Collapsed': return Collapsed;
-    case 'Internal': return Internal;
-  }
+  return getNodeType(node);
 }
 
 

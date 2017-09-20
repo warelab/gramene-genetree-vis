@@ -2,36 +2,6 @@ var _ = require('lodash');
 
 var alignments = {};
 
-function cigarToHistogram(cigar) {
-  var blocks = [];
-  var positions = {};
-  var pieces = cigar.split(/([DM])/);
-  var size = 0;
-  var stretch = 0;
-  pieces.forEach(function(piece) {
-    if (piece === "M") {
-      if (stretch === 0) stretch = 1;
-      blocks.push({
-        start: size,
-        end: size+stretch
-      });
-      positions[size] = 1;
-      positions[size + stretch] = -1;
-      size += stretch;
-      stretch = 0;
-    }
-    else if (piece === "D") {
-      if (stretch === 0) stretch = 1;
-      size += stretch;
-      stretch = 0;
-    }
-    else if (!!piece) {
-      stretch = +piece;
-    }
-  });
-  return {hist: positions, size: size, nSeqs: 1, blocks: blocks};
-}
-
 function calculateAlignmentFromConsensus(node) {
   var nodeId = node.model.node_id;
   if (alignments[nodeId]) return alignments[nodeId];
@@ -71,39 +41,6 @@ function calculateAlignmentFromConsensus(node) {
     size: consensus.consensusLength,
     nSeqs: consensus.nSeqs
   };
-  return alignments[nodeId];
-}
-
-function calculateAlignment(node) {
-  var nodeId = node.model.node_id;
-  if (alignments[nodeId]) return alignments[nodeId];
-
-  if (node.model.cigar) alignments[nodeId] = cigarToHistogram(node.model.cigar);
-  else if (node.children.length === 1) { // this happens when one child has no genomes of interest
-    alignments[nodeId] = _.cloneDeep(calculateAlignment(node.children[0]));
-  }
-  else {
-    var positions = {}; // Thanks for the sparse arrays JavaScript! Merging histograms is easy
-    var totalSeqs = 0;
-    var size;
-    node.children.forEach(function(childNode) { // I know these are binary trees, but this works for k-ary trees
-      var childAlignment = calculateAlignment(childNode); // recursive call to be sure that we have an alignment for the childNode
-      size = childAlignment.size;
-      totalSeqs += childAlignment.nSeqs;
-      Object.keys(childAlignment.hist).forEach(function(offset) {
-        if (positions[offset]) {
-          positions[offset] += childAlignment.hist[offset];
-          if (positions[offset] === 0) {
-            delete positions[offset];
-          }
-        }
-        else {
-          positions[offset] = childAlignment.hist[offset];
-        }
-      });
-    });
-    alignments[nodeId] = { hist: positions, size: size, nSeqs: totalSeqs };
-  }
   return alignments[nodeId];
 }
 

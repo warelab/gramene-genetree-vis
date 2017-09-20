@@ -78,6 +78,7 @@ function geneProps(model) {
       <tbody>
       {prop('ID', model.gene_stable_id)}
       {prop('Description', model.gene_description)}
+      {prop('nTranscripts', model.nTranscripts)}
       {prop('Distance to parent', model.distance_to_parent.toPrecision(3))}
       </tbody>
   )

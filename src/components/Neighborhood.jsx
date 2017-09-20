@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 import Gene from './Gene';
@@ -35,10 +34,10 @@ const NeighborhoodArrow = props => {
       ['region', region.name],
       ['start', region.start],
       ['end', region.end],
-      ['',<a href = {`${syntenyURL}${region.name}:${region.start}-${region.end}`} target='_blank'>{`Synteny browser`}</a>]
+      ['',<a href = {`${syntenyURL}${region.name}:${region.start}-${region.end}`} target='_blank' rel="noopener noreferrer">{`Synteny browser`}</a>]
     ];
     tooltip = (
-      <Tooltip>
+      <Tooltip id={region.name + ':' + region.start}>
         <table>
           <tbody>
           {tooltipFields.map( (tip, i ) => {
@@ -60,8 +59,8 @@ const NeighborhoodArrow = props => {
       <line
         x1={i} y1={4}
         x2={i} y2={20}
-        stroke="black"
-        strokeWidth="0.5"
+        stroke={color}
+        strokeWidth="0.25"
         key={i}
       />
     );
@@ -75,6 +74,7 @@ const NeighborhoodArrow = props => {
         x2={lineEnd} y2={neighborhoodHeight / 2}
         stroke={color}
         strokeWidth="3"
+        cursor='pointer'
       />
       </OverlayTrigger>
       {tickMarks}
@@ -99,10 +99,10 @@ const ComparaGene = props => {
   const highlighted = props.highlighted[gene.tree_id];
 
   let tooltipFields = [
-    ['Gene ID',     <a href={`http://www.gramene.org?idList=${gene.id}`} target='_blank'>{gene.id}</a>],
+    ['Gene ID',     <a href={`http://www.gramene.org?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
-    ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank'>{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
+    ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank' rel="noopener noreferrer">{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     // ['Biotype',     gene.biotype],
@@ -199,15 +199,6 @@ const NonCodingGroup = props => {
         fill={ props.scale(n) } />
     </OverlayTrigger>
   );
-
-  return (
-    <line
-      x1={x - 6} y1={20}
-      x2={x + 6} y2={4}
-      stroke="red"
-      strokeWidth="1"
-    />
-  )
 };
 
 function treeIDToColor(tree_id, treeMap, scale) {

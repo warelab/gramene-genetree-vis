@@ -5,6 +5,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import Label from './Label';
 import _ from 'lodash';
 import flow from 'lodash.flow';
+import PropTypes from 'prop-types';
 
 const style = {
 };
@@ -87,8 +88,11 @@ class LabelConfig extends Component {
       </div>
     );
   }
+}
+
+LabelConfig.propTypes = {
+  labelFields: PropTypes.array.isRequired,
+  updateLabelFields: PropTypes.func.isRequired
 };
 
-export default flow(
-  DragDropContext(HTML5Backend)
-)(LabelConfig)
+export default flow(DragDropContext(HTML5Backend))(LabelConfig);

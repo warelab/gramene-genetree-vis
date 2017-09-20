@@ -14,7 +14,7 @@ const style = {
   cursor: 'move',
   display: 'inline-block',
   zoom: 1,
-  'vertical-align': 'top',
+  verticalAlign: 'top',
   width: '140px'
 };
 
