@@ -88,6 +88,7 @@ function internalProps(model) {
   return (
       <tbody>
       {prop('Bootstrap', model.bootstrap)}
+      {model.duplication_confidence_score ? prop('Duplication confidence', 100*model.duplication_confidence_score.toPrecision(3) + '%') : ''}
       {prop('Distance to parent', model.distance_to_parent.toPrecision(3))}
       </tbody>
   )
