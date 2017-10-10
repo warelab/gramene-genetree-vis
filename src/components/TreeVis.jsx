@@ -133,7 +133,8 @@ export default class TreeVis extends React.Component {
                 neighborhoods: app.state.neighborhoods,
                 maxNCGGenes: app.state.nonCodingGroupLengthDistribution.length - 1,
                 numberOfNeighbors: app.props.numberOfNeighbors,
-                transform: app.transformViz
+                transform: app.transformViz,
+                ensemblUrl: app.props.ensemblUrl
               });
             }
           }
@@ -462,5 +463,6 @@ TreeVis.propTypes = {
   taxonomy: PropTypes.object,
   pivotTree: PropTypes.bool,
   numberOfNeighbors: PropTypes.number,
-  enablePhyloview: PropTypes.bool
+  enablePhyloview: PropTypes.bool,
+  ensemblUrl: PropTypes.string.isRequired
 };

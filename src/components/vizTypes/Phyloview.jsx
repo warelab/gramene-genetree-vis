@@ -184,6 +184,7 @@ export default class MSAOverview extends React.Component {
             maxNCGGenes={this.props.maxNCGGenes}
             treeInfo={treeInfo}
             highlighted={this.state.highlighted}
+            ensemblUrl={this.props.ensemblUrl}
             clickHandler={
               (gene_id, tree_id) => {
                 let highlighted = {...this.state.highlighted};
