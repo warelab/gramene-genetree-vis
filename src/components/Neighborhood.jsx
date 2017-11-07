@@ -30,11 +30,13 @@ const NeighborhoodArrow = props => {
     color = props.neighborhood.region.color;
     arrowHead = <polygon points={points} stroke={color} fill={color}/>
     const region = props.neighborhood.region;
+    const system_name=props.neighborhood.genes[0].system_name;
+    let syntenyURL = `${props.ensemblUrl}/${system_name}/Location/Synteny?r=${region.name}:${region.start}-${region.end}`;
     let tooltipFields = [
       ['region', region.name],
       ['start', region.start],
       ['end', region.end],
-      ['',<a href = {`${syntenyURL}${region.name}:${region.start}-${region.end}`} target='_blank' rel="noopener noreferrer">{`Synteny browser`}</a>]
+      ['',<a href={syntenyURL} target='_blank' rel="noopener noreferrer">{`Synteny browser`}</a>]
     ];
     tooltip = (
       <Tooltip id={region.name + ':' + region.start}>
@@ -97,12 +99,12 @@ const ComparaGene = props => {
   const identity = gene.relationToGeneOfInterest ? gene.relationToGeneOfInterest.identity : 1;
 
   const highlighted = props.highlighted[gene.tree_id];
-
+  let syntenyURL = `${props.ensemblUrl}/${gene.system_name}/Location/Synteny?r=${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`;
   let tooltipFields = [
-    ['Gene ID',     <a href={`http://www.gramene.org?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
+    ['Gene ID',     <a href={`/?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
-    ['Region',      <a href = {`${syntenyURL}${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`} target='_blank' rel="noopener noreferrer">{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
+    ['Region',      <a href = {syntenyURL} target='_blank' rel="noopener noreferrer">{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
     ['Tree ID',     gene.tree_id],
     //['Tree Root',   this.props.taxonomy.taxonIdToSpeciesName[gene.gene_tree_root_taxon_id]],
     // ['Biotype',     gene.biotype],
@@ -269,6 +271,7 @@ export default class Neighborhood extends React.Component {
                 center={gene_idx === neighborhood.center_idx}
                 clickHandler={this.props.clickHandler}
                 highlighted={this.props.highlighted}
+                ensemblUrl={this.props.ensemblUrl}
               />
             );
           }
@@ -295,7 +298,7 @@ export default class Neighborhood extends React.Component {
 
     return (
       <g className="Neighborhood" >
-        <NeighborhoodArrow neighborhood={neighborhood} width={this.props.width} totalLength={this.props.totalLength}/>
+        <NeighborhoodArrow ensemblUrl={this.props.ensemblUrl} neighborhood={neighborhood} width={this.props.width} totalLength={this.props.totalLength}/>
         {comparaGenes}
         {nonCodingGenes}
       </g>

@@ -3,6 +3,8 @@ let scale = require('d3').scale.linear;
 let calculateIdentity = require('gramene-trees-client').extensions.identity;
 
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
+  addHomologyInformationToNodes(genetree, geneOfInterest);
+  addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy);
   if (pivotTree) {
     let node = genetree.indices.gene_stable_id[geneOfInterest._id];
 
@@ -20,12 +22,6 @@ function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTr
       node = parent;
     }
   }
-  // (re)initialize relationships
-  // genetree.walk(function (node) {
-  //   node.relationToGeneOfInterest = {};
-  // });
-  addHomologyInformationToNodes(genetree, geneOfInterest);
-  addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy);
 }
 
 function addHomologyInformationToNodes(genetree, theGene) {
@@ -33,7 +29,8 @@ function addHomologyInformationToNodes(genetree, theGene) {
     let theGeneNode = genetree.indices.gene_stable_id[theGene._id];
     let homologs = indexHomologs(theGene);
     let representatives = indexReps(theGene);
-    genetree.walk(function (node) {
+    // recursive function that sorts children by identity
+    function sortByIdentity(node) {
       let homology;
       let nodeId = node.model.gene_stable_id;
       if (!node.hasOwnProperty('relationToGeneOfInterest')) {
@@ -53,7 +50,17 @@ function addHomologyInformationToNodes(genetree, theGene) {
           node.model.gene_display_label = `[${nodeId}]`;
         }
       }
-    });
+      else {
+        node.children.forEach(function (child) {
+          sortByIdentity(child);
+        });
+        node.children = _.sortBy(node.children, function (n) {
+          return 1.0 - n.relationToGeneOfInterest.identity;
+        });
+        node.relationToGeneOfInterest.identity = node.children[0].relationToGeneOfInterest.identity;
+      }
+    }
+    sortByIdentity(genetree);
   }
 }
 

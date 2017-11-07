@@ -26,6 +26,7 @@ ReactDOM.render(
            pivotTree={true}
            enablePhyloview={true}
            numberOfNeighbors={10}
+           ensemblUrl='http://ensembl.gramene.org'
            />,
   document.getElementById('tree')
 );

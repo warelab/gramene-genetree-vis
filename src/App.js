@@ -31,6 +31,7 @@ class App extends Component {
            allowGeneSelection={true}
            pivotTree={true}
            enablePhyloview={true}
+           ensemblUrl='http://ensembl.gramene.org'
            numberOfNeighbors={10}
            />;
   }
