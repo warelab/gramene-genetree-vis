@@ -84,7 +84,7 @@ function allGenesPromise(queryString, numberOfNeighbors) {
     q: `{!graph from=compara_neighbors_${fieldToQuery} to=compara_idx_multi maxDepth=1}${queryString}`,
     rows: 100000,
     start: 0,
-    fl: ["id", "name", "compara_idx", "gene_idx", "gene_tree", "taxon_id", "system_name",
+    fl: ["id", "name", "compara_idx", "gene_idx", "gene_tree", "taxon_id", "system_name", "closest_rep*", "model_rep*",
       "region", "strand", "biotype", "gene_tree_root_taxon_id", "description", "start", "end",
       "domains__ancestors", "GO__ancestors", "pathways__ancestors"
     ],

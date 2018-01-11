@@ -110,6 +110,12 @@ const ComparaGene = props => {
     // ['Biotype',     gene.biotype],
     ['Description', gene.description]
   ];
+  if (gene.closest_rep_id) {
+    tooltipFields.push(['Homolog', gene.closest_rep_description]);
+  }
+  else if (gene.model_rep_id) {
+    tooltipFields.push(['Homolog', gene.model_rep_description]);
+  }
   let button = (
     <button className='btn btn-xs btn-default' onClick={() => {
       if (props.clickHandler) {
