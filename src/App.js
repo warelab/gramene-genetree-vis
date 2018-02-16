@@ -32,6 +32,9 @@ class App extends Component {
       curatableGenomes: {4577: taxonomy.indices.id[4577]}
     };
   }
+  getCuration(opinion) {
+    console.log(opinion);
+  }
   render() {
     if (this.state.genetree) {
       return <TreeVis genetree={this.state.genetree}
@@ -46,6 +49,7 @@ class App extends Component {
                       ensemblUrl='http://ensembl.gramene.org'
                       numberOfNeighbors={10}
                       enableCuration={true}
+                      getCuration={this.getCuration.bind(this)}
       />;
     }
     else {

@@ -38,6 +38,7 @@ export default class Curation extends React.Component {
     let opinion = this.state.opinion;
     opinion[id] = shifty[opinion[id]];
     this.setState({opinion});
+    this.props.getCuration(opinion);
   }
 
   render() {

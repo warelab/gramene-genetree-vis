@@ -441,6 +441,7 @@ export default class TreeVis extends React.Component {
                            curatable={this.props.curatable}
                            xOffset={this.margin + this.treeWidth + this.labelWidth + this.vizWidth}
                            yOffset={DEFAULT_ZOOM_HEIGHT + this.margin - 10}
+                           getCuration={this.props.getCuration}
       />;
     }
     return (
