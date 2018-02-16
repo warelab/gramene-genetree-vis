@@ -5,6 +5,7 @@ import GeneTree from './GeneTree.jsx';
 import MSAOverview from './vizTypes/MSAOverview.jsx';
 import MSASequence from './vizTypes/MSASequence.jsx';
 import Phyloview from './vizTypes/Phyloview.jsx';
+import Curation from './vizTypes/Curation.jsx';
 import Spinner from './Spinner.jsx';
 import _ from 'lodash';
 import {client as GrameneClient} from 'gramene-search-client';
@@ -32,6 +33,7 @@ let addConsensus = GrameneTreesClient.extensions.addConsensus;
 const DEFAULT_MARGIN = 20;
 const DEFAULT_ZOOM_HEIGHT = 20;
 const DEFAULT_LABEL_WIDTH = 200;
+const CURATION_WIDTH = 200;
 const MIN_TREE_WIDTH = 50;
 const MAX_TREE_WIDTH = 200;
 const MIN_VIZ_WIDTH = 150;
@@ -234,6 +236,9 @@ export default class TreeVis extends React.Component {
       console.log('Is this too small to see everything?');
       this.width = this.treeWidth + this.vizWidth + this.labelWidth + 2 * this.margin;
     }
+    if (this.props.enableCuration) {
+      this.vizWidth -= CURATION_WIDTH;
+    }
     this.transformTree = `translate(${this.margin},${this.margin + DEFAULT_ZOOM_HEIGHT})`;
     this.transformViz = `translate(${this.margin + this.treeWidth + this.labelWidth},0)`;
   }
@@ -387,7 +392,12 @@ export default class TreeVis extends React.Component {
          </Dropdown>
          {this.colorSchemeDropdown()}
         </ButtonToolbar>
-        <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>{this.displayModeIdx[activeMode].description}</span>
+        <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>
+          {this.displayModeIdx[activeMode].description}
+        </span>
+        <div style={{position: 'absolute', left:`${this.margin + this.treeWidth + this.labelWidth + this.vizWidth}px`}}>
+          <b>Curate</b>: click to flag genes as <div>&nbsp;either: <span className="curation okay">okay</span> <span className="curation bad">bad</span> <span className="curation weird">weird</span></div>
+        </div>
       </div>
         )
   }
@@ -423,6 +433,16 @@ export default class TreeVis extends React.Component {
           yOffset: this.treeHeight / 2
         });
     }
+    let curation;
+    if (this.props.enableCuration) {
+      curation = <Curation nodes={this.state.visibleNodes}
+                           width={CURATION_WIDTH}
+                           height={DEFAULT_ZOOM_HEIGHT}
+                           curatable={this.props.curatable}
+                           xOffset={this.margin + this.treeWidth + this.labelWidth + this.vizWidth}
+                           yOffset={DEFAULT_ZOOM_HEIGHT + this.margin - 10}
+      />;
+    }
     return (
       <div>
         <Modal
@@ -448,6 +468,7 @@ export default class TreeVis extends React.Component {
               {genetree}
             </g>
             {theViz}
+            {curation}
           </svg>
         </div>
       </div>

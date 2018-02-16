@@ -7,3 +7,30 @@ body {
 .tooltip-inner {
   max-width : 400px;
 }
+
+.curation {
+  display: inline-block;
+  text-align: center;
+  width: 45px;
+  font-size: 8pt;
+  font-weight: bolder;
+  border: 1px solid black;
+  border-radius: 5px;
+  transition: border-width .1s;
+}
+.curation:hover {
+    border-width: 3px;
+    cursor: pointer;
+}
+.curation.okay {
+  background: lawngreen;
+  border-color: green;
+}
+.curation.bad {
+  background: orangered;
+  border-color: darkred;
+}
+.curation.weird {
+  background: yellow;
+  border-color: orange;
+}

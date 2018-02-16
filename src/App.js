@@ -15,25 +15,42 @@ let exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/YAB2_tree.j
 let taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
 let genomesOfInterest = {
-  // 3702 : taxonomy.indices.id[3702],
-  // 4558 : taxonomy.indices.id[4558],
-  // 4577 : taxonomy.indices.id[4577],
-  // 39947 : taxonomy.indices.id[39947]
+  3702 : taxonomy.indices.id[3702],
+  4558 : taxonomy.indices.id[4558],
+  4577 : taxonomy.indices.id[4577],
+  39947 : taxonomy.indices.id[39947]
 };
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      genetree: exampleGenetree,
+      geneOfInterest: geneFixture,
+      taxonomy: taxonomy,
+      genomesOfInterest: genomesOfInterest,
+      curatableGenomes: {4577: taxonomy.indices.id[4577]}
+    };
+  }
   render() {
-    return <TreeVis genetree={exampleGenetree}
-           initialGeneOfInterest={geneFixture}
-           taxonomy={taxonomy}
-           genomesOfInterest={genomesOfInterest}
-           width={1200}
-           allowGeneSelection={true}
-           pivotTree={true}
-           enablePhyloview={true}
-           ensemblUrl='http://ensembl.gramene.org'
-           numberOfNeighbors={10}
-           />;
+    if (this.state.genetree) {
+      return <TreeVis genetree={this.state.genetree}
+                      initialGeneOfInterest={this.state.geneOfInterest}
+                      taxonomy={this.state.taxonomy}
+                      genomesOfInterest={this.state.genomesOfInterest}
+                      curatable={this.state.curatableGenomes}
+                      width={1200}
+                      allowGeneSelection={true}
+                      pivotTree={true}
+                      enablePhyloview={true}
+                      ensemblUrl='http://ensembl.gramene.org'
+                      numberOfNeighbors={10}
+                      enableCuration={true}
+      />;
+    }
+    else {
+      return <div>tree</div>;
+    }
   }
 }
 
