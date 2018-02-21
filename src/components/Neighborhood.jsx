@@ -8,8 +8,6 @@ var d3Scale = require('d3-scale');
 const neighborhoodHeight = 24;
 const scaleFactor = 20;
 
-const syntenyURL = 'http://ensembl.gramene.org/Oryza_sativa/Location/Synteny?r=';
-
 const NeighborhoodArrow = props => {
   const arrowLength = scaleFactor * 10*props.totalLength/props.width;
   const arrowHeight = 4;

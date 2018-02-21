@@ -58,6 +58,7 @@ export default class Curation extends React.Component {
                     onClick={() => this.flipFlop(node)}>{opinion}</span>
             </foreignObject>
           }
+          return '';
         } ) }
       </g>
     )

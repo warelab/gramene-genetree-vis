@@ -34,3 +34,6 @@ body {
   background: yellow;
   border-color: orange;
 }
+.curation.submit {
+    width: 60px;
+}
