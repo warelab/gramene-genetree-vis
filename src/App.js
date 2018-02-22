@@ -67,9 +67,7 @@ class App extends Component {
   getCuration(opinion) {
     let submission = [];
     for (const gene in opinion) {
-      if (opinion[gene] !== 'okay') {
-        submission.push({geneId: gene, opinion: opinion[gene]})
-      }
+      submission.push({geneId: gene, opinion: opinion[gene]})
     }
     this.setState({submission})
   }

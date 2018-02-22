@@ -174,6 +174,18 @@ export default class TreeVis extends React.Component {
     addConsensus(this.genetree); // TODO: use a promise
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
+    if (this.props.enableCuration) {
+      let node = this.genetree;
+      node.displayInfo.paralogs.forEach(function (paralog) {
+        let parentNode = paralog.parent;
+        while (!parentNode.displayInfo.expanded) {
+          parentNode.displayInfo.expanded = true;
+          parentNode.displayInfo.expandedParalogs = true;
+          parentNode = parentNode.parent
+        }
+      });
+    }
+
     calculateXIndex(this.genetree);
     this.treeHeight = calculateSvgHeight(this.genetree);
 
