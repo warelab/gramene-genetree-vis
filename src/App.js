@@ -61,7 +61,10 @@ class App extends Component {
     Q.all([genePromise,treePromise]).spread(function(gene,tree) {
       let genetree = GrameneTrees.genetree.tree(tree);
       let geneOfInterest = gene[0];
-      this.setState({genetree, geneOfInterest});
+      let submission = genetree.leafNodes()
+        .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+        .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'okay'}});
+      this.setState({genetree, geneOfInterest, submission});
     }.bind(this));
   }
   getCuration(opinion) {
