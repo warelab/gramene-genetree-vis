@@ -76,7 +76,9 @@ class App extends Component {
 
   render() {
     let treeVis;
+    let treeId;
     if (this.state.genetree) {
+      treeId = this.state.genetree._id;
       treeVis = <TreeVis genetree={this.state.genetree}
                          initialGeneOfInterest={this.state.geneOfInterest}
                          taxonomy={this.state.taxonomy}
@@ -95,7 +97,7 @@ class App extends Component {
     return (
       <div>
         {treeVis}
-        <Feedback genetree={this.state.genetree._id} genes={this.state.submission}/>
+        <Feedback genetree={treeId} genes={this.state.submission}/>
       </div>
     )
   }
