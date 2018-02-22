@@ -1,5 +1,5 @@
 import React from 'react';
-// import Recaptcha from 'react-recaptcha';
+import Recaptcha from 'react-recaptcha';
 import { FormGroup, FormControl, Form, ControlLabel, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
@@ -11,7 +11,8 @@ export default class Feedback extends React.Component {
     this.state = {
       name: '',
       email: '',
-      genes: props.genes
+      genes: props.genes,
+      genetree: props.genetree
     };
   }
 
@@ -66,7 +67,7 @@ export default class Feedback extends React.Component {
   formIsValid() {
     return (this.validateField('name') === 'success'
       && this.validateField('email') === 'success'
-      // && this.state.recaptcha
+      && this.state.recaptcha
     )
   }
 
@@ -101,16 +102,16 @@ export default class Feedback extends React.Component {
               <FormControl.Feedback />
             </Col>
           </FormGroup>
-          {/*<FormGroup>*/}
-            {/*<Col smOffset={3} sm={9}>*/}
-              {/*<Recaptcha*/}
-                {/*sitekey="6LcDFdMSAAAAABJNbBf5O18x3LA4h1cb0dlclHY8"*/}
-                {/*render="explicit"*/}
-                {/*verifyCallback={this.verifyRecaptcha.bind(this)}*/}
-                {/*onloadCallback={this.loadRecaptcha}*/}
-              {/*/>*/}
-            {/*</Col>*/}
-          {/*</FormGroup>*/}
+          <FormGroup>
+            <Col smOffset={3} sm={9}>
+              <Recaptcha
+                sitekey="6LcDFdMSAAAAABJNbBf5O18x3LA4h1cb0dlclHY8"
+                render="explicit"
+                verifyCallback={this.verifyRecaptcha.bind(this)}
+                onloadCallback={this.loadRecaptcha}
+              />
+            </Col>
+          </FormGroup>
           <FormGroup>
             <Col smOffset={3} sm={9}>
               <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>

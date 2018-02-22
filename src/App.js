@@ -11,11 +11,8 @@ import queryString from 'query-string';
 import Q from "q";
 import _ from "lodash";
 
-// let geneFixture = require('./fixtures/YAB2_gene.json');
-
 let GrameneTrees = require('gramene-trees-client');
 
-// let exampleGenetree = GrameneTrees.genetree.tree(require('./fixtures/YAB2_tree.json'));
 let taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
 
 let genomesOfInterest = {
@@ -98,7 +95,7 @@ class App extends Component {
     return (
       <div>
         {treeVis}
-        <Feedback genes={this.state.submission}/>
+        <Feedback genetree={this.state.genetree._id} genes={this.state.submission}/>
       </div>
     )
   }
