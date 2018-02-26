@@ -22,6 +22,10 @@ body {
     border-width: 3px;
     cursor: pointer;
 }
+.curation.curate {
+  background: white;
+  border-color: black;
+}
 .curation.okay {
   background: lawngreen;
   border-color: green;

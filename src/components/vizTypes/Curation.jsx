@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 const shifty = {
+  curate : 'okay',
   okay : 'bad',
   bad : 'weird',
   weird: 'okay'
@@ -12,7 +13,7 @@ export default class Curation extends React.Component {
     let opinion=[];
     props.nodes.forEach((node) => {
       if (node.model.gene_stable_id && props.curatable[node.model.taxon_id]) {
-        opinion[node.model.gene_stable_id] = "okay";
+        opinion[node.model.gene_stable_id] = "curate";
       }
     });
     this.state = {opinion}
@@ -25,7 +26,7 @@ export default class Curation extends React.Component {
       nextProps.nodes.forEach((node) => {
         const id = node.model.gene_stable_id;
         if (id && !this.state.opinion[id] && nextProps.curatable[node.model.taxon_id]) {
-          opinion[id] = "okay";
+          opinion[id] = "curate";
           doUpdate = true;
         }
       });

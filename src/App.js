@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+  import React, { Component } from 'react';
 import './App.css';
 import './styles/msa.css';
 import './styles/tree.css';
@@ -8,7 +8,7 @@ import TreeVis from './components/TreeVis.jsx';
 import Feedback from './Feedback';
 import {client as searchInterface} from "gramene-search-client";
 import queryString from 'query-string';
-import Q from "q";
+// import Q from "q";
 import _ from "lodash";
 
 let GrameneTrees = require('gramene-trees-client');
@@ -52,20 +52,32 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    if (!parsed.genetree) {
-      parsed.genetree = defaults.genetree;
-    }
+    // if (!parsed.genetree) {
+    //   parsed.genetree = defaults.genetree;
+    // }
     let genePromise = details('genes',parsed.gene);
-    let treePromise = details('genetrees',parsed.genetree);
-
-    Q.all([genePromise,treePromise]).spread(function(gene,tree) {
-      let genetree = GrameneTrees.genetree.tree(tree);
-      let geneOfInterest = gene[0];
-      let submission = genetree.leafNodes()
-        .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
-        .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'okay'}});
-      this.setState({genetree, geneOfInterest, submission});
+    // let treePromise = details('genetrees',parsed.genetree);
+    genePromise.then(function(genes) {
+      let geneOfInterest = genes[0];
+      let treeId = geneOfInterest.homology.gene_tree.id;
+      let treePromise = details('genetrees',treeId);
+      treePromise.then(function(tree) {
+        let genetree = GrameneTrees.genetree.tree(tree);
+        let submission = genetree.leafNodes()
+          .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+          .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'curate'}});
+        this.setState({genetree, geneOfInterest, submission});
+      }.bind(this));
     }.bind(this));
+
+    // Q.all([genePromise,treePromise]).spread(function(gene,tree) {
+    //   let genetree = GrameneTrees.genetree.tree(tree);
+    //   let geneOfInterest = gene[0];
+    //   let submission = genetree.leafNodes()
+    //     .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+    //     .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'okay'}});
+    //   this.setState({genetree, geneOfInterest, submission});
+    // }.bind(this));
   }
   getCuration(opinion) {
     let submission = [];

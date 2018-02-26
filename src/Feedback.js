@@ -1,5 +1,5 @@
 import React from 'react';
-import Recaptcha from 'react-recaptcha';
+// import Recaptcha from 'react-recaptcha';
 import { FormGroup, FormControl, Form, ControlLabel, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
@@ -56,25 +56,45 @@ export default class Feedback extends React.Component {
       });
   }
 
-  verifyRecaptcha(response) {
-    this.setState({recaptcha: response});
-  }
-
-  loadRecaptcha() {
-    console.log('loaded recaptcha');
-  }
+  // verifyRecaptcha(response) {
+  //   this.setState({recaptcha: response});
+  // }
+  //
+  // loadRecaptcha() {
+  //   console.log('loaded recaptcha');
+  // }
 
   formIsValid() {
     return (this.validateField('name') === 'success'
       && this.validateField('email') === 'success'
-      && this.state.recaptcha
+      // && this.state.recaptcha
     )
   }
 
   renderForm() {
+    let tally = {
+      curate: 0,
+      okay: 0,
+      bad: 0,
+      weird: 0
+    };
+    this.props.genes.forEach(function(gene) {
+      tally[gene.opinion]++;
+    });
     return (
       <div style={{width:"500px"}}>
         <Form horizontal>
+          <FormGroup controlId="progress">
+            <Col componentClass={ControlLabel} sm={3}>
+              Progress
+            </Col>
+            <Col sm={9}>
+              <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
+              <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
+              <span className="curation bad">bad</span>&nbsp;{tally.bad}&nbsp;
+              <span className="curation weird">weird</span>&nbsp;{tally.weird}
+            </Col>
+          </FormGroup>
           <FormGroup controlId="name" validationState={this.validateField('name')}>
             <Col componentClass={ControlLabel} sm={3}>
               Your Name
@@ -102,16 +122,16 @@ export default class Feedback extends React.Component {
               <FormControl.Feedback />
             </Col>
           </FormGroup>
-          <FormGroup>
-            <Col smOffset={3} sm={9}>
-              <Recaptcha
-                sitekey="6LcDFdMSAAAAABJNbBf5O18x3LA4h1cb0dlclHY8"
-                render="explicit"
-                verifyCallback={this.verifyRecaptcha.bind(this)}
-                onloadCallback={this.loadRecaptcha}
-              />
-            </Col>
-          </FormGroup>
+          {/*<FormGroup>*/}
+            {/*<Col smOffset={3} sm={9}>*/}
+              {/*<Recaptcha*/}
+                {/*sitekey="6LcDFdMSAAAAABJNbBf5O18x3LA4h1cb0dlclHY8"*/}
+                {/*render="explicit"*/}
+                {/*verifyCallback={this.verifyRecaptcha.bind(this)}*/}
+                {/*onloadCallback={this.loadRecaptcha}*/}
+              {/*/>*/}
+            {/*</Col>*/}
+          {/*</FormGroup>*/}
           <FormGroup>
             <Col smOffset={3} sm={9}>
               <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>
