@@ -47,7 +47,7 @@ export default class Feedback extends React.Component {
 
   submitForm() {
     let that = this;
-    axios.post('/feedback',_.omit(this.state,['recaptcha']))
+    axios.post('http://brie6.cshl.edu:5000/curate',_.omit(this.state,['recaptcha']))
       .then(function (response) {
         that.setState({submittedForm: true, ticket: response.data.ticket});
       })
