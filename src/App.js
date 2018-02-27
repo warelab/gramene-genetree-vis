@@ -90,7 +90,10 @@ class App extends Component {
   render() {
     let treeVis;
     let treeId;
+    let geneInfo = <p>Loading</p>;
     if (this.state.genetree) {
+      const goi = this.state.geneOfInterest;
+      geneInfo = <div>This is the gene tree containing {goi._id}&nbsp;{goi.name}&nbsp;{goi.description}. Please curate each paralog based on the quality of the alignment</div>
       treeId = this.state.genetree._id;
       treeVis = <TreeVis genetree={this.state.genetree}
                          initialGeneOfInterest={this.state.geneOfInterest}
@@ -109,6 +112,7 @@ class App extends Component {
     }
     return (
       <div>
+        {geneInfo}
         {treeVis}
         <Feedback genetree={treeId} genes={this.state.submission}/>
       </div>
