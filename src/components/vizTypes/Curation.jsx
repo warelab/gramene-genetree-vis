@@ -2,9 +2,8 @@ import React from 'react';
 import _ from 'lodash';
 const shifty = {
   curate : 'okay',
-  okay : 'bad',
-  bad : 'weird',
-  weird: 'okay'
+  okay : 'weird',
+  weird : 'okay'
 };
 
 export default class Curation extends React.Component {

@@ -47,7 +47,7 @@ export default class Feedback extends React.Component {
 
   submitForm() {
     let that = this;
-    axios.post('http://brie6.cshl.edu:5000/curate',_.omit(this.state,['recaptcha']))
+    axios.post('http://curate.gramene.org/feedback',_.omit(this.state,['recaptcha']))
       .then(function (response) {
         that.setState({submittedForm: true, ticket: response.data.ticket});
       })
@@ -65,8 +65,7 @@ export default class Feedback extends React.Component {
   // }
 
   formIsValid() {
-    return (this.validateField('name') === 'success'
-      && this.validateField('email') === 'success'
+    return (this.validateField('email') === 'success'
       // && this.state.recaptcha
     )
   }
@@ -75,7 +74,6 @@ export default class Feedback extends React.Component {
     let tally = {
       curate: 0,
       okay: 0,
-      bad: 0,
       weird: 0
     };
     this.props.genes.forEach(function(gene) {
@@ -91,24 +89,10 @@ export default class Feedback extends React.Component {
             <Col sm={9}>
               <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
               <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
-              <span className="curation bad">bad</span>&nbsp;{tally.bad}&nbsp;
-              <span className="curation weird">weird</span>&nbsp;{tally.weird}
+              <span className="curation weird">weird</span>&nbsp;{tally.weird}&nbsp;
+              {/*<span className="curation weird">weird</span>&nbsp;{tally.weird}*/}
             </Col>
           </FormGroup>
-          <FormGroup controlId="name" validationState={this.validateField('name')}>
-            <Col componentClass={ControlLabel} sm={3}>
-              Your Name
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="text"
-                value={this.state.name}
-                onChange={this.handleChange.bind(this)}
-              />
-              <FormControl.Feedback />
-            </Col>
-          </FormGroup>
-
           <FormGroup controlId="email" validationState={this.validateField('email')}>
             <Col componentClass={ControlLabel} sm={3}>
               Your Email
