@@ -3,7 +3,7 @@ import _ from 'lodash';
 const shifty = {
   curate : 'okay',
   okay : 'flag',
-  flag : 'okay'
+  flag : 'curate'
 };
 const reasons = [
   {
