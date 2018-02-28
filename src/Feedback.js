@@ -74,7 +74,7 @@ export default class Feedback extends React.Component {
     let tally = {
       curate: 0,
       okay: 0,
-      weird: 0
+      flag: 0
     };
     this.props.genes.forEach(function(gene) {
       tally[gene.opinion]++;
@@ -89,8 +89,8 @@ export default class Feedback extends React.Component {
             <Col sm={9}>
               <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
               <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
-              <span className="curation weird">weird</span>&nbsp;{tally.weird}&nbsp;
-              {/*<span className="curation weird">weird</span>&nbsp;{tally.weird}*/}
+              <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
+              {/*<span className="curation flag">flag</span>&nbsp;{tally.flag}*/}
             </Col>
           </FormGroup>
           <FormGroup controlId="email" validationState={this.validateField('email')}>

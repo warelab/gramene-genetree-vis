@@ -79,10 +79,14 @@ class App extends Component {
     //   this.setState({genetree, geneOfInterest, submission});
     // }.bind(this));
   }
-  getCuration(opinion) {
+  getCuration(opinion,reason) {
     let submission = [];
     for (const gene in opinion) {
-      submission.push({geneId: gene, opinion: opinion[gene]})
+      let info = {geneId: gene, opinion: opinion[gene]};
+      if (opinion[gene] === 'flag') {
+        info.reason = reason[gene];
+      }
+      submission.push(info);
     }
     this.setState({submission})
   }
@@ -93,7 +97,13 @@ class App extends Component {
     let geneInfo = <p>Loading</p>;
     if (this.state.genetree) {
       const goi = this.state.geneOfInterest;
-      geneInfo = <div>This is the gene tree containing {goi._id}&nbsp;{goi.name}&nbsp;{goi.description}. Please curate each paralog based on the quality of the alignment</div>
+      let d = goi.description.replace(/^\s+/,'');
+      const name = (goi.name !== goi._id) ? (<span>Gene name: <b>{goi.name}</b>.</span>) : '';
+      const descr = (goi.name !== d) ? (<span>Description: <b>{d}</b>.</span>) : '';
+      geneInfo = (<div style={{border: '4px solid black', padding:20, margin: 20}}>
+        <p>This is the gene tree containing <b>{goi._id}</b>. {name} {descr}</p>
+        <p>Mark genes as okay or flag genes that you think might have issues and choose a reason from the drop down menu. When finished, enter your email address and submit.</p>
+      </div>);
       treeId = this.state.genetree._id;
       treeVis = <TreeVis genetree={this.state.genetree}
                          initialGeneOfInterest={this.state.geneOfInterest}
