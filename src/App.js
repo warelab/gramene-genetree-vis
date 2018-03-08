@@ -1,4 +1,4 @@
-  import React, { Component } from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import './styles/msa.css';
 import './styles/tree.css';
@@ -12,15 +12,6 @@ import queryString from 'query-string';
 import _ from "lodash";
 
 let GrameneTrees = require('gramene-trees-client');
-
-let taxonomy = GrameneTrees.taxonomy.tree(require('./fixtures/taxonomy.json'));
-
-let genomesOfInterest = {
-  3702 : taxonomy.indices.id[3702],
-  4558 : taxonomy.indices.id[4558],
-  4577 : taxonomy.indices.id[4577],
-  39947 : taxonomy.indices.id[39947]
-};
 
 function details(collection, idList) {
   if (!_.isArray(idList)) {
@@ -39,34 +30,44 @@ const defaults = {
 class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      taxonomy: taxonomy,
-      genomesOfInterest: genomesOfInterest,
-      curatableGenomes: {4577: taxonomy.indices.id[4577]},
+      // taxonomy: taxonomy,
+      // genomesOfInterest: genomesOfInterest,
+      curatableGenomes: {4577: 'B73'},
       submission: []
-    };
+    }
   }
   componentDidMount() {
     const parsed = queryString.parse(window.location.search);
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    // if (!parsed.genetree) {
-    //   parsed.genetree = defaults.genetree;
-    // }
-    let genePromise = details('genes',parsed.gene);
-    // let treePromise = details('genetrees',parsed.genetree);
-    genePromise.then(function(genes) {
-      let geneOfInterest = genes[0];
-      let treeId = geneOfInterest.homology.gene_tree.id;
-      let treePromise = details('genetrees',treeId);
-      treePromise.then(function(tree) {
-        let genetree = GrameneTrees.genetree.tree(tree);
-        let submission = genetree.leafNodes()
-          .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
-          .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'curate'}});
-        this.setState({genetree, geneOfInterest, submission});
+    let taxonomyPromise = GrameneTrees.promise.get(); //(require('./fixtures/taxonomy.json'));
+    taxonomyPromise.then(function (taxonomy) {
+      let genomesOfInterest = {
+        3702: taxonomy.indices.id[3702],
+        4558: taxonomy.indices.id[4558],
+        4577: taxonomy.indices.id[4577],
+        39947: taxonomy.indices.id[39947]
+      };
+      if (taxonomy.indices.id[45770]) {
+        genomesOfInterest[45770] = taxonomy.indices.id[45770];
+        genomesOfInterest[4577000] = taxonomy.indices.id[4577000];
+      }
+      let genePromise = details('genes', parsed.gene);
+      genePromise.then(function (genes) {
+        let geneOfInterest = genes[0];
+        let treeId = geneOfInterest.homology.gene_tree.id;
+        let treePromise = details('genetrees', treeId);
+        treePromise.then(function (tree) {
+          let genetree = GrameneTrees.genetree.tree(tree);
+          let submission = genetree.leafNodes()
+            .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+            .map(node => {
+              return {geneId: node.model.gene_stable_id, opinion: 'curate'}
+            });
+          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest});
+        }.bind(this));
       }.bind(this));
     }.bind(this));
 
