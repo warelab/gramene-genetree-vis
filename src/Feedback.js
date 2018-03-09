@@ -1,5 +1,4 @@
 import React from 'react';
-// import Recaptcha from 'react-recaptcha';
 import { FormGroup, FormControl, Form, ControlLabel, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
@@ -12,7 +11,8 @@ export default class Feedback extends React.Component {
       name: '',
       email: '',
       genes: props.genes,
-      genetree: props.genetree
+      genetree: props.genetree,
+      set: props.set
     };
   }
 
@@ -47,7 +47,7 @@ export default class Feedback extends React.Component {
 
   submitForm() {
     let that = this;
-    axios.post('/curate',_.omit(this.state,['recaptcha']))
+    axios.post('/curate',this.state)
       .then(function (response) {
         that.setState({submittedForm: true, ticket: response.data.ticket});
       })
@@ -56,18 +56,9 @@ export default class Feedback extends React.Component {
       });
   }
 
-  // verifyRecaptcha(response) {
-  //   this.setState({recaptcha: response});
-  // }
-  //
-  // loadRecaptcha() {
-  //   console.log('loaded recaptcha');
-  // }
 
   formIsValid() {
-    return (this.validateField('email') === 'success'
-      // && this.state.recaptcha
-    )
+    return (this.validateField('email') === 'success')
   }
 
   renderForm() {
@@ -90,7 +81,6 @@ export default class Feedback extends React.Component {
               <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
               <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
               <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
-              {/*<span className="curation flag">flag</span>&nbsp;{tally.flag}*/}
             </Col>
           </FormGroup>
           <FormGroup controlId="email" validationState={this.validateField('email')}>
@@ -106,16 +96,6 @@ export default class Feedback extends React.Component {
               <FormControl.Feedback />
             </Col>
           </FormGroup>
-          {/*<FormGroup>*/}
-            {/*<Col smOffset={3} sm={9}>*/}
-              {/*<Recaptcha*/}
-                {/*sitekey="6LcDFdMSAAAAABJNbBf5O18x3LA4h1cb0dlclHY8"*/}
-                {/*render="explicit"*/}
-                {/*verifyCallback={this.verifyRecaptcha.bind(this)}*/}
-                {/*onloadCallback={this.loadRecaptcha}*/}
-              {/*/>*/}
-            {/*</Col>*/}
-          {/*</FormGroup>*/}
           <FormGroup>
             <Col smOffset={3} sm={9}>
               <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>

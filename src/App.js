@@ -31,8 +31,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // taxonomy: taxonomy,
-      // genomesOfInterest: genomesOfInterest,
       curatableGenomes: {4577: 'B73'},
       submission: []
     }
@@ -42,7 +40,8 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let taxonomyPromise = GrameneTrees.promise.get(); //(require('./fixtures/taxonomy.json'));
+    let set = parsed.set || 'gramene';
+    let taxonomyPromise = GrameneTrees.promise.get();
     taxonomyPromise.then(function (taxonomy) {
       let genomesOfInterest = {
         3702: taxonomy.indices.id[3702],
@@ -53,6 +52,7 @@ class App extends Component {
       if (taxonomy.indices.id[45770]) {
         genomesOfInterest[45770] = taxonomy.indices.id[45770];
         genomesOfInterest[4577000] = taxonomy.indices.id[4577000];
+        genomesOfInterest = {};
       }
       let genePromise = details('genes', parsed.gene);
       genePromise.then(function (genes) {
@@ -66,7 +66,7 @@ class App extends Component {
             .map(node => {
               return {geneId: node.model.gene_stable_id, opinion: 'curate'}
             });
-          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest});
+          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest, set});
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -94,7 +94,7 @@ class App extends Component {
 
   render() {
     let treeVis;
-    let treeId;
+    let form;
     let geneInfo = <p>Loading</p>;
     if (this.state.genetree) {
       const goi = this.state.geneOfInterest;
@@ -105,7 +105,6 @@ class App extends Component {
         <p>This is the gene tree containing <b>{goi._id}</b>. {name} {descr}</p>
         <p>Mark genes as okay or flag genes that you think might have issues and choose a reason from the drop down menu. When finished, enter your email address and submit.</p>
       </div>);
-      treeId = this.state.genetree._id;
       treeVis = <TreeVis genetree={this.state.genetree}
                          initialGeneOfInterest={this.state.geneOfInterest}
                          taxonomy={this.state.taxonomy}
@@ -120,12 +119,13 @@ class App extends Component {
                          enableCuration={true}
                          getCuration={this.getCuration.bind(this)}
       />;
+      form = <Feedback genetree={this.state.genetree._id} genes={this.state.submission} set={this.state.set}/>;
     }
     return (
       <div>
         {geneInfo}
         {treeVis}
-        <Feedback genetree={treeId} genes={this.state.submission}/>
+        {form}
       </div>
     )
   }
