@@ -170,11 +170,28 @@ export default class TreeVis extends React.Component {
     else {
       this.genetree = _.cloneDeep(this.props.genetree);
     }
+    if (!_.isEmpty(this.props.orthologsSince)) {
+      let nodeOfInterest = this.genetree.indices.gene_stable_id[this.props.initialGeneOfInterest._id];
+      let pathToRoot = nodeOfInterest.getPath().reverse();
+      let nodeOnPath = pathToRoot.shift();
+      while (!this.props.orthologsSince.hasOwnProperty(nodeOnPath.model.taxon_id) && pathToRoot.length > 0) {
+        nodeOnPath = pathToRoot.shift();
+      }
+      if (pathToRoot.length > 0) {
+        nodeOnPath.walk(function (descendant) {
+          descendant.model.keep = true;
+        });
+        this.genetree = pruneTree(this.genetree, function (node) {
+          return (node.model.keep);
+        });
+        this.genetree.geneCount = this.props.genetree.geneCount;
+      }
+    }
 
     addConsensus(this.genetree); // TODO: use a promise
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
-    if (this.props.enableCuration) {
+    if (this.props.enableCuration && this.genetree.displayInfo.paralogs) {
       let node = this.genetree;
       node.displayInfo.paralogs.forEach(function (paralog) {
         let parentNode = paralog.parent;

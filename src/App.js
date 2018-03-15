@@ -31,7 +31,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      curatableGenomes: {4577: 'B73'},
+      curatableGenomes: {
+        4577: 'B73',
+        45770: 'W22',
+        4577000: 'PH207'
+      },
       submission: []
     }
   }
@@ -42,6 +46,11 @@ class App extends Component {
     }
     let set = parsed.set || 'gramene';
     let taxonomyPromise = GrameneTrees.promise.get();
+    let orthologsSince=undefined;
+    if (parsed.since) {
+      orthologsSince = {};
+      orthologsSince[parsed.since] = 'keep';
+    }
     taxonomyPromise.then(function (taxonomy) {
       let genomesOfInterest = {
         3702: taxonomy.indices.id[3702],
@@ -66,7 +75,7 @@ class App extends Component {
             .map(node => {
               return {geneId: node.model.gene_stable_id, opinion: 'curate'}
             });
-          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest, set});
+          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest, set, orthologsSince});
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -109,6 +118,7 @@ class App extends Component {
                          initialGeneOfInterest={this.state.geneOfInterest}
                          taxonomy={this.state.taxonomy}
                          genomesOfInterest={this.state.genomesOfInterest}
+                         orthologsSince={this.state.orthologsSince}
                          curatable={this.state.curatableGenomes}
                          width={1200}
                          allowGeneSelection={true}
