@@ -107,7 +107,7 @@ class App extends Component {
     let geneInfo = <p>Loading</p>;
     if (this.state.genetree) {
       const goi = this.state.geneOfInterest;
-      let d = goi.description.replace(/^\s+/,'');
+      let d = goi.description ? goi.description.replace(/^\s+/,'') : '';
       const name = (goi.name !== goi._id) ? (<span>Gene name: <b>{goi.name}</b>.</span>) : '';
       const descr = (goi.name !== d) ? (<span>Description: <b>{d}</b>.</span>) : '';
       geneInfo = (<div style={{border: '4px solid black', padding:20, margin: 20}}>
