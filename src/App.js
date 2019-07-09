@@ -33,8 +33,17 @@ class App extends Component {
     this.state = {
       curatableGenomes: {
         4577: 'B73',
-        45770: 'W22',
-        4577000: 'PH207'
+        45770000: 'B73v4',
+        4577004: 'CML247',
+        4577007: 'CML333',
+        4577008: 'CML52',
+        4577012: 'Ki11',
+        4577013: 'Ki3',
+        4577014: 'Ky21',
+        4577015: 'M162W',
+        4577018: 'MS71',
+        4577019: 'NC350',
+        4558: 'sorghum'
       },
       submission: []
     }
@@ -44,7 +53,7 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let set = parsed.set || 'gramene';
+    let set = parsed.set || 'nam';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
     if (parsed.since) {
@@ -56,13 +65,23 @@ class App extends Component {
         3702: taxonomy.indices.id[3702],
         4558: taxonomy.indices.id[4558],
         4577: taxonomy.indices.id[4577],
+        45770000: taxonomy.indices.id[45770000],
+        4577004: taxonomy.indices.id[4577004],
+        4577007: taxonomy.indices.id[4577007],
+        4577008: taxonomy.indices.id[4577008],
+        4577012: taxonomy.indices.id[4577012],
+        4577013: taxonomy.indices.id[4577013],
+        4577014: taxonomy.indices.id[4577014],
+        4577015: taxonomy.indices.id[4577015],
+        4577018: taxonomy.indices.id[4577018],
+        4577019: taxonomy.indices.id[4577019],
         39947: taxonomy.indices.id[39947]
       };
-      if (taxonomy.indices.id[45770]) {
-        genomesOfInterest[45770] = taxonomy.indices.id[45770];
-        genomesOfInterest[4577000] = taxonomy.indices.id[4577000];
-        genomesOfInterest = {};
-      }
+      // if (taxonomy.indices.id[45770]) {
+      //   genomesOfInterest[45770] = taxonomy.indices.id[45770];
+      //   genomesOfInterest[4577000] = taxonomy.indices.id[4577000];
+      //   genomesOfInterest = {};
+      // }
       let genePromise = details('genes', parsed.gene);
       genePromise.then(function (genes) {
         let geneOfInterest = genes[0];
