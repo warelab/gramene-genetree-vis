@@ -32,6 +32,8 @@ class App extends Component {
     super(props);
     this.state = {
       curatableGenomes: {
+        3702: 'arabidopsis',
+        39947: 'rice',
         4577: 'B73',
         45770000: 'B73v4',
         4577004: 'CML247',
@@ -43,7 +45,9 @@ class App extends Component {
         4577015: 'M162W',
         4577018: 'MS71',
         4577019: 'NC350',
-        4558: 'sorghum'
+        4558: 'sorghum',
+        29760: 'grapevine',
+        15368: 'brachy'
       },
       submission: []
     }
@@ -75,7 +79,11 @@ class App extends Component {
         4577015: taxonomy.indices.id[4577015],
         4577018: taxonomy.indices.id[4577018],
         4577019: taxonomy.indices.id[4577019],
-        39947: taxonomy.indices.id[39947]
+        39947: taxonomy.indices.id[39947],
+        3847: taxonomy.indices.id[3847],
+        29760: taxonomy.indices.id[29760],
+        15368: taxonomy.indices.id[15368],
+        88036: taxonomy.indices.id[88036]
       };
       // if (taxonomy.indices.id[45770]) {
       //   genomesOfInterest[45770] = taxonomy.indices.id[45770];
