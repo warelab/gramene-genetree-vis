@@ -81,7 +81,7 @@ function allGenesPromise(queryString, numberOfNeighbors) {
     fieldToQuery = 5;
   }
   return search({
-    q: `{!graph from=compara_neighbors_${fieldToQuery} to=compara_idx_multi maxDepth=1}${queryString}`,
+    fq: `{!graph from=compara_neighbors_${fieldToQuery} to=compara_idx_multi maxDepth=1}${queryString}`,
     rows: 100000,
     start: 0,
     fl: ["id", "name", "compara_idx", "gene_idx", "gene_tree", "taxon_id", "system_name", "closest_rep*", "model_rep*",
