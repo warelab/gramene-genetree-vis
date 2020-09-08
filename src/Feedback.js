@@ -58,17 +58,33 @@ export default class Feedback extends React.Component {
 
 
   formIsValid() {
-    return (this.validateField('email') === 'success')
+    let notCuratedYet = this.state.genes.filter(gene => gene.opinion === 'curate');
+    let flaggedForNoGoodReason = this.state.genes.filter(gene => (gene.opinion === 'flag' && gene.reason === 'none'));
+    const labRegex = /^pb\d+@cornell.edu$/;
+    return (
+      (
+        this.validateField('email') === 'success' &&
+        labRegex.test(this.state.email)
+      ) || (
+        this.validateField('email') === 'success' &&
+        notCuratedYet.length === 0 &&
+        flaggedForNoGoodReason.length === 0
+      )
+    )
   }
 
   renderForm() {
     let tally = {
       curate: 0,
       okay: 0,
-      flag: 0
+      flag: 0,
+      noReason: 0
     };
     this.props.genes.forEach(function(gene) {
       tally[gene.opinion]++;
+      if (gene.opinion === 'flag' && (!gene.reason || gene.reason === 'none')) {
+        tally.noReason++;
+      }
     });
     return (
       <div style={{width:"500px"}}>
@@ -81,6 +97,7 @@ export default class Feedback extends React.Component {
               <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
               <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
               <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
+              <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
             </Col>
           </FormGroup>
           <FormGroup controlId="email" validationState={this.validateField('email')}>

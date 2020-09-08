@@ -30,12 +30,39 @@ const defaults = {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        3702: 'arabidopsis',
-        39947: 'rice',
+        4577:1
+        // 4577001:1,
+        // 4577002:1,
+        // 4577003:1,
+        // 4577004:1,
+        // 4577005:1,
+        // 4577006:1,
+        // 4577007:1,
+        // 4577008:1,
+        // 4577009:1,
+        // 4577010:1,
+        // 4577011:1,
+        // 4577012:1,
+        // 4577013:1,
+        // 4577014:1,
+        // 4577015:1,
+        // 4577016:1,
+        // 4577017:1,
+        // 4577018:1,
+        // 4577019:1,
+        // 4577020:1,
+        // 4577021:1,
+        // 4577022:1,
+        // 4577023:1,
+        // 4577024:1,
+        // 4577025:1
+        // 3702: 'arabidopsis',
+        // 39947: 'rice',
         // 4577: 'B73',
-        45770000: 'B73v4',
+        // 45770000: 'B73v4',
         // 4577004: 'CML247',
         // 4577007: 'CML333',
         // 4577008: 'CML52',
@@ -45,7 +72,7 @@ class App extends Component {
         // 4577015: 'M162W',
         // 4577018: 'MS71',
         // 4577019: 'NC350',
-        4558: 'sorghum'
+        // 4558: 'sorghum'
         // 29760: 'grapevine',
         // 15368: 'brachy'
       },
@@ -53,6 +80,11 @@ class App extends Component {
     }
   }
   componentDidMount() {
+    this.myRef.current.addEventListener('wheel', function(event) {
+      if (event.deltaX !== 0) {
+        event.preventDefault();
+      }
+    });
     const parsed = queryString.parse(window.location.search);
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
@@ -66,30 +98,42 @@ class App extends Component {
     }
     taxonomyPromise.then(function (taxonomy) {
       let genomesOfInterest = {
-        3702: taxonomy.indices.id[3702],
-        4558: taxonomy.indices.id[4558],
-        4577: taxonomy.indices.id[4577],
-        45770000: taxonomy.indices.id[45770000],
-        4577004: taxonomy.indices.id[4577004],
-        4577007: taxonomy.indices.id[4577007],
-        4577008: taxonomy.indices.id[4577008],
-        4577012: taxonomy.indices.id[4577012],
-        4577013: taxonomy.indices.id[4577013],
-        4577014: taxonomy.indices.id[4577014],
-        4577015: taxonomy.indices.id[4577015],
-        4577018: taxonomy.indices.id[4577018],
-        4577019: taxonomy.indices.id[4577019],
-        39947: taxonomy.indices.id[39947],
-        3847: taxonomy.indices.id[3847],
-        29760: taxonomy.indices.id[29760],
-        15368: taxonomy.indices.id[15368],
-        88036: taxonomy.indices.id[88036]
+        3702:1,
+        15368:1,
+        3055:1,
+        3847:1,
+        39947:1,
+        88036:1,
+        4558:1,
+        29760:1,
+        4577:1,
+        4577001:1,
+        4577002:1,
+        4577003:1,
+        4577004:1,
+        4577005:1,
+        4577006:1,
+        4577007:1,
+        4577008:1,
+        4577009:1,
+        4577010:1,
+        4577011:1,
+        4577012:1,
+        4577013:1,
+        4577014:1,
+        4577015:1,
+        4577016:1,
+        4577017:1,
+        4577018:1,
+        4577019:1,
+        4577020:1,
+        4577021:1,
+        4577022:1,
+        4577023:1,
+        4577024:1,
+        4577025:1
       };
-      // if (taxonomy.indices.id[45770]) {
-      //   genomesOfInterest[45770] = taxonomy.indices.id[45770];
-      //   genomesOfInterest[4577000] = taxonomy.indices.id[4577000];
-      //   genomesOfInterest = {};
-      // }
+      genomesOfInterest = {};
       let genePromise = details('genes', parsed.gene);
       genePromise.then(function (genes) {
         let geneOfInterest = genes[0];
@@ -106,15 +150,6 @@ class App extends Component {
         }.bind(this));
       }.bind(this));
     }.bind(this));
-
-    // Q.all([genePromise,treePromise]).spread(function(gene,tree) {
-    //   let genetree = GrameneTrees.genetree.tree(tree);
-    //   let geneOfInterest = gene[0];
-    //   let submission = genetree.leafNodes()
-    //     .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
-    //     .map(node => {return {geneId: node.model.gene_stable_id, opinion: 'okay'}});
-    //   this.setState({genetree, geneOfInterest, submission});
-    // }.bind(this));
   }
   getCuration(opinion,reason) {
     let submission = [];
@@ -159,7 +194,7 @@ class App extends Component {
       form = <Feedback genetree={this.state.genetree._id} genes={this.state.submission} set={this.state.set}/>;
     }
     return (
-      <div>
+      <div ref={this.myRef}>
         {geneInfo}
         {treeVis}
         {form}

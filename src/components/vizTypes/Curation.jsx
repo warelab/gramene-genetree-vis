@@ -5,40 +5,58 @@ const shifty = {
   okay : 'flag',
   flag : 'curate'
 };
-const reasons = [
+let reasons = [
   {
     name : "none",
     label: "choose a reason"
-  },
-  {
-    name : "gain5",
-    label: "5' gain"
-  },
-  {
-    name : "loss5",
-    label: "5' loss"
-  },
-  {
-    name : "gain3",
-    label: "3' gain"
-  },
-  {
-    name : "loss3",
-    label: "3' loss"
-  },
-  {
-    name : "gainAA",
-    label: "exon gain"
-  },
-  {
-    name : "lossAA",
-    label: "exon loss"
-  },
-  {
-    name : "other",
-    label: "other"
   }
 ];
+const combos = [
+  'G__',
+  'L__',
+  '_G_',
+  '_L_',
+  '__G',
+  '__L',
+  'GG_',
+  'GL_',
+  'G_G',
+  'G_L',
+  'GGG',
+  'GGL',
+  'GLG',
+  'GLL',
+  'LG_',
+  'LL_',
+  'L_G',
+  'L_L',
+  'LGG',
+  'LGL',
+  'LLG',
+  'LLL',
+  '_GG',
+  '_GL',
+  '_LG',
+  '_LL'
+];
+combos.forEach(c => {
+  reasons.push({
+    name: c,
+    label: c.split('').join(',')
+  })
+});
+reasons.push({
+  name: 'split',
+  label: 'split gene'
+});
+reasons.push({
+  name: 'fusion',
+  label: 'fused gene'
+});
+reasons.push({
+  name: 'other',
+  label: 'other'
+});
 
 export default class Curation extends React.Component {
   constructor(props) {
@@ -100,15 +118,15 @@ export default class Curation extends React.Component {
             if (opinion === 'flag') {
               reasonSelect = (<span>
                 <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
-                  {reasons.map(r => (
-                    <option value={r.name}>{r.label}</option>
+                  {reasons.map((r,idx) => (
+                    <option key={idx} value={r.name}>{r.label}</option>
                   ))}
                 </select>
               </span>)
             }
             return <foreignObject key={idx}
                                   x={10} y={node.x - 4}
-                                  height={this.props.height - 2}
+                                  height={this.props.height}
                                   width={this.props.width}>
               <span
                     className={`curation ${opinion}`}

@@ -67,7 +67,7 @@ function centralGenePromise(queryString) {
     q: queryString,
     rows: 10000,
     start: 0,
-    fl: ['compara_idx', 'gene_idx', 'id', 'taxon_id', 'region']
+    fl: ['compara_idx', 'gene_idx', 'id', 'taxon_id', 'region','start','end','strand']
   });
 }
 
@@ -210,7 +210,12 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
       neighborhoods.push(geneNeighborhood);
     }
   });
-  return {neighborhoods: neighborhoods, facets: allGenesAndFacets.facets, nonCodingGroupLengthDistribution: spanDistribution};
+  return {
+    neighborhoods: neighborhoods,
+    facets: allGenesAndFacets.facets,
+    nonCodingGroupLengthDistribution: spanDistribution,
+    geneDocs: geneDocs
+  };
 }
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {

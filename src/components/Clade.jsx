@@ -122,7 +122,7 @@ export default class Clade extends React.Component {
     }
   }
 
-  overlay(node) {
+  overlay(node,geneDocs) {
     const model = node.model;
     const titleText = model.node_type
       ? `${model.taxon_name} – ${model.node_type}`
@@ -150,6 +150,7 @@ export default class Clade extends React.Component {
                        expandClade={this.expandClade.bind(this)}
                        changeParalogVisibility={this.changeParalogVisibility.bind(this)}
                        changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
+                       geneDocs={geneDocs}
           />
         </Popover>
       </Overlay>
@@ -178,7 +179,7 @@ export default class Clade extends React.Component {
           {this.renderEdge()}
           {this.renderNode()}
         </g>
-        {this.overlay(this.props.node)}
+        {this.overlay(this.props.node,this.props.geneDocs)}
 
         {this.renderSubClades()}
       </g>
@@ -191,5 +192,6 @@ Clade.propTypes = {
   labelFields: PropTypes.array.isRequired,
   cladeHovered: PropTypes.bool,
   xOffset: PropTypes.number.isRequired,
-  yOffset: PropTypes.number.isRequired
+  yOffset: PropTypes.number.isRequired,
+  geneDocs: PropTypes.object.isRequired
 };

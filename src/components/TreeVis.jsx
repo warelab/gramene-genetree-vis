@@ -424,9 +424,11 @@ export default class TreeVis extends React.Component {
         <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>
           {this.displayModeIdx[activeMode].description}
         </span>
+        {this.props.enableCuration &&
         <div style={{position: 'absolute', left:`${this.margin + this.treeWidth + this.labelWidth + this.vizWidth}px`}}>
           <b>Curate</b>: click to flag genes <div>&nbsp;<span className="curation okay">okay</span>&nbsp;or&nbsp;<span className="curation flag">flag</span></div>
         </div>
+        }
       </div>
         )
   }
@@ -439,7 +441,7 @@ export default class TreeVis extends React.Component {
   }
 
   render() {
-    if (!this.state.visibleNodes) {
+    if (!(this.state.visibleNodes && this.state.geneDocs)) {
       return <div></div>;
     }
     let genetree = (
@@ -452,6 +454,7 @@ export default class TreeVis extends React.Component {
                 onNodeHover={this.handleNodeHover}
                 onNodeUnhover={this.handleNodeUnhover}
                 taxonomy={this.props.taxonomy}
+                geneDocs={this.state.geneDocs}
       />
     );
 
