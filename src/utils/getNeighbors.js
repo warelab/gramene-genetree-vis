@@ -156,7 +156,7 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
       let last = idx - numberOfNeighbors;
       // extend first and last to capture numberOfNeighbors compara genes
       const compara_idx = doc.compara_idx;
-      const first_compara = compara_idx - numberOfNeighbors;
+      const first_compara = compara_idx < numberOfNeighbors ? 0 : compara_idx - numberOfNeighbors;
       const last_compara = compara_idx + numberOfNeighbors;
       while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
       while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
