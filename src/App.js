@@ -33,7 +33,13 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        4577:1
+        4577:1,
+        4558: 'BTx623 (JGI)',
+        1000655996: 'tx430',
+        1000651496: 'rio',
+        1100004558: 'TX623 (CSHL)',
+        1000656001: 'tx2783',
+        1000561071: 'tx436'
         // 4577001:1,
         // 4577002:1,
         // 4577003:1,
@@ -89,7 +95,7 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let set = parsed.set || 'nam';
+    let set = parsed.set || 'sorghum1';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
     if (parsed.since) {
