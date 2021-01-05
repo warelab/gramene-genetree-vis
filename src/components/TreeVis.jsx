@@ -500,8 +500,8 @@ export default class TreeVis extends React.Component {
             <g className="tree-wrapper" transform={this.transformTree}>
               {genetree}
             </g>
-            {theViz}
-            {curation}
+            {/*{theViz}*/}
+            {/*{curation}*/}
           </svg>
         </div>
       </div>

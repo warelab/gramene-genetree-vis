@@ -195,7 +195,7 @@ class App extends Component {
                          enablePhyloview={true}
                          ensemblUrl='http://ensembl.gramene.org'
                          numberOfNeighbors={10}
-                         enableCuration={true}
+                         enableCuration={false}
                          getCuration={this.getCuration.bind(this)}
       />;
       form = <Feedback genetree={this.state.genetree._id} genes={this.state.submission} set={this.state.set}/>;
