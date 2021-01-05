@@ -67,7 +67,8 @@ export default class MSAOverview extends React.Component {
     super(props);
     this.state = {
       highlighted : {}
-    }
+    };
+    this.svgRef = React.createRef();
   }
 
   componentWillMount() {
@@ -125,7 +126,7 @@ export default class MSAOverview extends React.Component {
             target.setAttribute('data-x', x);
             target.setAttribute('data-width', parseInt(target.style.width, 10));
 
-            this.neighborhoodsSVG.setAttribute('viewBox', this.getViewBox(false));
+            this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
           }
         }.bind(this))
     }
@@ -152,7 +153,7 @@ export default class MSAOverview extends React.Component {
       this.viewRange.min = xPosInSeq;
       this.viewRange.max = xPosInSeq + viewWidth;
 
-      this.neighborhoodsSVG.setAttribute('viewBox', this.getViewBox(false));
+      this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
     }
   }
 
@@ -205,7 +206,7 @@ export default class MSAOverview extends React.Component {
     return (
       <g className="phyloview-wrapper"
          transform={`translate(${this.props.xOffset},${this.props.yOffset + this.props.controlsHeight + this.props.margin - 10})`}>
-        <svg ref={(svg) => this.neighborhoodsSVG = svg}
+        <svg ref={this.svgRef}
              width={this.props.width}
              height={this.props.height + 2 * this.props.margin}
              viewBox={this.getViewBox(false)}

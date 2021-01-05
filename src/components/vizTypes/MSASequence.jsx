@@ -8,7 +8,8 @@ import interact from 'interact.js';
 export default class MSASequence extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {};
+    this.zoomerRef = React.createRef();
   }
 
   componentWillMount() {
@@ -42,17 +43,18 @@ export default class MSASequence extends React.Component {
   }
 
   componentDidMount() {
-    if (this.zoomer) {
+    let zoomer = this.zoomerRef.current;
+    if (zoomer) {
       let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
-      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-      this.zoomer.style.webkitTransform =
-        this.zoomer.style.transform =
+      let y = parseFloat(zoomer.getAttribute('data-y')) || 0;
+      zoomer.style.webkitTransform =
+        zoomer.style.transform =
           `translate(${x}px,${y}px)`;
-      this.zoomer.style.width = this.windowWidth + 'px';
+      zoomer.style.width = this.windowWidth + 'px';
       let rows = document.getElementsByClassName('MSAlignments-wrapper');
       rows[0].scrollLeft = this.MSARange.MSAStart * this.charWidth;
 
-      interact(this.zoomer)
+      interact(zoomer)
         .draggable({
           onmove: this.dragMoveListener.bind(this)
         })
@@ -60,12 +62,13 @@ export default class MSASequence extends React.Component {
   }
 
   componentDidUpdate() {
+    let zoomer = this.zoomerRef.current;
     this.windowWidth = this.props.width * this.props.width / (this.charWidth * this.consensusLength);
     this.charsAtOnce = this.props.width / this.charWidth;
     let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
-    let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-    this.zoomer.style.webkitTransform =
-      this.zoomer.style.transform =
+    let y = parseFloat(zoomer.getAttribute('data-y')) || 0;
+    zoomer.style.webkitTransform =
+      zoomer.style.transform =
         `translate(${x}px,${y}px)`;
     let rows = document.getElementsByClassName('MSAlignments-wrapper');
     rows[0].scrollLeft = this.MSARange.MSAStart * this.charWidth;
@@ -155,7 +158,7 @@ export default class MSASequence extends React.Component {
                        width={this.props.width}
                        height={this.props.controlsHeight + 6}>
           <div className="resize-container">
-            <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
+            <div ref={this.zoomerRef} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
           </div>
         </foreignObject>
 

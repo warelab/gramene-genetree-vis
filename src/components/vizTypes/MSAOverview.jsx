@@ -10,7 +10,9 @@ import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 export default class MSAOverview extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {};
+    this.zoomerRef = React.createRef();
+    this.svgRef = React.createRef();
   }
 
   componentWillMount() {
@@ -20,14 +22,15 @@ export default class MSAOverview extends React.Component {
     this.MSARange = this.props.MSARange;
   }
   componentDidMount() {
-    if (this.zoomer) {
+    let zoomer = this.zoomerRef.current;
+    if (zoomer) {
       let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
-      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-      this.zoomer.style.webkitTransform =
-        this.zoomer.style.transform =
+      let y = parseFloat(zoomer.getAttribute('data-y')) || 0;
+      zoomer.style.webkitTransform =
+        zoomer.style.transform =
           `translate(${x}px,${y}px)`;
-      this.zoomer.style.width = this.props.width * (this.MSARange.MSAStop - this.MSARange.MSAStart)/this.consensusLength + 'px';
-      interact(this.zoomer)
+      zoomer.style.width = this.props.width * (this.MSARange.MSAStop - this.MSARange.MSAStart)/this.consensusLength + 'px';
+      interact(zoomer)
         .draggable({
           onmove: this.dragMoveListener.bind(this)
         })
@@ -59,7 +62,7 @@ export default class MSAOverview extends React.Component {
                 `translate(${x}px,${y}px)`;
             target.setAttribute('data-x', x);
             // let vb = `${this.MSARange.MSAStart} -3 ${viewWidth} ${this.props.height}`;
-            this.alignmentsSVG.setAttribute('viewBox', this.getViewBox(false));
+            this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
             this.props.handleRangeChange(this.MSARange);
           }
         }.bind(this))
@@ -67,12 +70,13 @@ export default class MSAOverview extends React.Component {
   }
 
   componentDidUpdate() {
+    let zoomer = this.zoomerRef.current;
     let x = this.props.width * this.MSARange.MSAStart / this.consensusLength;
-    let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-    this.zoomer.style.webkitTransform =
-      this.zoomer.style.transform =
+    let y = parseFloat(zoomer.getAttribute('data-y')) || 0;
+    zoomer.style.webkitTransform =
+      zoomer.style.transform =
         `translate(${x}px,${y}px)`;
-    this.zoomer.style.width = this.props.width * (this.MSARange.MSAStop - this.MSARange.MSAStart)/this.consensusLength + 'px';
+    zoomer.style.width = this.props.width * (this.MSARange.MSAStop - this.MSARange.MSAStart)/this.consensusLength + 'px';
   }
 
   dragMoveListener(event) {
@@ -99,7 +103,7 @@ export default class MSAOverview extends React.Component {
       this.MSARange.MSAStart = xPosInSeq;
       this.MSARange.MSAStop = xPosInSeq + viewWidth;
       // let vb = `${xPosInSeq} -3 ${viewWidth} ${this.props.height}`;
-      this.alignmentsSVG.setAttribute('viewBox', this.getViewBox(false));
+      this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
       this.props.handleRangeChange(this.MSARange);
     }
   }
@@ -163,7 +167,7 @@ export default class MSAOverview extends React.Component {
                        height={this.props.controlsHeight + 6}>
           <OverlayTrigger placement="left" overlay={tooltip}>
             <div className="resize-container">
-              <div ref={(e) => this.zoomer = e} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
+              <div ref={this.zoomerRef} className="resize-drag" style={{height:this.props.controlsHeight + 6}}/>
             </div>
           </OverlayTrigger>
         </foreignObject>
@@ -175,7 +179,7 @@ export default class MSAOverview extends React.Component {
     return (
       <g className="alignments-wrapper"
          transform={`translate(${this.props.xOffset},${this.props.yOffset + this.props.controlsHeight + this.props.margin - 10})`}>
-        <svg ref={(svg) => this.alignmentsSVG = svg}
+        <svg ref={this.svgRef}
              width={this.props.width}
              height={this.props.height + 2 * this.props.margin}
              viewBox={this.getViewBox(false)}
