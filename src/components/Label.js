@@ -4,7 +4,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash.flow';
-import { Checkbox } from 'react-bootstrap';
+import { FormCheck } from 'react-bootstrap';
 
 const style = {
   // border: '1px dashed gray',
@@ -81,7 +81,7 @@ class Label extends Component {
     return connectDragSource(connectDropTarget(
       <div style={{ ...style, opacity }}>
         <div style={{border:'1px dashed gray',padding:'1rem'}}>
-          <Checkbox onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked}>{text}</Checkbox>
+          <FormCheck onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked}>{text}</FormCheck>
         </div>
       </div>,
     ));

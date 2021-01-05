@@ -21,7 +21,7 @@ import {
   makeNodeVisible,
   makeNodeInvisible
 } from "../utils/visibleNodes";
-import {MenuItem, Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
+import {Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
 import positionDomains from '../utils/positionDomains';
@@ -377,9 +377,9 @@ export default class TreeVis extends React.Component {
       const colorSchemes = ['clustal', 'zappo', 'taylor','hydrophobicity','helix_propensity','strand_propensity','turn_propensity','buried_index'];
       let items = colorSchemes.map(function (scheme, i) {
         return (
-          <MenuItem key={i} eventKey={i} active={scheme === this.state.colorScheme}
+          <Dropdown.Item key={i} eventKey={i} active={scheme === this.state.colorScheme}
                     onClick={() => this.setState({colorScheme: scheme})}
-          >{toTitleCase(scheme.replace('_',' '))}</MenuItem>
+          >{toTitleCase(scheme.replace('_',' '))}</Dropdown.Item>
         );
       }.bind(this));
       let nofloat = {float:'none'};
@@ -396,13 +396,7 @@ export default class TreeVis extends React.Component {
 
   renderToolbar(activeMode) {
     let choices = this.displayModes.map(function(mode, idx) {
-      return (
-        <MenuItem eventKey={mode.id}
-                  key={idx}
-                  active={ activeMode === mode.id }>
-          {mode.label}
-        </MenuItem>
-      )
+      return <option value={mode.id}>{mode.label}</option>
     });
     return (
       <div className="display-mode">
@@ -410,15 +404,11 @@ export default class TreeVis extends React.Component {
           <Button onClick={() => this.toggleConfigModal()}>
             <span className="glyphicon glyphicon-cog"/>
           </Button>
-          <Dropdown id="display-mode-dropdown"
-                    onClick={(e) => e.stopPropagation()}>
-            <Dropdown.Toggle>
-              Display mode
-            </Dropdown.Toggle>
-            <Dropdown.Menu onSelect={this.handleModeSelection.bind(this)}>
-              {choices}
-            </Dropdown.Menu>
-         </Dropdown>
+          <select value={activeMode} onChange={(e) => {
+            this.setState({displayMode: e.target.value})
+          }}>
+            <optgroup label={"Display Modes"}>{choices}</optgroup>
+          </select>
          {this.colorSchemeDropdown()}
         </ButtonToolbar>
         <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>
@@ -498,10 +488,10 @@ export default class TreeVis extends React.Component {
         <div className="genetree-vis">
           <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>
             <g className="tree-wrapper" transform={this.transformTree}>
-              {/*{genetree}*/}
+              {genetree}
             </g>
-            {/*{theViz}*/}
-            {/*{curation}*/}
+            {theViz}
+            {curation}
           </svg>
         </div>
       </div>

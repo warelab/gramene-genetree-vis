@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, FormControl, Form, ControlLabel, Col, Button } from 'react-bootstrap';
+import { FormGroup, FormControl, Form, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
 import axios from 'axios';
@@ -90,7 +90,7 @@ export default class Feedback extends React.Component {
       <div style={{width:"500px"}}>
         <Form horizontal>
           <FormGroup controlId="progress">
-            <Col componentClass={ControlLabel} sm={3}>
+            <Col sm={3}>
               Progress
             </Col>
             <Col sm={9}>
@@ -101,7 +101,7 @@ export default class Feedback extends React.Component {
             </Col>
           </FormGroup>
           <FormGroup controlId="email" validationState={this.validateField('email')}>
-            <Col componentClass={ControlLabel} sm={3}>
+            <Col sm={3}>
               Your Email
             </Col>
             <Col sm={9}>
