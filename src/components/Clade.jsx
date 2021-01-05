@@ -16,6 +16,7 @@ export default class Clade extends React.Component {
 
   constructor(props) {
     super(props);
+    this.cladeRef = React.createRef();
     this.state = {
       popoverVisible: false
     };
@@ -143,7 +144,7 @@ export default class Clade extends React.Component {
 
     return (
       <Overlay show={this.state.popoverVisible}
-               target={ props => ReactDOM.findDOMNode(this.refs.clickable)}>
+               target={ props => ReactDOM.findDOMNode(this.cladeRef)}>
         <Popover id={id} title={title}>
           <NodePopover node={node}
                        collapseClade={this.collapseClade.bind(this)}
@@ -175,7 +176,7 @@ export default class Clade extends React.Component {
   render() {
     return (
       <g {...this.cladeProps()}>
-        <g ref="clickable" onClick={this.togglePopoverVisibility.bind(this)}>
+        <g ref={this.cladeRef} onClick={this.togglePopoverVisibility.bind(this)}>
           {this.renderEdge()}
           {this.renderNode()}
         </g>
