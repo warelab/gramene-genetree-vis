@@ -498,7 +498,7 @@ export default class TreeVis extends React.Component {
         <div className="genetree-vis">
           <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>
             <g className="tree-wrapper" transform={this.transformTree}>
-              {genetree}
+              {/*{genetree}*/}
             </g>
             {/*{theViz}*/}
             {/*{curation}*/}
