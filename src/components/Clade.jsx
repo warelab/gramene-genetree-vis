@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -144,7 +144,7 @@ export default class Clade extends React.Component {
 
     return (
       <Overlay show={this.state.popoverVisible}
-               target={ props => ReactDOM.findDOMNode(this.cladeRef)}>
+               target={ props => this.cladeRef.current}>
         <Popover id={id} title={title}>
           <NodePopover node={node}
                        collapseClade={this.collapseClade.bind(this)}
