@@ -63,7 +63,7 @@ class Domains extends Component {
 
   renderPopover(domain) {
     var title = `${domain.id} - ${domain.name}`;
-    return <Popover id={domain.name} title={title}>{this.renderPopoverContent(domain)}</Popover>;
+    return <Popover id={domain.name}><Popover.Title>{title}</Popover.Title><Popover.Content>{this.renderPopoverContent(domain)}</Popover.Content></Popover>;
   }
 
   renderPopoverContent(domain) {

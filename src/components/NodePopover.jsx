@@ -26,7 +26,7 @@ function internalNodeButtons({node, collapseClade, expandClade}) {
 
   return (
     <div>
-      <ButtonGroup style={{marginBottom: 3}}>
+      <ButtonGroup size='sm' style={{marginBottom: "0.2rem"}}>
         {expandCladeButton} {collapseCladeButton}
       </ButtonGroup>
     </div>
@@ -46,7 +46,7 @@ function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) 
     button = btn("Focus on this gene", () => changeGeneOfInterest(node), "success");
   }
   return (
-    <ButtonGroup style={{marginBottom: 3}}>
+    <ButtonGroup size='sm' style={{marginBottom: 3}}>
       {button}
     </ButtonGroup>
   )
@@ -54,8 +54,7 @@ function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) 
 
 function btn(name, handler, style = "default") {
   return (
-      <Button size="xsmall"
-              variant={style}
+      <Button variant={style}
               onClick={handler}>
         {name}
       </Button>

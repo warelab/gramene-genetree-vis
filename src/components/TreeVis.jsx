@@ -22,6 +22,7 @@ import {
   makeNodeInvisible
 } from "../utils/visibleNodes";
 import {Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
+import { BsGearFill } from "react-icons/bs";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
@@ -371,7 +372,7 @@ export default class TreeVis extends React.Component {
   }
 
   colorSchemeDropdown() {
-    if (this.state.displayMode === 'msa') {
+    // if (this.state.displayMode === 'msa') {
       function toTitleCase(str) {
         return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
       }
@@ -383,34 +384,39 @@ export default class TreeVis extends React.Component {
           >{toTitleCase(scheme.replace('_',' '))}</Dropdown.Item>
         );
       }.bind(this));
-      let nofloat = {float:'none'};
       return (
         <DropdownButton id="colorscheme-dropdown"
                         title="Color Scheme"
                         disabled={this.state.displayMode !== 'msa' }
-                        style={nofloat}>
+                        variant='outline-dark' size='sm'
+        >
           {items}
         </DropdownButton>
       );
-    }
+    // }
   }
 
   renderToolbar(activeMode) {
-    let choices = this.displayModes.map(function(mode, idx) {
-      return <option key={idx} value={mode.id}>{mode.label}</option>
-    });
     return (
       <div className="display-mode">
         <ButtonToolbar>
-          <Button onClick={() => this.toggleConfigModal()}>
-            <span className="glyphicon glyphicon-cog"/>
-          </Button>
-          <select value={activeMode} onChange={(e) => {
-            this.setState({displayMode: e.target.value})
-          }}>
-            <optgroup label={"Display Modes"}>{choices}</optgroup>
-          </select>
-         {this.colorSchemeDropdown()}
+            <Button onClick={() => this.toggleConfigModal()} variant='light' size='sm'>
+              <BsGearFill/>
+            </Button>
+            <DropdownButton id="displaymode-dropdown"
+                            title="Display Mode" variant='outline-dark' size='sm'>
+              {this.displayModes.map((mode, idx) => {
+                return (
+                  <Dropdown.Item key={idx}
+                                 eventKey={mode.id}
+                                 active={activeMode === mode.id}
+                                 onClick={() => this.setState({displayMode: mode.id})}>
+                    {mode.label}
+                  </Dropdown.Item>
+                )
+              })}
+            </DropdownButton>
+           {this.colorSchemeDropdown()}
         </ButtonToolbar>
         <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>
           {this.displayModeIdx[activeMode].description}
@@ -473,11 +479,10 @@ export default class TreeVis extends React.Component {
         <Modal
           show={this.state.configModal}
           onHide={this.toggleConfigModal.bind(this)}
+          size='lg'
         >
           <Modal.Header closeButton>
-            <Modal.Title>
-              Configure labels
-            </Modal.Title>
+            <Modal.Title>Configure labels</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <LabelConfig
