@@ -22,6 +22,7 @@ import {
   makeNodeInvisible
 } from "../utils/visibleNodes";
 import {Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
 import positionDomains from '../utils/positionDomains';
@@ -396,7 +397,7 @@ export default class TreeVis extends React.Component {
 
   renderToolbar(activeMode) {
     let choices = this.displayModes.map(function(mode, idx) {
-      return <option value={mode.id}>{mode.label}</option>
+      return <option key={idx} value={mode.id}>{mode.label}</option>
     });
     return (
       <div className="display-mode">
@@ -468,9 +469,10 @@ export default class TreeVis extends React.Component {
     }
     return (
       <div>
+        {this.renderToolbar(this.state.displayMode)}
         <Modal
           show={this.state.configModal}
-          onHide={()=>this.toggleConfigModal()}
+          onHide={this.toggleConfigModal.bind(this)}
         >
           <Modal.Header closeButton>
             <Modal.Title>
@@ -484,7 +486,6 @@ export default class TreeVis extends React.Component {
             />
           </Modal.Body>
         </Modal>
-        {this.renderToolbar(this.state.displayMode)}
         <div className="genetree-vis">
           <svg width={this.width} height={this.treeHeight + 2 * this.margin + DEFAULT_ZOOM_HEIGHT}>
             <g className="tree-wrapper" transform={this.transformTree}>

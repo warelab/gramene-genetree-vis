@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, FormControl, Form, Col, Button } from 'react-bootstrap';
+import { FormControl, Form, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
 import axios from 'axios';
@@ -88,8 +88,8 @@ export default class Feedback extends React.Component {
     });
     return (
       <div style={{width:"500px"}}>
-        <Form horizontal>
-          <FormGroup controlId="progress">
+        <Form inline={true} noValidate>
+          <Form.Group controlId="progress">
             <Col sm={3}>
               Progress
             </Col>
@@ -99,8 +99,8 @@ export default class Feedback extends React.Component {
               <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
               <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
             </Col>
-          </FormGroup>
-          <FormGroup controlId="email" validationState={this.validateField('email')}>
+          </Form.Group>
+          <Form.Group controlId="email">
             <Col sm={3}>
               Your Email
             </Col>
@@ -109,17 +109,18 @@ export default class Feedback extends React.Component {
                 type="text"
                 value={this.state.email}
                 onChange={this.handleChange.bind(this)}
+                isValid={this.validateField('email')}
               />
               <FormControl.Feedback />
             </Col>
-          </FormGroup>
-          <FormGroup>
-            <Col smOffset={3} sm={9}>
+          </Form.Group>
+          <Form.Group>
+            <Col smoffset={3} sm={9}>
               <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>
                 Send your feedback
               </Button>
             </Col>
-          </FormGroup>
+          </Form.Group>
         </Form>
       </div>
     );

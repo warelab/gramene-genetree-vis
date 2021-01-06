@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import microsoftBrowser from '../utils/microsoftBrowser';
 
-import {Overlay, Popover, Button} from "react-bootstrap";
+import {OverlayTrigger, Popover, Button} from "react-bootstrap";
 
 import NodePopover from './NodePopover.jsx';
 
@@ -135,7 +135,8 @@ export default class Clade extends React.Component {
 
     const title = <div>
       <Button className="tooltip-title-button"
-              bsSize="xsmall"
+              size="sm"
+              variant="light"
               onClick={this.togglePopoverVisibility.bind(this)}>
         &times;
       </Button>
@@ -143,18 +144,21 @@ export default class Clade extends React.Component {
     </div>;
 
     return (
-      <Overlay show={this.state.popoverVisible}
-               target={this.cladeRef.current}>
-        <Popover id={id} title={title}>
-          <NodePopover node={node}
-                       collapseClade={this.collapseClade.bind(this)}
-                       expandClade={this.expandClade.bind(this)}
-                       changeParalogVisibility={this.changeParalogVisibility.bind(this)}
-                       changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
-                       geneDocs={geneDocs}
-          />
+      // <Overlay show={this.state.popoverVisible}
+      //          target={this.cladeRef.current}>
+        <Popover id={id}>
+          <Popover.Title>{title}</Popover.Title>
+          <Popover.Content>
+            <NodePopover node={node}
+                         collapseClade={this.collapseClade.bind(this)}
+                         expandClade={this.expandClade.bind(this)}
+                         changeParalogVisibility={this.changeParalogVisibility.bind(this)}
+                         changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
+                         geneDocs={geneDocs}
+            />
+          </Popover.Content>
         </Popover>
-      </Overlay>
+      // </Overlay>
     );
   }
 
@@ -174,14 +178,22 @@ export default class Clade extends React.Component {
   }
 
   render() {
+    const popover = this.overlay(this.props.node, this.props.geneDocs);
     return (
       <g {...this.cladeProps()}>
-        <g ref={this.cladeRef} onClick={this.togglePopoverVisibility.bind(this)}>
-          {this.renderEdge()}
-          {this.renderNode()}
-        </g>
-        {this.overlay(this.props.node,this.props.geneDocs)}
-
+        <OverlayTrigger
+          trigger="click"
+          placement="right"
+          overlay={popover}
+          transition={false}
+          show={this.state.popoverVisible}
+          onToggle={this.togglePopoverVisibility.bind(this)}
+        >
+          <g>
+            {this.renderEdge()}
+            {this.renderNode()}
+          </g>
+        </OverlayTrigger>
         {this.renderSubClades()}
       </g>
     );

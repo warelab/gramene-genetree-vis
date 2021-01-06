@@ -54,8 +54,8 @@ function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) 
 
 function btn(name, handler, style = "default") {
   return (
-      <Button bsSize="xsmall"
-              bsStyle={style}
+      <Button size="xsmall"
+              variant={style}
               onClick={handler}>
         {name}
       </Button>
@@ -67,7 +67,7 @@ function table({node,geneDocs}) {
   const contents = node.displayInfo.leafNode ? geneProps(model,geneDocs) : internalProps(model);
 
   return (
-      <Table condensed hover style={{fontSize: 12}}>
+      <Table hover style={{fontSize: 12}}>
         {contents}
       </Table>
   );
@@ -90,7 +90,7 @@ function internalProps(model) {
   return (
       <tbody>
       {prop('Bootstrap', model.bootstrap)}
-      {model.duplication_confidence_score ? prop('Duplication confidence', 100*model.duplication_confidence_score.toPrecision(3) + '%') : ''}
+      {model.duplication_confidence_score && prop('Duplication confidence', 100*model.duplication_confidence_score.toPrecision(3) + '%')}
       {prop('Distance to parent', model.distance_to_parent.toPrecision(3))}
       </tbody>
   )
