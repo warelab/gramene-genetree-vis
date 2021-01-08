@@ -24,6 +24,8 @@ import {
 import {Dropdown, DropdownButton, Button, ButtonToolbar, Modal} from 'react-bootstrap';
 import { BsGearFill } from "react-icons/bs";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/tree.css';
+import '../styles/msa.css';
 import domainStats from '../utils/domainsStats';
 import getNeighborhood from '../utils/getNeighbors';
 import positionDomains from '../utils/positionDomains';
