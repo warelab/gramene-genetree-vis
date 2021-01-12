@@ -1,5 +1,5 @@
 import React from 'react';
-import {Tooltip, OverlayTrigger} from 'react-bootstrap';
+import {Tooltip, OverlayTrigger, Button} from 'react-bootstrap';
 
 import Gene from './Gene';
 
@@ -115,13 +115,13 @@ const ComparaGene = props => {
     tooltipFields.push(['Homolog', gene.model_rep_description]);
   }
   let button = (
-    <button className='btn btn-xs btn-default' onClick={() => {
+    <Button size={'sm'} onClick={() => {
       if (props.clickHandler) {
         props.clickHandler(gene.id, gene.tree_id)
       }
     }}>
       {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
-    </button>
+    </Button>
   );
   if (gene.relationToGeneOfInterest) {
     tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);

@@ -10,15 +10,15 @@ export default class MSASequence extends React.Component {
     super(props);
     this.state = {};
     this.zoomerRef = React.createRef();
-  }
-
-  componentWillMount() {
     this.consensusLength = this.props.rootNode.model.consensus.sequence.length;
     this.charWidth = 7.2065;
-    this.charsAtOnce = this.props.width / this.charWidth;
-    this.windowWidth = this.props.width*this.props.width/(this.charWidth*this.consensusLength);
-    this.MSARange = this.props.MSARange;
+    this.charsAtOnce = props.width / this.charWidth;
+    this.windowWidth = props.width*props.width/(this.charWidth*this.consensusLength);
+    this.MSARange = props.MSARange;
   }
+
+  // componentWillMount() {
+  // }
 
   dragMoveListener(event) {
     let target = event.target,

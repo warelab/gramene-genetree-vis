@@ -69,20 +69,20 @@ export default class MSAOverview extends React.Component {
       highlighted : {}
     };
     // this.svgRef = React.createRef();
-  }
-
-  componentWillMount() {
-    this.totalLength = 2 + 2*this.props.numberOfNeighbors;
+    this.totalLength = 2 + 2*props.numberOfNeighbors;
     this.viewRange = {
-      min: this.props.numberOfNeighbors/2,
+      min: props.numberOfNeighbors/2,
       max: .75*this.totalLength
     };
-    this.minWidth = this.props.width * 4/ (this.totalLength);
+    this.minWidth = props.width * 4/ (this.totalLength);
     if (this.viewRange.max - this.viewRange.min <= this.minWidth) {
       this.viewRange.min= 0;
       this.viewRange.max= this.totalLength;
     }
   }
+
+  // componentDidMount() {
+  // }
 
   // componentDidMount() {
   //   if (this.zoomer) {

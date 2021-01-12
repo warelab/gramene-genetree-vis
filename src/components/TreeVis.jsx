@@ -154,8 +154,7 @@ export default class TreeVis extends React.Component {
     this.setState(MSARange);
   }
 
-  componentWillMount() {
-    // TODO: use web workers to prep data for the tree and viz components
+  componentDidMount() {
     this.resizeListener = _.debounce(
       this.updateAvailableWidth.bind(this),
       windowResizeDebounceMs
@@ -235,17 +234,13 @@ export default class TreeVis extends React.Component {
           that.setState(neighborhoodsAndFacets);
         });
     }
-
+    this.updateAvailableWidth();
   }
 
   componentWillUnmount() {
     if (this.resizeListener) {
       global.removeEventListener('resize', this.resizeListener);
     }
-  }
-
-  componentDidMount() {
-    this.updateAvailableWidth();
   }
 
   updateAvailableWidth() {

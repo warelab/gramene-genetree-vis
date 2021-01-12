@@ -4,7 +4,6 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash.flow';
-import { Form } from 'react-bootstrap';
 
 const style = {
   // border: '1px dashed gray',

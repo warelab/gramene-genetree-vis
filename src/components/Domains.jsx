@@ -15,22 +15,22 @@ class Domains extends Component {
     alignment: React.PropTypes.object.isRequired
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.node.hasChildren()) {
       this.cladeStats = domainStats(this.props.node);
     }
   }
 
-  componentWillUpdate() {
-    if (this.props.node.hasChildren()) {
-      this.cladeStats = domainStats(this.props.node);
-    }
-  }
+  // componentDidUpdate() {
+  //   if (this.props.node.hasChildren()) {
+  //     this.cladeStats = domainStats(this.props.node);
+  //   }
+  // }
 
   render() {
     return (
       <g className="domains">
-        {this.renderDomains()}
+        {this.cladeStats && this.renderDomains()}
       </g>
     );
   }

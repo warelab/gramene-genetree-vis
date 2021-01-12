@@ -16,7 +16,7 @@ export default class Feedback extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!_.isEqual(nextProps.genes,this.state.genes)) {
       let genes = nextProps.genes;
       this.setState({genes});

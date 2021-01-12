@@ -1,12 +1,14 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import _ from "lodash";
-import {ButtonGroup, Button, Table} from "react-bootstrap";
+import {Button, Table} from "react-bootstrap";
 
 const NodePopover = props => {
   return (
       <div>
-        {buttons(props)}
+        <div style={{marginBottom: "0.5rem"}}>
+          {buttons(props)}
+        </div>
         {table(props)}
       </div>
   );
@@ -26,9 +28,9 @@ function internalNodeButtons({node, collapseClade, expandClade}) {
 
   return (
     <div>
-      <ButtonGroup size='sm' style={{marginBottom: "0.2rem"}}>
+      {/*<ButtonGroup size='sm' style={{marginBottom: "0.2rem"}}>*/}
         {expandCladeButton} {collapseCladeButton}
-      </ButtonGroup>
+      {/*</ButtonGroup>*/}
     </div>
   )
 }
@@ -45,17 +47,14 @@ function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) 
   else {
     button = btn("Focus on this gene", () => changeGeneOfInterest(node), "success");
   }
-  return (
-    <ButtonGroup size='sm' style={{marginBottom: 3}}>
-      {button}
-    </ButtonGroup>
-  )
+  return button;
 }
 
 function btn(name, handler, style = "default") {
   return (
       <Button variant={style}
-              onClick={handler}>
+              onClick={handler}
+              size={'sm'}>
         {name}
       </Button>
   );

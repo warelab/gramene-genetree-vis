@@ -13,14 +13,12 @@ export default class MSAOverview extends React.Component {
     this.state = {};
     this.zoomerRef = React.createRef();
     this.svgRef = React.createRef();
+    this.consensusLength = props.rootNode.model.consensus.sequence.length;
+    this.charWidth = 7.2065;
+    this.minWidth = props.width*props.width/(this.charWidth*this.consensusLength);
+    this.MSARange = props.MSARange;
   }
 
-  componentWillMount() {
-    this.consensusLength = this.props.rootNode.model.consensus.sequence.length;
-    this.charWidth = 7.2065;
-    this.minWidth = this.props.width*this.props.width/(this.charWidth*this.consensusLength);
-    this.MSARange = this.props.MSARange;
-  }
   componentDidMount() {
     let zoomer = this.zoomerRef.current;
     if (zoomer) {
