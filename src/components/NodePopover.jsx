@@ -37,7 +37,7 @@ function internalNodeButtons({node, collapseClade, expandClade}) {
 
 function geneNodeButtons({node, changeParalogVisibility, changeGeneOfInterest}) {
   var button;
-  if (node.displayInfo.isGeneOfInterest) {
+  if (node.displayInfo.isGeneOfInterest && node.displayInfo.paralogs) {
     var root = node.parent;
     while (root.parent) {
       root = root.parent;
