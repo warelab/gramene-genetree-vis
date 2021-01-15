@@ -6,20 +6,18 @@ import {resolveOverlaps} from '../utils/calculateAlignment';
 import domainStats from '../utils/domainsStats';
 
 class Domains extends Component {
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    stats: React.PropTypes.object.isRequired,
-    domains: React.PropTypes.object.isRequired,
-    alignment: React.PropTypes.object.isRequired
+  constructor(props) {
+    super(props);
+    this.cladeStats = domainStats(this.props.node);
   }
-
-  componentDidMount() {
-    if (this.props.node.hasChildren()) {
-      this.cladeStats = domainStats(this.props.node);
-    }
-  }
+  // props: {
+  //   id: React.PropTypes.number.isRequired,
+  //   node: React.PropTypes.object.isRequired,
+  //   width: React.PropTypes.number.isRequired,
+  //   stats: React.PropTypes.object.isRequired,
+  //   domains: React.PropTypes.object.isRequired,
+  //   alignment: React.PropTypes.object.isRequired
+  // }
 
   // componentDidUpdate() {
   //   if (this.props.node.hasChildren()) {
@@ -30,7 +28,7 @@ class Domains extends Component {
   render() {
     return (
       <g className="domains">
-        {this.cladeStats && this.renderDomains()}
+        {this.renderDomains()}
       </g>
     );
   }
