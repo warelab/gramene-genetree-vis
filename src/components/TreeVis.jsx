@@ -328,36 +328,37 @@ export default class TreeVis extends React.Component {
   }
 
   changeParalogVisibility(node) {
-    if (node.displayInfo.expandedParalogs) {
-      // hide these paralogs
-      node.displayInfo.paralogs.forEach(function (paralog) {
-        let parentNode = paralog.parent;
+    if (node.displayInfo.paralogs) {
+      if (node.displayInfo.expandedParalogs) {
+        // hide these paralogs
+        node.displayInfo.paralogs.forEach(function (paralog) {
+          let parentNode = paralog.parent;
 
-        const childCallback = (child) => {
-          if (child.displayInfo.expanded)
+          const childCallback = (child) => {
+            if (child.displayInfo.expanded)
+              parentNode.displayInfo.expanded = true;
+          };
+
+          while (parentNode !== node) {
+            parentNode.displayInfo.expandedParalogs = false;
+            // check if any child is expanded
+            parentNode.displayInfo.expanded = false;
+            parentNode.children.forEach(childCallback);
+            parentNode = parentNode.parent
+          }
+        });
+      } else {
+        node.displayInfo.paralogs.forEach(function (paralog) {
+          let parentNode = paralog.parent;
+          while (!parentNode.displayInfo.expanded) {
             parentNode.displayInfo.expanded = true;
-        };
-
-        while (parentNode !== node) {
-          parentNode.displayInfo.expandedParalogs = false;
-          // check if any child is expanded
-          parentNode.displayInfo.expanded = false;
-          parentNode.children.forEach( childCallback );
-          parentNode = parentNode.parent
-        }
-      });
+            parentNode.displayInfo.expandedParalogs = true;
+            parentNode = parentNode.parent
+          }
+        });
+      }
+      this.updateVisibleNodes();
     }
-    else {
-      node.displayInfo.paralogs.forEach(function (paralog) {
-        let parentNode = paralog.parent;
-        while (!parentNode.displayInfo.expanded) {
-          parentNode.displayInfo.expanded = true;
-          parentNode.displayInfo.expandedParalogs = true;
-          parentNode = parentNode.parent
-        }
-      });
-    }
-    this.updateVisibleNodes();
   }
 
   toggleConfigModal() {
