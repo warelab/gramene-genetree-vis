@@ -17,7 +17,7 @@ const NeighborhoodArrow = props => {
   let arrowHead;
   let color = 'black';
   let tooltip = '<pre>internal node</pre>';
-  if (props.neighborhood.strand) {
+  if (props.neighborhood && props.neighborhood.strand) {
     const flipped = (props.neighborhood.strand === 'reverse');
     lineStart = flipped ? arrowLength : 0;
     lineEnd = flipped ? lineLength : lineLength - arrowLength;
