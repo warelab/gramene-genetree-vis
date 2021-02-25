@@ -79,7 +79,7 @@ function geneProps(model,geneDocs) {
       {prop('Description', model.gene_description)}
       {prop('nTranscripts', model.nTranscripts)}
       {prop('Distance to parent', model.distance_to_parent.toPrecision(3))}
-      {prop('Location', `${gene.region}:${gene.start}-${gene.end}:${gene.strand === 1 ? '+':'-'}`)}
+      {gene && prop('Location', `${gene.region}:${gene.start}-${gene.end}:${gene.strand === 1 ? '+':'-'}`)}
       </tbody>
   )
 }
