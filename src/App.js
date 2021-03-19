@@ -34,7 +34,7 @@ class App extends Component {
     this.state = {
       curatableGenomes: {
         4577:1,
-        45770000:1,
+        // 45770000:1,
         // 4558: 'BTx623 (JGI)',
         // 1000655996: 'tx430',
         // 1000651496: 'rio',
@@ -193,9 +193,9 @@ class App extends Component {
                          allowGeneSelection={true}
                          pivotTree={true}
                          enablePhyloview={true}
-                         ensemblUrl='http://ensembl.gramene.org'
+                         enableCuration={true}
+                         ensemblUrl='http://maize-pangenone-ensembl.gramene.org'
                          numberOfNeighbors={10}
-                         enableCuration={false}
                          getCuration={this.getCuration.bind(this)}
       />;
       form = <Feedback genetree={this.state.genetree._id} genes={this.state.submission} set={this.state.set}/>;
