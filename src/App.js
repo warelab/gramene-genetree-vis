@@ -35,7 +35,7 @@ class App extends Component {
       curatableGenomes: {
         4577:1,
         // 45770000:1,
-        // 4558: 'BTx623 (JGI)',
+        4558: 'BTx623 (JGI)',
         // 1000655996: 'tx430',
         // 1000651496: 'rio',
         // 1100004558: 'TX623 (CSHL)',

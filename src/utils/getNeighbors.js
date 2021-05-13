@@ -249,10 +249,10 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 
 export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
   let queryString = `gene_tree:${genetree.model._id}`;
-  if (!_.isEmpty(genomesOfInterest)) {
-    let taxa = Object.keys(genomesOfInterest).join(' ');
-    queryString = `${queryString} AND taxonomy__ancestors:(${taxa})`;
-  }
+  // if (!_.isEmpty(genomesOfInterest)) {
+  //   let taxa = Object.keys(genomesOfInterest).join(' ');
+  //   queryString = `${queryString} AND taxonomy__ancestors:(${taxa})`;
+  // }
   return Q.all([
     centralGenePromise(queryString),
     getAndIndexGenes(queryString, numberOfNeighbors),
