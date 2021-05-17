@@ -99,7 +99,7 @@ const ComparaGene = props => {
   const highlighted = props.highlighted[gene.tree_id];
   let syntenyURL = `${props.ensemblUrl}/${gene.system_name}/Location/Synteny?r=${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`;
   let tooltipFields = [
-    ['Gene ID',     <a href={`/?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
+    ['Gene ID',     <a href={`?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
     ['Region',      <a href = {syntenyURL} target='_blank' rel="noopener noreferrer">{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
