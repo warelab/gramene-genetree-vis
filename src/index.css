@@ -7,12 +7,17 @@ body {
 .tooltip-inner {
   max-width : 400px;
 }
-
+.curation-wrapper {
+  line-height: 1;
+}
+.curation-reason {
+  font-size: 9pt;
+}
 .curation {
   display: inline-block;
   text-align: center;
   width: 45px;
-  font-size: 6pt;
+  font-size: 9pt;
   font-weight: bolder;
   border: 1px solid black;
   border-radius: 3px;
@@ -41,7 +46,7 @@ body {
 .curation.noReason {
   background: orangered;
   border-color: darkred;
-  width: 70px;
+  width: 100px;
 }
 .curation.submit {
     width: 60px;

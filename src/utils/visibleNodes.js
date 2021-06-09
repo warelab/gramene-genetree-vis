@@ -55,8 +55,8 @@ export function calculateXIndex(genetree) {
   genetree.minXindex = treeExtrema.min;
 }
 
-export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
-  let pathIds = getPathIds();
+export function setDefaultNodeDisplayInfo(genetree, geneOfInterest, expandRepresentatives) {
+  let pathIds = getPathIds(expandRepresentatives);
   let paralogPathIds = getParalogPathIds();
   let orthologPathIds = getOrthologPathIds();
 
@@ -89,8 +89,8 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest) {
     node.displayInfo = displayInfo;
   });
 
-  function getPathIds() {
-    let representatives = _.get(geneOfInterest.homology.gene_tree, 'representative');
+  function getPathIds(expandRepresentatives) {
+    let representatives = expandRepresentatives && _.get(geneOfInterest.homology.gene_tree, 'representative');
 
     // get nodes of representatives and gene of interest.
     let nodesToExpand = representatives ? _.map(representatives, (rep)=>idToNode(rep.id)) : [];

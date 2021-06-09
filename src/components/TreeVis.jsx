@@ -193,18 +193,35 @@ export default class TreeVis extends React.Component {
 
     addConsensus(this.genetree); // TODO: use a promise
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
-    setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest);
-    if (this.props.enableCuration && this.genetree.displayInfo.paralogs) {
-      let node = this.genetree;
-      node.displayInfo.paralogs.forEach(function (paralog) {
-        let parentNode = paralog.parent;
-        while (!parentNode.displayInfo.expanded) {
-          parentNode.displayInfo.expanded = true;
-          parentNode.displayInfo.expandedParalogs = true;
-          parentNode = parentNode.parent
+    if (this.props.enableCuration) {
+      setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest, false);
+      let curatable = this.props.curatable;
+      this.genetree.walk(function (node) {
+        if (curatable.hasOwnProperty(node.model.taxon_id)) {
+          let parentNode = node.parent;
+          while (!parentNode.displayInfo.expanded) {
+            parentNode.displayInfo.expanded = true;
+            parentNode.displayInfo.expandedCuratable = true;
+            parentNode = parentNode.parent;
+          }
         }
-      });
+      })
     }
+    else {
+      setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest, true);
+    }
+
+    // if (this.props.enableCuration && this.genetree.displayInfo.paralogs) {
+    //   let node = this.genetree;
+    //   node.displayInfo.paralogs.forEach(function (paralog) {
+    //     let parentNode = paralog.parent;
+    //     while (!parentNode.displayInfo.expanded) {
+    //       parentNode.displayInfo.expanded = true;
+    //       parentNode.displayInfo.expandedParalogs = true;
+    //       parentNode = parentNode.parent
+    //     }
+    //   });
+    // }
 
     calculateXIndex(this.genetree);
     this.treeHeight = calculateSvgHeight(this.genetree);
@@ -275,7 +292,7 @@ export default class TreeVis extends React.Component {
     GrameneClient.genes(geneNode.model.gene_stable_id).then(function (response) {
       let geneOfInterest = response.docs[0];
       relateGeneToTree(this.genetree, geneOfInterest, this.props.taxonomy, this.props.pivotTree);
-      setDefaultNodeDisplayInfo(this.genetree, geneOfInterest);
+      setDefaultNodeDisplayInfo(this.genetree, geneOfInterest, true);
       calculateXIndex(this.genetree);
       this.treeHeight = calculateSvgHeight(this.genetree);
 

@@ -22,9 +22,21 @@ function details(collection, idList) {
   );
 }
 
+function getTaxonomyLUT() {
+  return searchInterface.grameneClient.then((client) =>
+      client['Data access']['maps']({rows:-1}).then((response) => response.obj).then((maps) => {
+        let taxLut = {};
+        maps.forEach(map => {
+          taxLut[map.taxon_id] = map.display_name;
+        });
+        return taxLut;
+      })
+  );
+}
+
 const defaults = {
-  gene: "AT1G08465",
-  genetree: "EPlGT00140000000739"
+  gene: "AT1G13740",
+  genetree: "SORGHUM1GT_177574"
 };
 
 class App extends Component {
@@ -33,55 +45,9 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        4577:1,
-        // 45770000:1,
         4558: 'BTx623 (JGI)',
-        // 1000655996: 'tx430',
-        // 1000651496: 'rio',
-        // 1100004558: 'TX623 (CSHL)',
-        // 1000656001: 'tx2783',
-        // 1000561071: 'tx436'
-        // 4577001:1,
-        // 4577002:1,
-        // 4577003:1,
-        // 4577004:1,
-        // 4577005:1,
-        // 4577006:1,
-        // 4577007:1,
-        // 4577008:1,
-        // 4577009:1,
-        // 4577010:1,
-        // 4577011:1,
-        // 4577012:1,
-        // 4577013:1,
-        // 4577014:1,
-        // 4577015:1,
-        // 4577016:1,
-        // 4577017:1,
-        // 4577018:1,
-        // 4577019:1,
-        // 4577020:1,
-        // 4577021:1,
-        // 4577022:1,
-        // 4577023:1,
-        // 4577024:1,
-        // 4577025:1
-        // 3702: 'arabidopsis',
-        // 39947: 'rice',
-        // 4577: 'B73',
-        // 45770000: 'B73v4',
-        // 4577004: 'CML247',
-        // 4577007: 'CML333',
-        // 4577008: 'CML52',
-        // 4577012: 'Ki11',
-        // 4577013: 'Ki3',
-        // 4577014: 'Ky21',
-        // 4577015: 'M162W',
-        // 4577018: 'MS71',
-        // 4577019: 'NC350',
-        // 4558: 'sorghum'
-        // 29760: 'grapevine',
-        // 15368: 'brachy'
+        29760: 'grapevine',
+        297600000: 'PN'
       },
       submission: []
     }
@@ -96,7 +62,7 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let set = parsed.set || 'sorghum1';
+    let set = parsed.set || 'vitis1';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
     if (parsed.since) {
@@ -147,13 +113,31 @@ class App extends Component {
         let treeId = geneOfInterest.homology.gene_tree.id;
         let treePromise = details('genetrees', treeId);
         treePromise.then(function (tree) {
-          let genetree = GrameneTrees.genetree.tree(tree);
-          let submission = genetree.leafNodes()
-            .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
-            .map(node => {
-              return {geneId: node.model.gene_stable_id, opinion: 'curate'}
-            });
-          this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest, set, orthologsSince});
+          let mapsPromise = getTaxonomyLUT();
+          mapsPromise.then(function (maps) {
+            function update_taxon_name(node) {
+              if (maps.hasOwnProperty(node.taxon_id)) {
+                node.taxon_name = maps[node.taxon_id]
+              }
+              else if (node.taxon_id === 1100004558) {
+                node.taxon_name = "Sorghum bicolor"
+              }
+              if (node.taxon_id === 297600009 && node.hasOwnProperty('children')) {
+                node.taxon_name = "Vitis vinifera"
+              }
+              if (node.hasOwnProperty('children')) {
+                node.children.forEach(c => update_taxon_name(c))
+              }
+            }
+            update_taxon_name(tree[0]);
+            let genetree = GrameneTrees.genetree.tree(tree);
+            let submission = genetree.leafNodes()
+                .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+                .map(node => {
+                  return {geneId: node.model.gene_stable_id, opinion: 'curate'}
+                });
+            this.setState({genetree, geneOfInterest, submission, taxonomy, genomesOfInterest, set, orthologsSince});
+          }.bind(this));
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -194,7 +178,7 @@ class App extends Component {
                          pivotTree={true}
                          enablePhyloview={true}
                          enableCuration={true}
-                         ensemblUrl='http://maize-pangenone-ensembl.gramene.org'
+                         ensemblUrl='http://vitis-ensembl.gramene.org'
                          numberOfNeighbors={10}
                          getCuration={this.getCuration.bind(this)}
       />;

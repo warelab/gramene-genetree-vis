@@ -116,7 +116,7 @@ export default class Curation extends React.Component {
             const reason = this.state.reason[node.model.gene_stable_id] || 'none';
             let reasonSelect;
             if (opinion === 'flag') {
-              reasonSelect = (<span>
+              reasonSelect = (<span className='curation-reason'>
                 <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
                   {reasons.map((r,idx) => (
                     <option key={idx} value={r.name}>{r.label}</option>

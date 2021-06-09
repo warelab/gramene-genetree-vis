@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Form, Col, Button } from 'react-bootstrap';
+import { FormControl, Form, Container, Row, Col, Button } from 'react-bootstrap';
 import isEmail from 'is-email';
 import _ from 'lodash';
 import axios from 'axios';
@@ -87,42 +87,42 @@ export default class Feedback extends React.Component {
       }
     });
     return (
-      <div style={{width:"500px"}}>
-        <Form inline={true} noValidate>
-          <Form.Group controlId="progress">
-            <Col sm={3}>
-              Progress
-            </Col>
-            <Col sm={9}>
-              <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
-              <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
-              <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
-              <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
-            </Col>
-          </Form.Group>
-          <Form.Group controlId="email">
-            <Col sm={3}>
-              Your Email
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="text"
-                value={this.state.email}
-                onChange={this.handleChange.bind(this)}
-                isValid={this.validateField('email')}
-              />
-              <FormControl.Feedback />
-            </Col>
-          </Form.Group>
-          <Form.Group>
-            <Col smoffset={3} sm={9}>
-              <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>
-                Send your feedback
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-      </div>
+        <Container>
+          <Form inline={true} noValidate>
+              <Form.Group controlId="progress">
+                <Col sm={2}>
+                  Progress
+                </Col>
+                <Col sm={10}>
+                  <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
+                  <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
+                  <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
+                  <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
+                </Col>
+              </Form.Group>
+              <Form.Group controlId="email">
+                <Col sm={3}>
+                  Email
+                </Col>
+                <Col sm={9}>
+                  <FormControl
+                      type="text"
+                      value={this.state.email}
+                      onChange={this.handleChange.bind(this)}
+                      isValid={this.validateField('email')}
+                  />
+                  <FormControl.Feedback />
+                </Col>
+              </Form.Group>
+              <Form.Group>
+                <Col smoffset={3} sm={9}>
+                  <Button disabled={!this.formIsValid()} onClick={this.submitForm.bind(this)}>
+                    Submit
+                  </Button>
+                </Col>
+              </Form.Group>
+          </Form>
+        </Container>
     );
   }
 
