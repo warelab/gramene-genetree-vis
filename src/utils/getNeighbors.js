@@ -140,6 +140,7 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
   sortedIdsAndIdentities.forEach(function (geneIdAndIdentity) {
     const geneId = geneIdAndIdentity.id;
     const doc = geneDocs[geneId];
+    console.log(geneId);
     if (doc) {
       const geneNeighborhood = {
         region: {
@@ -152,11 +153,11 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
         genes: [] // tbd
       };
       const idx = doc.gene_idx;
-      let first = idx - numberOfNeighbors;
-      let last = idx - numberOfNeighbors;
+      let first = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
+      let last = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
       // extend first and last to capture numberOfNeighbors compara genes
       const compara_idx = doc.compara_idx;
-      const first_compara = compara_idx - numberOfNeighbors;
+      const first_compara = (compara_idx > numberOfNeighbors) ? compara_idx - numberOfNeighbors : 0;
       const last_compara = compara_idx + numberOfNeighbors;
       while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
       while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
