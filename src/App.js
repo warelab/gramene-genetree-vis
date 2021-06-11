@@ -10,8 +10,9 @@ import {client as searchInterface} from "gramene-search-client";
 import queryString from 'query-string';
 // import Q from "q";
 import _ from "lodash";
-
+// import GrameneTreesClient from "gramene-trees-client";
 let GrameneTrees = require('gramene-trees-client');
+let pruneTree = GrameneTrees.extensions.pruneTree;
 
 function details(collection, idList) {
   if (!_.isArray(idList)) {
@@ -45,7 +46,7 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        4558: 'BTx623 (JGI)',
+        // 4558: 'BTx623 (JGI)',
         29760: 'grapevine',
         297600000: 'PN'
       },
@@ -131,6 +132,23 @@ class App extends Component {
             }
             update_taxon_name(tree[0]);
             let genetree = GrameneTrees.genetree.tree(tree);
+            if (!_.isEmpty(orthologsSince)) {
+              let nodeOfInterest = genetree.indices.gene_stable_id[geneOfInterest._id];
+              let pathToRoot = nodeOfInterest.getPath().reverse();
+              let nodeOnPath = pathToRoot.shift();
+              while (!orthologsSince.hasOwnProperty(nodeOnPath.model.taxon_id) && pathToRoot.length > 0) {
+                nodeOnPath = pathToRoot.shift();
+              }
+              if (pathToRoot.length > 0) {
+                nodeOnPath.walk(function (descendant) {
+                  descendant.model.keep = true;
+                });
+                genetree = pruneTree(genetree, function (node) {
+                  return (node.model.keep);
+                });
+//              genetree.geneCount = this.props.genetree.geneCount;
+              }
+            }
             let submission = genetree.leafNodes()
                 .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
                 .map(node => {
