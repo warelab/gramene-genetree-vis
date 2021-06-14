@@ -59,18 +59,7 @@ export default class Feedback extends React.Component {
 
   formIsValid() {
     let notCuratedYet = this.state.genes.filter(gene => gene.opinion === 'curate');
-    let flaggedForNoGoodReason = this.state.genes.filter(gene => (gene.opinion === 'flag' && gene.reason === 'none'));
-    const labRegex = /^pb\d+@cornell.edu$/;
-    return (
-      (
-        this.validateField('email') === 'success' &&
-        labRegex.test(this.state.email)
-      ) || (
-        this.validateField('email') === 'success' &&
-        notCuratedYet.length === 0 &&
-        flaggedForNoGoodReason.length === 0
-      )
-    )
+    return this.validateField('email') === 'success' && notCuratedYet.length === 0
   }
 
   renderForm() {
@@ -90,14 +79,14 @@ export default class Feedback extends React.Component {
         <Container>
           <Form inline={true} noValidate>
               <Form.Group controlId="progress">
-                <Col sm={2}>
+                <Col sm={4}>
                   Progress
                 </Col>
                 <Col sm={10}>
                   <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
                   <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
-                  <span className="curation flag">flag</span>&nbsp;{tally.flag}&nbsp;
-                  <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
+                  <span className="curation flag">poor</span>&nbsp;{tally.flag}&nbsp;
+                  {/*<span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;*/}
                 </Col>
               </Form.Group>
               <Form.Group controlId="email">

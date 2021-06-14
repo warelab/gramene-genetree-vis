@@ -43,6 +43,10 @@ body {
   background: yellow;
   border-color: orange;
 }
+.curation.poor {
+  background: yellow;
+  border-color: orange;
+}
 .curation.noReason {
   background: orangered;
   border-color: darkred;

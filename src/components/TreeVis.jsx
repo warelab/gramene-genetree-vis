@@ -421,7 +421,7 @@ export default class TreeVis extends React.Component {
         </span>
         {this.props.enableCuration &&
         <div style={{position: 'absolute', left:`${this.margin + this.treeWidth + this.labelWidth + this.vizWidth}px`}}>
-          <b>Curate</b>: click to flag genes <div>&nbsp;<span className="curation okay">okay</span>&nbsp;or&nbsp;<span className="curation flag">flag</span></div>
+          <b>Curate</b>: click to flag genes <div>&nbsp;<span className="curation okay">okay</span>&nbsp;or&nbsp;<span className="curation flag">poor</span></div>
         </div>
         }
       </div>

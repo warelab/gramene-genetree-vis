@@ -2,8 +2,8 @@ import React from 'react';
 import _ from 'lodash';
 const shifty = {
   curate : 'okay',
-  okay : 'flag',
-  flag : 'curate'
+  okay : 'poor',
+  poor : 'curate'
 };
 let reasons = [
   {
@@ -115,15 +115,15 @@ export default class Curation extends React.Component {
             const opinion = this.state.opinion[node.model.gene_stable_id];
             const reason = this.state.reason[node.model.gene_stable_id] || 'none';
             let reasonSelect;
-            if (opinion === 'flag') {
-              reasonSelect = (<span className='curation-reason'>
-                <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
-                  {reasons.map((r,idx) => (
-                    <option key={idx} value={r.name}>{r.label}</option>
-                  ))}
-                </select>
-              </span>)
-            }
+            // if (opinion === 'flag') {
+            //   reasonSelect = (<span className='curation-reason'>
+            //     <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
+            //       {reasons.map((r,idx) => (
+            //         <option key={idx} value={r.name}>{r.label}</option>
+            //       ))}
+            //     </select>
+            //   </span>)
+            // }
             return <foreignObject key={idx}
                                   x={10} y={node.x - 4}
                                   height={this.props.height}
