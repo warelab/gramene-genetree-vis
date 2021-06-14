@@ -1,6 +1,6 @@
 {
   "name": "gramene-genetree-vis",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "main": "index.js",
   "description": "Visualize a genetree using d3",
   "repository": {
