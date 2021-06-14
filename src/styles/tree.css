@@ -35,6 +35,23 @@
 .genetree-vis .duplication rect {
   fill: #cd0000;
 }
+.genetree-vis .gene_split rect {
+  fill: #ffff00;
+  -webkit-animation: pulse linear .2s;
+  -webkit-animation-iteration-count: 50;
+  animation: pulse linear .2s;
+  animation-iteration-count: 50;
+}
+@-webkit-keyframes pulse {
+   0% { fill: #cd0000; }
+   50% { fill: #ffff00; }
+   100% { fill: #0000ff; }
+ }
+@keyframes pulse {
+  0% { fill: #cd0000; }
+  50% { fill: #ffff00; }
+  100% { fill: #0000ff; }
+}
 .genetree-vis .node:hover .internal,
 .genetree-vis .edge:hover .internal,
 .genetree-vis .node:hover .gene circle,

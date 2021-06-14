@@ -4,18 +4,16 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash.flow';
-import { Checkbox } from 'react-bootstrap';
 
 const style = {
   // border: '1px dashed gray',
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
+  padding: '0.25rem 0.5rem',
   backgroundColor: 'white',
   cursor: 'move',
   display: 'inline-block',
   zoom: 1,
   verticalAlign: 'top',
-  width: '140px'
+  width: '20%'
 };
 
 const labelSource = {
@@ -81,7 +79,8 @@ class Label extends Component {
     return connectDragSource(connectDropTarget(
       <div style={{ ...style, opacity }}>
         <div style={{border:'1px dashed gray',padding:'1rem'}}>
-          <Checkbox onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked}>{text}</Checkbox>
+          <input name={text} onChange={()=>this.props.toggleLabel(this.props.index)} checked={checked} type='checkbox'/>
+          <label style={{marginBottom:0, paddingLeft:"0.2rem"}} htmlFor={text}>{text}</label>
         </div>
       </div>,
     ));

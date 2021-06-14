@@ -1,5 +1,5 @@
 import React from 'react';
-import {Tooltip, OverlayTrigger} from 'react-bootstrap';
+import {Tooltip, OverlayTrigger, Button} from 'react-bootstrap';
 
 import Gene from './Gene';
 
@@ -7,8 +7,6 @@ var d3Scale = require('d3-scale');
 
 const neighborhoodHeight = 24;
 const scaleFactor = 20;
-
-const syntenyURL = 'http://ensembl.gramene.org/Oryza_sativa/Location/Synteny?r=';
 
 const NeighborhoodArrow = props => {
   const arrowLength = scaleFactor * 10*props.totalLength/props.width;
@@ -19,7 +17,7 @@ const NeighborhoodArrow = props => {
   let arrowHead;
   let color = 'black';
   let tooltip = '<pre>internal node</pre>';
-  if (props.neighborhood.strand) {
+  if (props.neighborhood && props.neighborhood.strand) {
     const flipped = (props.neighborhood.strand === 'reverse');
     lineStart = flipped ? arrowLength : 0;
     lineEnd = flipped ? lineLength : lineLength - arrowLength;
@@ -101,7 +99,7 @@ const ComparaGene = props => {
   const highlighted = props.highlighted[gene.tree_id];
   let syntenyURL = `${props.ensemblUrl}/${gene.system_name}/Location/Synteny?r=${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`;
   let tooltipFields = [
-    ['Gene ID',     <a href={`/?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
+    ['Gene ID',     <a href={`?idList=${gene.id}`} target='_blank' rel="noopener noreferrer">{gene.id}</a>],
     ['Gene Name',   gene.name],
     // ['Taxonomy',    props.taxonomy.taxonIdToSpeciesName[gene.taxon_id]],
     ['Region',      <a href = {syntenyURL} target='_blank' rel="noopener noreferrer">{`${gene.region}:${gene.start}-${gene.end}:${gene.orientation}`}</a>],
@@ -117,13 +115,13 @@ const ComparaGene = props => {
     tooltipFields.push(['Homolog', gene.model_rep_description]);
   }
   let button = (
-    <button className='btn btn-xs btn-default' onClick={() => {
+    <Button size={'sm'} onClick={() => {
       if (props.clickHandler) {
         props.clickHandler(gene.id, gene.tree_id)
       }
     }}>
       {highlighted ? 'Unhighlight' : 'Highlight'} this gene tree
-    </button>
+    </Button>
   );
   if (gene.relationToGeneOfInterest) {
     tooltipFields.push(['Identity',Math.floor(1000*identity)/10 + '%']);

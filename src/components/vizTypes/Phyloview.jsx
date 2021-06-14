@@ -1,6 +1,6 @@
 import React from 'react';
 import PositionedNeighborhood from '../PositionedNeighborhood.jsx';
-import interact from 'interact.js';
+// import interact from 'interact.js';
 
 var d3Scale = require('d3-scale');
 
@@ -67,94 +67,95 @@ export default class MSAOverview extends React.Component {
     super(props);
     this.state = {
       highlighted : {}
-    }
-  }
-
-  componentWillMount() {
-    this.totalLength = 2 + 2*this.props.numberOfNeighbors;
+    };
+    // this.svgRef = React.createRef();
+    this.totalLength = 2 + 2*props.numberOfNeighbors;
     this.viewRange = {
-      min: this.props.numberOfNeighbors/2,
+      min: props.numberOfNeighbors/2,
       max: .75*this.totalLength
     };
-    this.minWidth = this.props.width * 4/ (this.totalLength);
+    this.minWidth = props.width * 4/ (this.totalLength);
     if (this.viewRange.max - this.viewRange.min <= this.minWidth) {
       this.viewRange.min= 0;
       this.viewRange.max= this.totalLength;
     }
   }
 
-  componentDidMount() {
-    if (this.zoomer) {
-      let x = this.props.width * this.viewRange.min / this.totalLength;
-      let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
-      this.zoomer.style.webkitTransform =
-        this.zoomer.style.transform =
-          `translate(${x}px,${y}px)`;
-      this.zoomer.style.width = this.props.width * (this.viewRange.max - this.viewRange.min)/this.totalLength + 'px';
-      interact(this.zoomer)
-        .draggable({
-          onmove: this.dragMoveListener.bind(this)
-        })
-        .resizable({
-          preserveAspectRatio: false,
-          edges: {left: true, right: true, bottom: false, top: false }
-        })
-        .on('resizemove', function (event) {
-          if (event.rect.width > this.minWidth) {
-            let target = event.target;
-            let x = this.props.width * this.viewRange.min / this.totalLength;
-            let y = (parseFloat(target.getAttribute('data-y')) || 0);
-            if (event.deltaRect.left !== 0) {
-              // move left edge
-              x += event.deltaRect.left;
-              if (x < 0) x = 0;
-              this.viewRange.min = x * this.totalLength / this.props.width;
-            }
-            if (event.deltaRect.right !== 0) {
-              // move right edge
-              let right = x + event.rect.width;
-              if (right > this.props.width) right = this.props.width;
-              this.viewRange.max = right * this.totalLength / this.props.width;
-            }
+  // componentDidMount() {
+  // }
 
-            let viewWidth = this.viewRange.max - this.viewRange.min;
-            target.style.width = this.props.width * viewWidth / this.totalLength + 'px';
-            target.style.webkitTransform =
-              target.style.transform =
-                `translate(${x}px,${y}px)`;
-            target.setAttribute('data-x', x);
-            target.setAttribute('data-width', parseInt(target.style.width, 10));
-
-            this.neighborhoodsSVG.setAttribute('viewBox', this.getViewBox(false));
-          }
-        }.bind(this))
-    }
-  }
-
-  dragMoveListener(event) {
-    if ((this.viewRange.max - this.viewRange.min + 1) < 0.98*this.totalLength) {
-      let target = event.target,
-        x = this.props.width * this.viewRange.min / this.totalLength + event.dx,
-        y = parseFloat(target.getAttribute('data-y')) || 0;
-      // respect boundaries
-      if (x < 0) x = 0;
-      let zoomerWidth = parseFloat(target.style.width);
-      if (x + zoomerWidth > this.props.width) x = this.props.width - zoomerWidth;
-      let xPosInSeq = this.totalLength * x / this.props.width;
-      let viewWidth = this.viewRange.max - this.viewRange.min;
-      // translate the element
-      target.style.webkitTransform =
-        target.style.transform =
-          'translate(' + x + 'px, ' + y + 'px)';
-      // update the position attribute
-      target.setAttribute('data-x', x);
-      // update the view position
-      this.viewRange.min = xPosInSeq;
-      this.viewRange.max = xPosInSeq + viewWidth;
-
-      this.neighborhoodsSVG.setAttribute('viewBox', this.getViewBox(false));
-    }
-  }
+  // componentDidMount() {
+  //   if (this.zoomer) {
+  //     let x = this.props.width * this.viewRange.min / this.totalLength;
+  //     let y = parseFloat(this.zoomer.getAttribute('data-y')) || 0;
+  //     this.zoomer.style.webkitTransform =
+  //       this.zoomer.style.transform =
+  //         `translate(${x}px,${y}px)`;
+  //     this.zoomer.style.width = this.props.width * (this.viewRange.max - this.viewRange.min)/this.totalLength + 'px';
+  //     interact(this.zoomer)
+  //       .draggable({
+  //         onmove: this.dragMoveListener.bind(this)
+  //       })
+  //       .resizable({
+  //         preserveAspectRatio: false,
+  //         edges: {left: true, right: true, bottom: false, top: false }
+  //       })
+  //       .on('resizemove', function (event) {
+  //         if (event.rect.width > this.minWidth) {
+  //           let target = event.target;
+  //           let x = this.props.width * this.viewRange.min / this.totalLength;
+  //           let y = (parseFloat(target.getAttribute('data-y')) || 0);
+  //           if (event.deltaRect.left !== 0) {
+  //             // move left edge
+  //             x += event.deltaRect.left;
+  //             if (x < 0) x = 0;
+  //             this.viewRange.min = x * this.totalLength / this.props.width;
+  //           }
+  //           if (event.deltaRect.right !== 0) {
+  //             // move right edge
+  //             let right = x + event.rect.width;
+  //             if (right > this.props.width) right = this.props.width;
+  //             this.viewRange.max = right * this.totalLength / this.props.width;
+  //           }
+  //
+  //           let viewWidth = this.viewRange.max - this.viewRange.min;
+  //           target.style.width = this.props.width * viewWidth / this.totalLength + 'px';
+  //           target.style.webkitTransform =
+  //             target.style.transform =
+  //               `translate(${x}px,${y}px)`;
+  //           target.setAttribute('data-x', x);
+  //           target.setAttribute('data-width', parseInt(target.style.width, 10));
+  //
+  //           this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
+  //         }
+  //       }.bind(this))
+  //   }
+  // }
+  //
+  // dragMoveListener(event) {
+  //   if ((this.viewRange.max - this.viewRange.min + 1) < 0.98*this.totalLength) {
+  //     let target = event.target,
+  //       x = this.props.width * this.viewRange.min / this.totalLength + event.dx,
+  //       y = parseFloat(target.getAttribute('data-y')) || 0;
+  //     // respect boundaries
+  //     if (x < 0) x = 0;
+  //     let zoomerWidth = parseFloat(target.style.width);
+  //     if (x + zoomerWidth > this.props.width) x = this.props.width - zoomerWidth;
+  //     let xPosInSeq = this.totalLength * x / this.props.width;
+  //     let viewWidth = this.viewRange.max - this.viewRange.min;
+  //     // translate the element
+  //     target.style.webkitTransform =
+  //       target.style.transform =
+  //         'translate(' + x + 'px, ' + y + 'px)';
+  //     // update the position attribute
+  //     target.setAttribute('data-x', x);
+  //     // update the view position
+  //     this.viewRange.min = xPosInSeq;
+  //     this.viewRange.max = xPosInSeq + viewWidth;
+  //
+  //     this.svgRef.current.setAttribute('viewBox', this.getViewBox(false));
+  //   }
+  // }
 
   getViewBox(forConsensus) {
     let viewBoxMinX = forConsensus ? 0 : this.viewRange.min;
@@ -205,8 +206,7 @@ export default class MSAOverview extends React.Component {
     return (
       <g className="phyloview-wrapper"
          transform={`translate(${this.props.xOffset},${this.props.yOffset + this.props.controlsHeight + this.props.margin - 10})`}>
-        <svg ref={(svg) => this.neighborhoodsSVG = svg}
-             width={this.props.width}
+        <svg width={this.props.width}
              height={this.props.height + 2 * this.props.margin}
              viewBox={this.getViewBox(false)}
              preserveAspectRatio="none">

@@ -7,3 +7,47 @@ body {
 .tooltip-inner {
   max-width : 400px;
 }
+.curation-wrapper {
+  line-height: 1;
+}
+.curation-reason {
+  font-size: 9pt;
+}
+.curation {
+  display: inline-block;
+  text-align: center;
+  width: 45px;
+  font-size: 9pt;
+  font-weight: bolder;
+  border: 1px solid black;
+  border-radius: 3px;
+  transition: border-width .1s;
+}
+.curation:hover {
+    border-width: 3px;
+    cursor: pointer;
+}
+.curation.curate {
+  background: white;
+  border-color: black;
+}
+.curation.okay {
+  background: lawngreen;
+  border-color: green;
+}
+.curation.bad {
+  background: orangered;
+  border-color: darkred;
+}
+.curation.flag {
+  background: yellow;
+  border-color: orange;
+}
+.curation.noReason {
+  background: orangered;
+  border-color: darkred;
+  width: 100px;
+}
+.curation.submit {
+    width: 60px;
+}

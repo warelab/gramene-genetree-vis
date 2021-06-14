@@ -6,26 +6,24 @@ import {resolveOverlaps} from '../utils/calculateAlignment';
 import domainStats from '../utils/domainsStats';
 
 class Domains extends Component {
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    stats: React.PropTypes.object.isRequired,
-    domains: React.PropTypes.object.isRequired,
-    alignment: React.PropTypes.object.isRequired
+  constructor(props) {
+    super(props);
+    this.cladeStats = domainStats(this.props.node);
   }
+  // props: {
+  //   id: React.PropTypes.number.isRequired,
+  //   node: React.PropTypes.object.isRequired,
+  //   width: React.PropTypes.number.isRequired,
+  //   stats: React.PropTypes.object.isRequired,
+  //   domains: React.PropTypes.object.isRequired,
+  //   alignment: React.PropTypes.object.isRequired
+  // }
 
-  componentWillMount() {
-    if (this.props.node.hasChildren()) {
-      this.cladeStats = domainStats(this.props.node);
-    }
-  }
-
-  componentWillUpdate() {
-    if (this.props.node.hasChildren()) {
-      this.cladeStats = domainStats(this.props.node);
-    }
-  }
+  // componentDidUpdate() {
+  //   if (this.props.node.hasChildren()) {
+  //     this.cladeStats = domainStats(this.props.node);
+  //   }
+  // }
 
   render() {
     return (
@@ -63,7 +61,7 @@ class Domains extends Component {
 
   renderPopover(domain) {
     var title = `${domain.id} - ${domain.name}`;
-    return <Popover id={domain.name} title={title}>{this.renderPopoverContent(domain)}</Popover>;
+    return <Popover id={domain.name}><Popover.Title>{title}</Popover.Title><Popover.Content>{this.renderPopoverContent(domain)}</Popover.Content></Popover>;
   }
 
   renderPopoverContent(domain) {

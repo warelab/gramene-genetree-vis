@@ -67,7 +67,7 @@ function centralGenePromise(queryString) {
     q: queryString,
     rows: 10000,
     start: 0,
-    fl: ['compara_idx', 'gene_idx', 'id', 'taxon_id', 'region']
+    fl: ['compara_idx', 'gene_idx', 'id', 'taxon_id', 'region','start','end','strand']
   });
 }
 
@@ -152,11 +152,11 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
         genes: [] // tbd
       };
       const idx = doc.gene_idx;
-      let first = idx < numberOfNeighbors ? 0 : idx - numberOfNeighbors;
-      let last = idx < numberOfNeighbors ? 0 : idx - numberOfNeighbors;
+      let first = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
+      let last = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
       // extend first and last to capture numberOfNeighbors compara genes
       const compara_idx = doc.compara_idx;
-      const first_compara = compara_idx < numberOfNeighbors ? 0 : compara_idx - numberOfNeighbors;
+      const first_compara = (compara_idx > numberOfNeighbors) ? compara_idx - numberOfNeighbors : 0;
       const last_compara = compara_idx + numberOfNeighbors;
       while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
       while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
@@ -210,7 +210,12 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
       neighborhoods.push(geneNeighborhood);
     }
   });
-  return {neighborhoods: neighborhoods, facets: allGenesAndFacets.facets, nonCodingGroupLengthDistribution: spanDistribution};
+  return {
+    neighborhoods: neighborhoods,
+    facets: allGenesAndFacets.facets,
+    nonCodingGroupLengthDistribution: spanDistribution,
+    geneDocs: geneDocs
+  };
 }
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {
@@ -244,10 +249,10 @@ function getAndIndexGenes(queryString, numberOfNeighbors) {
 
 export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfInterest) {
   let queryString = `gene_tree:${genetree.model._id}`;
-  if (!_.isEmpty(genomesOfInterest)) {
-    let taxa = Object.keys(genomesOfInterest).join(' ');
-    queryString = `${queryString} AND taxonomy__ancestors:(${taxa})`;
-  }
+  // if (!_.isEmpty(genomesOfInterest)) {
+  //   let taxa = Object.keys(genomesOfInterest).join(' ');
+  //   queryString = `${queryString} AND taxonomy__ancestors:(${taxa})`;
+  // }
   return Q.all([
     centralGenePromise(queryString),
     getAndIndexGenes(queryString, numberOfNeighbors),

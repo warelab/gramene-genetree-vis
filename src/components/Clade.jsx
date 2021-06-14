@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import microsoftBrowser from '../utils/microsoftBrowser';
 
-import {Overlay, Popover, Button} from "react-bootstrap";
+import {OverlayTrigger, Popover, Button} from "react-bootstrap";
 
 import NodePopover from './NodePopover.jsx';
 
@@ -16,6 +16,7 @@ export default class Clade extends React.Component {
 
   constructor(props) {
     super(props);
+    this.cladeRef = React.createRef();
     this.state = {
       popoverVisible: false
     };
@@ -122,7 +123,7 @@ export default class Clade extends React.Component {
     }
   }
 
-  overlay(node) {
+  overlay(node,geneDocs) {
     const model = node.model;
     const titleText = model.node_type
       ? `${model.taxon_name} – ${model.node_type}`
@@ -134,7 +135,8 @@ export default class Clade extends React.Component {
 
     const title = <div>
       <Button className="tooltip-title-button"
-              bsSize="xsmall"
+              size="sm"
+              variant="light"
               onClick={this.togglePopoverVisibility.bind(this)}>
         &times;
       </Button>
@@ -142,17 +144,21 @@ export default class Clade extends React.Component {
     </div>;
 
     return (
-      <Overlay show={this.state.popoverVisible}
-               target={ props => ReactDOM.findDOMNode(this.refs.clickable)}>
-        <Popover id={id} title={title}>
-          <NodePopover node={node}
-                       collapseClade={this.collapseClade.bind(this)}
-                       expandClade={this.expandClade.bind(this)}
-                       changeParalogVisibility={this.changeParalogVisibility.bind(this)}
-                       changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
-          />
+      // <Overlay show={this.state.popoverVisible}
+      //          target={this.cladeRef.current}>
+        <Popover id={id}>
+          <Popover.Title>{title}</Popover.Title>
+          <Popover.Content>
+            <NodePopover node={node}
+                         collapseClade={this.collapseClade.bind(this)}
+                         expandClade={this.expandClade.bind(this)}
+                         changeParalogVisibility={this.changeParalogVisibility.bind(this)}
+                         changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
+                         geneDocs={geneDocs}
+            />
+          </Popover.Content>
         </Popover>
-      </Overlay>
+      // </Overlay>
     );
   }
 
@@ -172,14 +178,22 @@ export default class Clade extends React.Component {
   }
 
   render() {
+    const popover = this.overlay(this.props.node, this.props.geneDocs);
     return (
       <g {...this.cladeProps()}>
-        <g ref="clickable" onClick={this.togglePopoverVisibility.bind(this)}>
-          {this.renderEdge()}
-          {this.renderNode()}
-        </g>
-        {this.overlay(this.props.node)}
-
+        <OverlayTrigger
+          trigger="click"
+          placement="right"
+          overlay={popover}
+          transition={false}
+          show={this.state.popoverVisible}
+          onToggle={this.togglePopoverVisibility.bind(this)}
+        >
+          <g>
+            {this.renderEdge()}
+            {this.renderNode()}
+          </g>
+        </OverlayTrigger>
         {this.renderSubClades()}
       </g>
     );
@@ -191,5 +205,6 @@ Clade.propTypes = {
   labelFields: PropTypes.array.isRequired,
   cladeHovered: PropTypes.bool,
   xOffset: PropTypes.number.isRequired,
-  yOffset: PropTypes.number.isRequired
+  yOffset: PropTypes.number.isRequired,
+  geneDocs: PropTypes.object.isRequired
 };
