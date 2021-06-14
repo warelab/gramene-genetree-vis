@@ -140,7 +140,6 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
   sortedIdsAndIdentities.forEach(function (geneIdAndIdentity) {
     const geneId = geneIdAndIdentity.id;
     const doc = geneDocs[geneId];
-    console.log(geneId);
     if (doc) {
       const geneNeighborhood = {
         region: {
