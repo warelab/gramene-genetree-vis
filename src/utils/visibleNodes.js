@@ -58,7 +58,7 @@ export function calculateXIndex(genetree) {
 export function setDefaultNodeDisplayInfo(genetree, geneOfInterest, expandRepresentatives) {
   let pathIds = getPathIds(expandRepresentatives);
   let paralogPathIds = getParalogPathIds();
-  let orthologPathIds = getOrthologPathIds();
+  let orthologPathIds = null; //getOrthologPathIds();
 
   genetree.walk(function (node) {
     let nodeId = node.model.node_id;
@@ -103,6 +103,7 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest, expandRepres
 
   function pathIdsImpl(path) {
     let ids = _.get(geneOfInterest, path);
+    ids.push(geneOfInterest._id);
     let nodes = _.map(ids, idToNode);
     return _.reduce(nodes, nodesToPathIds, {});
   }

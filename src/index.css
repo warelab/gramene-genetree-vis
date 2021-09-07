@@ -13,6 +13,9 @@ body {
 .curation-reason {
   font-size: 9pt;
 }
+.curation-group {
+  font-size: 9pt;
+}
 .curation {
   display: inline-block;
   text-align: center;
@@ -43,9 +46,22 @@ body {
   background: yellow;
   border-color: orange;
 }
+.curation.poor {
+  background: orangered;
+  border-color: darkred;
+}
+.curation.unclear {
+  background: yellow;
+  border-color: orange;
+}
 .curation.noReason {
   background: orangered;
   border-color: darkred;
+  width: 100px;
+}
+.curation.noGroup {
+  background: yellow;
+  border-color: orange;
   width: 100px;
 }
 .curation.submit {
