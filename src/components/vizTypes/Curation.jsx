@@ -3,12 +3,27 @@ import _ from 'lodash';
 const shifty = {
   curate : 'okay',
   okay : 'poor',
-  poor : 'curate'
+  unclear: 'curate',
+  poor : 'unclear'
 };
 let reasons = [
   {
     name : "none",
     label: "choose a reason"
+  }
+];
+let groups = [
+  {
+    name: "none",
+    label: "choose a group"
+  },
+  {
+    name: 'A',
+    label: 'A'
+  },
+  {
+    name: 'B',
+    label: 'B'
   }
 ];
 const combos = [
@@ -63,13 +78,15 @@ export default class Curation extends React.Component {
     super(props);
     let opinion=[];
     let reason=[];
+    let group=[];
     props.nodes.forEach((node) => {
       if (node.model.gene_stable_id && props.curatable[node.model.taxon_id]) {
         opinion[node.model.gene_stable_id] = "curate";
         reason[node.model.gene_stable_id] = "none";
+        group[node.model.gene_stable_id] = "none";
       }
     });
-    this.state = {opinion,reason}
+    this.state = {opinion,reason,group}
   }
 
   componentWillReceiveProps(nextProps) {
@@ -91,18 +108,30 @@ export default class Curation extends React.Component {
     const id = node.model.gene_stable_id;
     let opinion = this.state.opinion;
     let reason = this.state.reason;
+    let group = this.state.group;
     opinion[id] = shifty[opinion[id]];
     this.setState({opinion});
-    this.props.getCuration(opinion,reason);
+    this.props.getCuration(opinion,reason,group);
   }
 
   changeReason(e,node) {
     const id = node.model.gene_stable_id;
     let opinion = this.state.opinion;
     let reason = this.state.reason;
+    let group = this.state.group;
     reason[id] = e.target.value;
     this.setState({reason});
-    this.props.getCuration(opinion,reason);
+    this.props.getCuration(opinion,reason,group);
+  }
+
+  changeGroup(e,node) {
+    const id = node.model.gene_stable_id;
+    let opinion = this.state.opinion;
+    let reason = this.state.reason;
+    let group = this.state.group;
+    group[id] = e.target.value;
+    this.setState({group});
+    this.props.getCuration(opinion,reason,group);
   }
 
   render() {
@@ -114,6 +143,7 @@ export default class Curation extends React.Component {
           if (node.model.gene_stable_id && this.props.curatable[node.model.taxon_id]) {
             const opinion = this.state.opinion[node.model.gene_stable_id];
             const reason = this.state.reason[node.model.gene_stable_id] || 'none';
+            const group = this.state.group[node.model.gene_stable_id] || 'none';
             let reasonSelect;
             // if (opinion === 'flag') {
             //   reasonSelect = (<span className='curation-reason'>
@@ -124,6 +154,16 @@ export default class Curation extends React.Component {
             //     </select>
             //   </span>)
             // }
+            let groupSelect;
+            if (opinion === 'unclear') {
+              groupSelect = (<span className='curation-group'>
+                <select value={group} name={node.model.gene_stable_id} onChange={(e) => this.changeGroup(e,node)}>
+                  {groups.map((g,idx) => (
+                    <option key={idx} value={g.name}>{g.label}</option>
+                  ))}
+                </select>
+              </span>)
+            }
             return <foreignObject key={idx}
                                   x={10} y={node.x - 4}
                                   height={this.props.height}
@@ -132,6 +172,7 @@ export default class Curation extends React.Component {
                     className={`curation ${opinion}`}
                     onClick={() => this.flipFlop(node)}>{opinion}</span>
               {reasonSelect}
+              {groupSelect}
             </foreignObject>
           }
           return '';

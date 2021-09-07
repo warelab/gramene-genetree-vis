@@ -46,9 +46,13 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        // 4558: 'BTx623 (JGI)',
-        29760: 'grapevine',
-        297600000: 'PN'
+        4558: 'BTx623 (JGI)',
+        1000651496: 'Rio',
+        1000656001: 'TX2783',
+        1000561071: 'RTx436',
+        1000655996: 'RTx430'
+        // 29760: 'grapevine',
+        // 297600000: 'PN'
       },
       submission: []
     }
@@ -160,12 +164,15 @@ class App extends Component {
       }.bind(this));
     }.bind(this));
   }
-  getCuration(opinion,reason) {
+  getCuration(opinion,reason,group) {
     let submission = [];
     for (const gene in opinion) {
       let info = {geneId: gene, opinion: opinion[gene]};
       if (opinion[gene] === 'flag') {
         info.reason = reason[gene];
+      }
+      if (opinion[gene] === 'unclear') {
+        info.reason = group[gene]
       }
       submission.push(info);
     }
