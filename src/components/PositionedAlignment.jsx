@@ -3,15 +3,15 @@ import Alignment from './Alignment.jsx';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
 export default class PositionedAlignment extends Component {
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    stats: React.PropTypes.object.isRequired,
-    highlight: React.PropTypes.string.isRequired,
-    domains: React.PropTypes.object.isRequired,
-    alignment: React.PropTypes.object.isRequired
-  }
+  // props: {
+  //   id: React.PropTypes.number.isRequired,
+  //   node: React.PropTypes.object.isRequired,
+  //   width: React.PropTypes.number.isRequired,
+  //   stats: React.PropTypes.object.isRequired,
+  //   highlight: React.PropTypes.string.isRequired,
+  //   domains: React.PropTypes.object.isRequired,
+  //   alignment: React.PropTypes.object.isRequired
+  // }
 
   constructor(props) {
     super(props);
