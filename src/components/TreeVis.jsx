@@ -74,7 +74,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'domains',
         label: 'Alignment overview',
-        description: <div><b>Alignment overview</b>: Proteins color-coded by InterPro domain. Resize slider to navigate.</div>,
+        description: (<div><b>Alignment overview</b>: Proteins color-coded by InterPro domain. Resize slider to navigate.</div>),
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSAOverview, {
