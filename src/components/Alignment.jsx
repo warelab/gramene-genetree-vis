@@ -6,15 +6,15 @@ var alignmentTools = require('../utils/calculateAlignment');
 
 
 class Alignment extends Component {
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    stats: React.PropTypes.object.isRequired,
-    domains: React.PropTypes.object.idRequired,
-    highlight: React.PropTypes.string.isRequired,
-    alignment: React.PropTypes.object.isRequred
-  }
+  // props: {
+  //   id: React.PropTypes.number.isRequired,
+  //   node: React.PropTypes.object.isRequired,
+  //   width: React.PropTypes.number.isRequired,
+  //   stats: React.PropTypes.object.isRequired,
+  //   domains: React.PropTypes.object.idRequired,
+  //   highlight: React.PropTypes.string.isRequired,
+  //   alignment: React.PropTypes.object.isRequred
+  // }
 
   getColorMap(alignment, stats) {
     var regionColor = [];

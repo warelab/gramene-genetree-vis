@@ -15,12 +15,12 @@ function remap(seqPos, blocks) {
 
 
 export default class ExonJunctions extends Component {
-  props: {
-    id: React.PropTypes.number.isRequired,
-    node: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    alignment: React.PropTypes.object.isRequired
-  }
+  // props: {
+  //   id: React.PropTypes.number.isRequired,
+  //   node: React.PropTypes.object.isRequired,
+  //   width: React.PropTypes.number.isRequired,
+  //   alignment: React.PropTypes.object.isRequired
+  // }
 
   render() {
     var node = this.props.node;
