@@ -97,7 +97,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'msa',
         label: 'Multiple Sequence Alignment',
-        description: <div><b>Multiple Sequence Alignment</b>: Amino acid MSA. Drag slider to reposition.</div>,
+        description: (<div><b>Multiple Sequence Alignment</b>: Amino acid MSA. Drag slider to reposition.</div>),
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSASequence, {
@@ -124,7 +124,7 @@ export default class TreeVis extends React.Component {
         {
           id: 'phyloview',
           label: 'Neighborhood conservation',
-          description: <div><b>Neighborhood conservation</b>: +/- 10 flanking genes color-coded by gene family.</div>,
+          description: (<div><b>Neighborhood conservation</b>: +/- 10 flanking genes color-coded by gene family.</div>),
           getComponent: function (app) {
             if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
               return React.createElement(Phyloview, {
