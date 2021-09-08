@@ -508,6 +508,7 @@ export default class TreeVis extends React.Component {
   }
 }
 
+
 TreeVis.propTypes = {
   margin: PropTypes.number,
   genetree: PropTypes.object.isRequired,
