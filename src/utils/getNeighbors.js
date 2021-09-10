@@ -1,9 +1,9 @@
 import Q from "q";
 import _ from "lodash";
 import {client as searchInterface} from "gramene-search-client";
-import d3 from 'd3';
+let d3Scale = require('d3-scale');
 
-const regionColors = d3.scale.category10().range();
+const regionColors = d3Scale.scaleOrdinal(d3Scale.schemeCategory10).range();
 const unanchoredColor = '#d3d3d3';
 
 var facets = {

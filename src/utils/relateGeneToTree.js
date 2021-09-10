@@ -1,5 +1,5 @@
 import _ from 'lodash';
-let scale = require('d3').scale.linear;
+let d3Scale = require('d3-scale');
 let calculateIdentity = require('gramene-trees-client').extensions.identity;
 
 function relateNodesToGeneOfInterest(genetree, geneOfInterest, taxonomy, pivotTree) {
@@ -158,7 +158,7 @@ function addTaxonDistanceInformationToNodes(genetree, geneOfInterest, taxonomy) 
       }
     });
 
-    maxima.colorScale = scale()
+    maxima.colorScale = d3Scale.scaleLinear()
       .domain([0, maxima.lcaDistance + maxima.pathDistance])
       .range(['green', 'red']);
   }

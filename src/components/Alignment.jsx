@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-var scale = require('d3').scale.linear;
+var d3Scale = require('d3-scale');
 var _ = require('lodash');
 
 var alignmentTools = require('../utils/calculateAlignment');
-
 
 class Alignment extends Component {
   // props: {
@@ -18,7 +17,7 @@ class Alignment extends Component {
 
   getColorMap(alignment, stats) {
     var regionColor = [];
-    var grayScale = scale().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
+    var grayScale = d3Scale.scaleLinear().domain([0, alignment.nSeqs]).range(['#DDDDDD','#444444']);
     var prevEnd=0;
     if (this.props.domains.length > 0) {
       alignmentTools.resolveOverlaps(this.props.domains).forEach(function(d) {
@@ -35,11 +34,11 @@ class Alignment extends Component {
         if (d.end > prevEnd) {
           prevEnd = d.end;
           var maxColor = stats[d.id].color;
-          var colorScale = scale().domain([0, 1]).range(['#FFFFFF', maxColor]);
+          var colorScale = d3Scale.scaleLinear().domain([0, 1]).range(['#FFFFFF', maxColor]);
           regionColor.push({
             start: d.start,
             end: d.end,
-            color: scale().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
+            color: d3Scale.scaleLinear().domain([0, alignment.nSeqs]).range([colorScale(0.5), maxColor])
           });
         }
       })

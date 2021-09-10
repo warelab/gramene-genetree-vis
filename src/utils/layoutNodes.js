@@ -1,11 +1,11 @@
-let scale = require('d3').scale.linear;
+let d3Scale = require('d3-scale');
 
 // https://gist.github.com/kueda/1036776#file-d3-phylogram-js-L175
 export default function layoutNodes(genetree, w, h) {
   const MIN_DIST = 0.05;
   const MAX_DIST = 2;
 
-  let xscale = scale()
+  let xscale = d3Scale.scaleLinear()
     .domain([genetree.minXindex, genetree.maxXindex])
     .range([0, h]);
 
@@ -25,7 +25,7 @@ export default function layoutNodes(genetree, w, h) {
       }
     }
   });
-  let yscale = scale()
+  let yscale = d3Scale.scaleLinear()
     .domain([0, maxExpandedDist])
     .range([0, w]);
 
