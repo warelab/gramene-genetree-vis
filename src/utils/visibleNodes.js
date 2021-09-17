@@ -103,6 +103,9 @@ export function setDefaultNodeDisplayInfo(genetree, geneOfInterest, expandRepres
 
   function pathIdsImpl(path) {
     let ids = _.get(geneOfInterest, path);
+    if (!ids) {
+      return null;
+    }
     ids.push(geneOfInterest._id);
     let nodes = _.map(ids, idToNode);
     return _.reduce(nodes, nodesToPathIds, {});
