@@ -17,7 +17,7 @@ export function makeCladeInvisible(node) {
 }
 function compressLongTaxonName(node) {
   const fullName = node.model.taxon_name;
-  const removedExtraineousWords = fullName.replace(/( Group$| subsp\.| var\.| strain)/, '');
+  const removedExtraineousWords = fullName.replace(/( Group$| subsp\.| ssp\.| var\.| strain)/, '');
   let finalVersion;
   if (removedExtraineousWords.length > 20) {
     let words = removedExtraineousWords.split(' ');
