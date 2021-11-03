@@ -15,7 +15,28 @@ export function makeCladeVisible(node) {
 export function makeCladeInvisible(node) {
   node.walk(makeNodeInvisible);
 }
-
+function compressLongTaxonName(node) {
+  const fullName = node.model.taxon_name;
+  const removedExtraineousWords = fullName.replace(/( Group$| subsp\.| var\.| strain)/, '');
+  let finalVersion;
+  if (removedExtraineousWords.length > 20) {
+    let words = removedExtraineousWords.split(' ');
+    if (words.length === 2) {
+      // abrreviate first word.
+      finalVersion = removedExtraineousWords.replace(/^([A-Z])[a-z]+/, '$1.')
+    }
+    if (words.length > 2) {
+      finalVersion = removedExtraineousWords.replace(/^([A-Z])[a-z]+\s([a-z])[a-z]+/, '$1$2.')
+    }
+  }
+  else {
+    finalVersion = removedExtraineousWords;
+  }
+  node.model.taxon_name = finalVersion;
+}
+export function compressLongTaxonNames(node) {
+  node.walk(compressLongTaxonName);
+}
 export function calculateXIndex(genetree) {
   let visibleUnexpanded = []; // array of unexpanded nodes that are visible
 

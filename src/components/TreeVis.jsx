@@ -16,6 +16,7 @@ import layoutNodes from '../utils/layoutNodes';
 import {
   setDefaultNodeDisplayInfo,
   calculateXIndex,
+  compressLongTaxonNames,
   makeCladeVisible,
   makeCladeInvisible,
   makeNodeVisible,
@@ -173,7 +174,7 @@ export default class TreeVis extends React.Component {
     else {
       this.genetree = _.cloneDeep(this.props.genetree);
     }
-
+    compressLongTaxonNames(this.genetree);
     addConsensus(this.genetree); // TODO: use a promise
     relateGeneToTree(this.genetree, this.props.initialGeneOfInterest, this.props.taxonomy, this.props.pivotTree);
     if (this.props.enableCuration) {
