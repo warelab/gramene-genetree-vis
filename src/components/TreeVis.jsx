@@ -125,7 +125,7 @@ export default class TreeVis extends React.Component {
         {
           id: 'phyloview',
           label: 'Neighborhood conservation',
-          description: <div><b>Neighborhood conservation</b>: +/- 10 flanking genes color-coded by gene family.</div>,
+          description: <div><b>Neighborhood conservation</b>: +/- 10 genes flanking the gene of interest (top row) are color-coded by gene family.<br/>Gray genes are from other families. Central genes (green) are shaded based on similarity with gene of interest.</div>,
           getComponent: function (app) {
             if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
               return React.createElement(Phyloview, {
