@@ -2,9 +2,10 @@ import React from 'react';
 import _ from 'lodash';
 const shifty = {
   curate : 'okay',
-  okay : 'poor',
-  unclear: 'curate',
-  poor : 'unclear'
+  okay : 'flag',
+  // unclear: 'curate',
+  flag : 'curate'
+  // poor : 'unclear'
 };
 let reasons = [
   {
@@ -145,25 +146,25 @@ export default class Curation extends React.Component {
             const reason = this.state.reason[node.model.gene_stable_id] || 'none';
             const group = this.state.group[node.model.gene_stable_id] || 'none';
             let reasonSelect;
-            // if (opinion === 'flag') {
-            //   reasonSelect = (<span className='curation-reason'>
-            //     <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
-            //       {reasons.map((r,idx) => (
-            //         <option key={idx} value={r.name}>{r.label}</option>
-            //       ))}
-            //     </select>
-            //   </span>)
-            // }
-            let groupSelect;
-            if (opinion === 'unclear') {
-              groupSelect = (<span className='curation-group'>
-                <select value={group} name={node.model.gene_stable_id} onChange={(e) => this.changeGroup(e,node)}>
-                  {groups.map((g,idx) => (
-                    <option key={idx} value={g.name}>{g.label}</option>
+            if (opinion === 'flag') {
+              reasonSelect = (<span className='curation-reason'>
+                <select value={reason} name={node.model.gene_stable_id} onChange={(e) => this.changeReason(e,node)}>
+                  {reasons.map((r,idx) => (
+                    <option key={idx} value={r.name}>{r.label}</option>
                   ))}
                 </select>
               </span>)
             }
+            let groupSelect;
+            // if (opinion === 'unclear') {
+            //   groupSelect = (<span className='curation-group'>
+            //     <select value={group} name={node.model.gene_stable_id} onChange={(e) => this.changeGroup(e,node)}>
+            //       {groups.map((g,idx) => (
+            //         <option key={idx} value={g.name}>{g.label}</option>
+            //       ))}
+            //     </select>
+            //   </span>)
+            // }
             return <foreignObject key={idx}
                                   x={10} y={node.x - 4}
                                   height={this.props.height}

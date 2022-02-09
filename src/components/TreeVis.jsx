@@ -425,8 +425,8 @@ export default class TreeVis extends React.Component {
           <b>Curate</b>: click to flag genes
           <div>
             &nbsp;<span className="curation okay">okay</span>
-            &nbsp;<span className="curation poor">poor</span>
-            &nbsp;<span className="curation unclear">unclear</span>
+            {/*&nbsp;<span className="curation poor">poor</span>*/}
+            &nbsp;<span className="curation unclear">flag</span>
           </div>
         </div>
         }

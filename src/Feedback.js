@@ -59,7 +59,8 @@ export default class Feedback extends React.Component {
 
   formIsValid() {
     let notCuratedYet = this.state.genes.filter(gene => gene.opinion === 'curate');
-    let missingReasons = this.state.genes.filter(gene => gene.opinion === 'unclear' && (!gene.reason || gene.reason === 'none'));
+    // let missingReasons = this.state.genes.filter(gene => gene.opinion === 'unclear' && (!gene.reason || gene.reason === 'none'));
+    let missingReasons = this.state.genes.filter(gene => gene.opinion === 'flag' && (!gene.reason || gene.reason === 'none'));
     return this.validateField('email') === 'success' && notCuratedYet.length === 0 && missingReasons.length === 0
   }
 
@@ -92,10 +93,10 @@ export default class Feedback extends React.Component {
                 <Col sm={10}>
                   <span className="curation curate">curate</span>&nbsp;{tally.curate}&nbsp;
                   <span className="curation okay">okay</span>&nbsp;{tally.okay}&nbsp;
-                  <span className="curation poor">poor</span>&nbsp;{tally.poor}&nbsp;
-                  <span className="curation unclear">unclear</span>&nbsp;{tally.unclear}&nbsp;
-                  <span className="curation noGroup">missing group</span>&nbsp;{tally.noGroup}&nbsp;
-                  {/*<span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;*/}
+                  <span className="curation unclear">flag</span>&nbsp;{tally.flag}&nbsp;
+                  {/*<span className="curation unclear">unclear</span>&nbsp;{tally.unclear}&nbsp;*/}
+                  {/*<span className="curation noGroup">missing group</span>&nbsp;{tally.noGroup}&nbsp;*/}
+                  <span className="curation noReason">missing reason</span>&nbsp;{tally.noReason}&nbsp;
                 </Col>
               </Form.Group>
               <Form.Group controlId="email">

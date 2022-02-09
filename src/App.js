@@ -36,8 +36,8 @@ function getTaxonomyLUT() {
 }
 
 const defaults = {
-  gene: "AT1G13740",
-  genetree: "SORGHUM1GT_177574"
+  gene: "Os08g0531600",
+  genetree: "ORYZA3GT_150771"
 };
 
 class App extends Component {
@@ -46,11 +46,28 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        4558: 'BTx623 (JGI)',
-        1000651496: 'Rio',
-        1000656001: 'TX2783',
-        1000561071: 'RTx436',
-        1000655996: 'RTx430'
+        39947: 'Oryza sativa Japonica',
+        1736659: 'Oryza sativa aus cA1 var. N22',
+        39946000: 'Oryza sativa indica 93-11',
+        39947002: 'Oryza sativa indica cB var. Os117425',
+        39947003: 'Oryza sativa indica XI-2B var. Os125619',
+        39947004: 'Oryza sativa indica XI-3B2 var. Os125827',
+        39947005: 'Oryza sativa indica XI-3B1 var. Os127518',
+        39947006: 'Oryza sativa indica XI-3A var. Os127564',
+        39947007: 'Oryza sativa aus cA2 var. Os127652',
+        39947008: 'Oryza sativa indica XI-1B2 var. Os127742',
+        39947009: 'Oryza sativa japonica GJ-trop2 var. Os128077',
+        39947010: 'Oryza sativa japonica GJ-subtrp var. Os132278',
+        39947011: 'Oryza sativa indica XI-2A var. Os132424',
+        39947001: 'Oryza sativa japonica GJ-trop1 var. Azucena',
+        39947012: 'Oryza sativa indica XI-1B1 var. IR64',
+        399470014: 'Oryza sativa indica XI-adm var MH63',
+        399470015: 'Oryza sativa indica XI-1A var ZS97'
+        // 4558: 'BTx623 (JGI)',
+        // 1000651496: 'Rio',
+        // 1000656001: 'TX2783',
+        // 1000561071: 'RTx436',
+        // 1000655996: 'RTx430'
         // 29760: 'grapevine',
         // 297600000: 'PN'
       },
