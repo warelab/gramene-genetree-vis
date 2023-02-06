@@ -47,7 +47,9 @@ export default class Feedback extends React.Component {
 
   submitForm() {
     let that = this;
-    axios.post('/curate',this.state)
+    let formData = _.cloneDeep(this.state);
+    formData.genes = formData.genes.filter(gene => gene.opinion !== 'curate');
+    axios.post('/curate', formData)
       .then(function (response) {
         that.setState({submittedForm: true, ticket: response.data.ticket});
       })
@@ -59,9 +61,13 @@ export default class Feedback extends React.Component {
 
   formIsValid() {
     let notCuratedYet = this.state.genes.filter(gene => gene.opinion === 'curate');
+    let curated = this.state.genes.filter(gene => gene.opinion !== 'curate');
     // let missingReasons = this.state.genes.filter(gene => gene.opinion === 'unclear' && (!gene.reason || gene.reason === 'none'));
     let missingReasons = this.state.genes.filter(gene => gene.opinion === 'flag' && (!gene.reason || gene.reason === 'none'));
-    return this.validateField('email') === 'success' && notCuratedYet.length === 0 && missingReasons.length === 0
+    // if we require all genes are curated
+    // return this.validateField('email') === 'success' && notCuratedYet.length === 0 && missingReasons.length === 0
+    // at least one gene was curated
+    return this.validateField('email') === 'success' && curated.length > 0// && missingReasons.length === 0
   }
 
   renderForm() {

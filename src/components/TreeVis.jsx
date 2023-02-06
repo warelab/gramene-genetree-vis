@@ -180,8 +180,9 @@ export default class TreeVis extends React.Component {
     if (this.props.enableCuration) {
       setDefaultNodeDisplayInfo(this.genetree, this.props.initialGeneOfInterest, false);
       let curatable = this.props.curatable;
+      const goi_tax = this.props.initialGeneOfInterest.taxon_id;
       this.genetree.walk(function (node) {
-        if (curatable.hasOwnProperty(node.model.taxon_id)) {
+        if ((curatable.hasOwnProperty('all') && node.model.cigar) || curatable.hasOwnProperty(node.model.taxon_id)) {
           let parentNode = node.parent;
           while (!parentNode.displayInfo.expanded) {
             parentNode.displayInfo.expanded = true;

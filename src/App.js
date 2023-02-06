@@ -8,6 +8,7 @@ import TreeVis from './components/TreeVis.jsx';
 import Feedback from './Feedback';
 import {client as searchInterface} from "gramene-search-client";
 import queryString from 'query-string';
+import Accordion from 'react-bootstrap/Accordion';
 // import Q from "q";
 import _ from "lodash";
 // import GrameneTreesClient from "gramene-trees-client";
@@ -36,8 +37,8 @@ function getTaxonomyLUT() {
 }
 
 const defaults = {
-  gene: "Os08g0531600",
-  genetree: "ORYZA3GT_150771"
+  gene: "Os04g0447100",
+  genetree: "ORYZA4GT_273232"
 };
 
 class App extends Component {
@@ -46,29 +47,39 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
+        'all':'yep',
         39947: 'Oryza sativa Japonica',
-        1736659: 'Oryza sativa aus cA1 var. N22',
-        39946000: 'Oryza sativa indica 93-11',
-        39947002: 'Oryza sativa indica cB var. Os117425',
-        39947003: 'Oryza sativa indica XI-2B var. Os125619',
-        39947004: 'Oryza sativa indica XI-3B2 var. Os125827',
-        39947005: 'Oryza sativa indica XI-3B1 var. Os127518',
-        39947006: 'Oryza sativa indica XI-3A var. Os127564',
-        39947007: 'Oryza sativa aus cA2 var. Os127652',
-        39947008: 'Oryza sativa indica XI-1B2 var. Os127742',
-        39947009: 'Oryza sativa japonica GJ-trop2 var. Os128077',
-        39947010: 'Oryza sativa japonica GJ-subtrp var. Os132278',
-        39947011: 'Oryza sativa indica XI-2A var. Os132424',
-        39947001: 'Oryza sativa japonica GJ-trop1 var. Azucena',
-        39947012: 'Oryza sativa indica XI-1B1 var. IR64',
-        399470014: 'Oryza sativa indica XI-adm var MH63',
-        399470015: 'Oryza sativa indica XI-1A var ZS97'
+        // 1736659: 'Oryza sativa aus cA1 var. N22',
+        // 39946000: 'Oryza sativa indica 93-11',
+        // 39947002: 'Oryza sativa indica cB var. Os117425',
+        // 39947003: 'Oryza sativa indica XI-2B var. Os125619',
+        // 39947004: 'Oryza sativa indica XI-3B2 var. Os125827',
+        // 39947005: 'Oryza sativa indica XI-3B1 var. Os127518',
+        // 39947006: 'Oryza sativa indica XI-3A var. Os127564',
+        // 39947007: 'Oryza sativa aus cA2 var. Os127652',
+        // 39947008: 'Oryza sativa indica XI-1B2 var. Os127742',
+        // 39947009: 'Oryza sativa japonica GJ-trop2 var. Os128077',
+        // 39947010: 'Oryza sativa japonica GJ-subtrp var. Os132278',
+        // 39947011: 'Oryza sativa indica XI-2A var. Os132424',
+        // 39947001: 'Oryza sativa japonica GJ-trop1 var. Azucena',
+        // 39947012: 'Oryza sativa indica XI-1B1 var. IR64',
+        // 39947014: 'Oryza sativa indica XI-adm var MH63',
+        // 39947015: 'Oryza sativa indica XI-1A var ZS97',
+        // 39947016: 'Oryza sativa japonica KitaakeX'
         // 4558: 'BTx623 (JGI)',
         // 1000651496: 'Rio',
         // 1000656001: 'TX2783',
         // 1000561071: 'RTx436',
         // 1000655996: 'RTx430'
-        // 29760: 'grapevine',
+        // 297600000: 'grapevine'
+        45580014: 1,
+        45580015: 1,
+        // 45580003: 1,
+        // 1000651496: 1,
+        1000656001: 1,
+        1000655996: 1,
+        1000561071: 1,
+        4558: 1
         // 297600000: 'PN'
       },
       submission: []
@@ -84,7 +95,7 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let set = parsed.set || 'vitis1';
+    let set = parsed.set || 'vitis3';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
     if (parsed.since) {
@@ -171,7 +182,7 @@ class App extends Component {
               }
             }
             let submission = genetree.leafNodes()
-                .filter(node => this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
+                .filter(node => this.state.curatableGenomes.hasOwnProperty('all') || this.state.curatableGenomes.hasOwnProperty(node.model.taxon_id))
                 .map(node => {
                   return {geneId: node.model.gene_stable_id, opinion: 'curate'}
                 });
@@ -207,7 +218,16 @@ class App extends Component {
       const descr = (goi.name !== d) ? (<span>Description: <b>{d}</b>.</span>) : '';
       geneInfo = (<div style={{border: '4px solid black', padding:20, margin: 20}}>
         <p>This is the gene tree containing <b>{goi._id}</b>. {name} {descr}</p>
-        <p>Mark genes as okay or flag genes that you think might have issues and choose a reason from the drop down menu. When finished, enter your email address and submit.</p>
+        <Accordion defaultActiveKey="0">
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>Curation Instructions</Accordion.Header>
+            <Accordion.Body>
+              <p>Mark genes as okay or flag genes that you think might have issues and choose a reason from the drop down menu. When finished, enter your email address and submit.</p>
+              <p>The reason for flagging a gene model is optional, but you may indicate whether there is a gain (G), loss (L) or no change (_) in the beginning, middle, and end of the gene model.</p>
+              <p>For example <code>L,_,_</code> means there is a loss at the 5' end.</p>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
       </div>);
       treeVis = <TreeVis genetree={this.state.genetree}
                          initialGeneOfInterest={this.state.geneOfInterest}
@@ -220,7 +240,7 @@ class App extends Component {
                          pivotTree={true}
                          enablePhyloview={true}
                          enableCuration={true}
-                         ensemblUrl='http://vitis-ensembl.gramene.org'
+                         ensemblUrl='https://oryza-ensembl.gramene.org'
                          numberOfNeighbors={10}
                          getCuration={this.getCuration.bind(this)}
       />;

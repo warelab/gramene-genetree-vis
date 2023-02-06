@@ -81,7 +81,7 @@ export default class Curation extends React.Component {
     let reason=[];
     let group=[];
     props.nodes.forEach((node) => {
-      if (node.model.gene_stable_id && props.curatable[node.model.taxon_id]) {
+      if (node.model.gene_stable_id && (props.curatable.all || props.curatable[node.model.taxon_id])) {
         opinion[node.model.gene_stable_id] = "curate";
         reason[node.model.gene_stable_id] = "none";
         group[node.model.gene_stable_id] = "none";
@@ -96,7 +96,7 @@ export default class Curation extends React.Component {
       let doUpdate = false;
       nextProps.nodes.forEach((node) => {
         const id = node.model.gene_stable_id;
-        if (id && !this.state.opinion[id] && nextProps.curatable[node.model.taxon_id]) {
+        if (id && !this.state.opinion[id] && (nextProps.curatable.all || nextProps.curatable[node.model.taxon_id])) {
           opinion[id] = "curate";
           // doUpdate = true;
         }
@@ -141,7 +141,7 @@ export default class Curation extends React.Component {
       <g className="curation-wrapper"
          transform={`translate(${this.props.xOffset},${this.props.yOffset})`}>
         { this.props.nodes.map((node,idx) => {
-          if (node.model.gene_stable_id && this.props.curatable[node.model.taxon_id]) {
+          if (node.model.gene_stable_id && (this.props.curatable.all || this.props.curatable[node.model.taxon_id])) {
             const opinion = this.state.opinion[node.model.gene_stable_id];
             const reason = this.state.reason[node.model.gene_stable_id] || 'none';
             const group = this.state.group[node.model.gene_stable_id] || 'none';
