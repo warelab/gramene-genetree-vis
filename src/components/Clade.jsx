@@ -147,8 +147,8 @@ export default class Clade extends React.Component {
       // <Overlay show={this.state.popoverVisible}
       //          target={this.cladeRef.current}>
         <Popover id={id}>
-          <Popover.Title>{title}</Popover.Title>
-          <Popover.Content>
+          <Popover.Header>{title}</Popover.Header>
+          <Popover.Body>
             <NodePopover node={node}
                          collapseClade={this.collapseClade.bind(this)}
                          expandClade={this.expandClade.bind(this)}
@@ -156,7 +156,7 @@ export default class Clade extends React.Component {
                          changeGeneOfInterest={this.changeGeneOfInterest.bind(this)}
                          geneDocs={geneDocs}
             />
-          </Popover.Content>
+          </Popover.Body>
         </Popover>
       // </Overlay>
     );
