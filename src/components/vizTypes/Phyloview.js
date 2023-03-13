@@ -1,5 +1,5 @@
 import React from 'react';
-import PositionedNeighborhood from '../PositionedNeighborhood.jsx';
+import PositionedNeighborhood from '../PositionedNeighborhood.js';
 // import interact from 'interact.js';
 
 var d3Scale = require('d3-scale');

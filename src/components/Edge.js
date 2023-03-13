@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import microsoftBrowser from '../utils/microsoftBrowser';
 import taxonomyColor from '../utils/taxonomyColor';
-import Internal from './nodeTypes/Internal.jsx';
+import Internal from './nodeTypes/Internal.js';
 let defaultXAdjust = Internal.xy;
 
 // see CSS selector ".node:hover .internal"

@@ -1,6 +1,6 @@
 import React from 'react';
 import microsoftBrowser from '../utils/microsoftBrowser';
-import Neighborhood from './Neighborhood.jsx';
+import Neighborhood from './Neighborhood.js';
 
 export default class PositionedNeighborhood extends React.Component {
   constructor(props) {

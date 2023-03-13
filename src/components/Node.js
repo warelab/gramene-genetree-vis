@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Collapsed from './nodeTypes/Collapsed.jsx';
-import Internal from './nodeTypes/Internal.jsx';
-import Gene from './nodeTypes/Gene.jsx';
+import Collapsed from './nodeTypes/Collapsed.js';
+import Internal from './nodeTypes/Internal.js';
+import Gene from './nodeTypes/Gene.js';
 
 const Node = props => {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Clade from './Clade.jsx';
+import Clade from './Clade.js';
 
 const GeneTree = props => {
   return (

@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
-import ExonJunctions from './ExonJunctions.jsx';
+import Alignment from './Alignment.js';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
-export default class PositionedExonJunctions extends Component {
+export default class PositionedAlignment extends Component {
   // props: {
   //   id: React.PropTypes.number.isRequired,
   //   node: React.PropTypes.object.isRequired,
   //   width: React.PropTypes.number.isRequired,
+  //   stats: React.PropTypes.object.isRequired,
+  //   highlight: React.PropTypes.string.isRequired,
+  //   domains: React.PropTypes.object.isRequired,
   //   alignment: React.PropTypes.object.isRequired
   // }
-  //
+
   constructor(props) {
     super(props);
     this.state = {};
@@ -21,7 +24,7 @@ export default class PositionedExonJunctions extends Component {
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x - 2;
+    y = this.props.node.x;// - 7;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   }
@@ -37,8 +40,9 @@ export default class PositionedExonJunctions extends Component {
 
     return (
       <g {...props}>
-        <ExonJunctions width={this.props.width} node={this.props.node} alignment={this.props.alignment} />
+        <Alignment width={this.props.width} node={this.props.node} highlight={this.props.highlight} stats={this.props.stats} domains={this.props.domains} alignment={this.props.alignment} />
       </g>
     )
   }
 };
+

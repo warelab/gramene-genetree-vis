@@ -1,6 +1,6 @@
 import React from 'react'; // This var is required after JSX->JS transpile.
 import ReactDOM from 'react-dom';
-import TreeVis from './src/components/TreeVis.jsx';
+import TreeVis from './src/components/TreeVis.js';
 
 let geneFixture = require('./fixtures/maize_waxy_gene.json');
 

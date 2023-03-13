@@ -4,7 +4,7 @@ import './styles/msa.css';
 import './styles/tree.css';
 import './styles/spinner.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import TreeVis from './components/TreeVis.jsx';
+import TreeVis from './components/TreeVis.js';
 import Feedback from './Feedback';
 import {client as searchInterface} from "gramene-search-client";
 import queryString from 'query-string';

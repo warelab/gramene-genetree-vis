@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import Alignment from './Alignment.jsx';
+import Domains from './Domains.js';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
-export default class PositionedAlignment extends Component {
+class PositionedDomains extends Component {
   // props: {
   //   id: React.PropTypes.number.isRequired,
   //   node: React.PropTypes.object.isRequired,
   //   width: React.PropTypes.number.isRequired,
   //   stats: React.PropTypes.object.isRequired,
-  //   highlight: React.PropTypes.string.isRequired,
   //   domains: React.PropTypes.object.isRequired,
   //   alignment: React.PropTypes.object.isRequired
   // }
@@ -24,7 +23,7 @@ export default class PositionedAlignment extends Component {
     px = isStyle ? 'px' : '';
 
     x = 0;
-    y = this.props.node.x;// - 7;
+    y = this.props.node.x - 2;
 
     return 'translate(' + x + px + ', ' + y + px + ')';
   }
@@ -40,9 +39,10 @@ export default class PositionedAlignment extends Component {
 
     return (
       <g {...props}>
-        <Alignment width={this.props.width} node={this.props.node} highlight={this.props.highlight} stats={this.props.stats} domains={this.props.domains} alignment={this.props.alignment} />
+        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} domains={this.props.domains} />
       </g>
     )
   }
 };
 
+export default PositionedDomains;

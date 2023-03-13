@@ -7,10 +7,10 @@ import microsoftBrowser from '../utils/microsoftBrowser';
 
 import {OverlayTrigger, Popover, Button} from "react-bootstrap";
 
-import NodePopover from './NodePopover.jsx';
+import NodePopover from './NodePopover.js';
 
-import Edge from './Edge.jsx';
-import Node from './Node.jsx';
+import Edge from './Edge.js';
+import Node from './Node.js';
 
 export default class Clade extends React.Component {
 

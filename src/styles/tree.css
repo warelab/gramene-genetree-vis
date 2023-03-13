@@ -1,9 +1,9 @@
-/* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
+/* see src/components/Edge.js#HOVER_SCALE_FACTOR (currently line 8) */
 .display-mode .btn-toolbar {
   position: absolute;
 }
 .genetree-vis {
-  /* see src/components/Edge.jsx#HOVER_SCALE_FACTOR (currently line 8) */
+  /* see src/components/Edge.js#HOVER_SCALE_FACTOR (currently line 8) */
 }
 .genetree-vis .node,
 .genetree-vis .edge {

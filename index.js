@@ -1,1 +1,1 @@
-module.exports = require('./src/components/TreeVis.jsx');
+module.exports = require('./src/components/TreeVis.js');

@@ -1,17 +1,15 @@
 import React, {Component} from 'react';
-import Domains from './Domains.jsx';
+import ExonJunctions from './ExonJunctions.js';
 var microsoftBrowser = require('../utils/microsoftBrowser');
 
-class PositionedDomains extends Component {
+export default class PositionedExonJunctions extends Component {
   // props: {
   //   id: React.PropTypes.number.isRequired,
   //   node: React.PropTypes.object.isRequired,
   //   width: React.PropTypes.number.isRequired,
-  //   stats: React.PropTypes.object.isRequired,
-  //   domains: React.PropTypes.object.isRequired,
   //   alignment: React.PropTypes.object.isRequired
   // }
-
+  //
   constructor(props) {
     super(props);
     this.state = {};
@@ -39,10 +37,8 @@ class PositionedDomains extends Component {
 
     return (
       <g {...props}>
-        <Domains stats={this.props.stats} width={this.props.width} node={this.props.node} domains={this.props.domains} />
+        <ExonJunctions width={this.props.width} node={this.props.node} alignment={this.props.alignment} />
       </g>
     )
   }
 };
-
-export default PositionedDomains;
