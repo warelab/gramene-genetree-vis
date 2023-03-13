@@ -75,7 +75,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'domains',
         label: 'Alignment overview',
-        description: (<div><b>Alignment overview</b>: Proteins color-coded by InterPro domain. Resize slider to navigate.</div>),
+        description: 'Proteins color-coded by InterPro domain. Resize slider to navigate.',
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSAOverview, {
@@ -98,7 +98,7 @@ export default class TreeVis extends React.Component {
       {
         id: 'msa',
         label: 'Multiple Sequence Alignment',
-        description: <div><b>Multiple Sequence Alignment</b>: Amino acid MSA. Drag slider to reposition.</div>,
+        description: 'Amino acid MSA. Drag slider to reposition.',
         getComponent: function(app) {
           if (app.geneTreeRoot && app.state.visibleNodes && app.vizWidth && app.domainStats) {
             return React.createElement(MSASequence, {
@@ -125,7 +125,7 @@ export default class TreeVis extends React.Component {
         {
           id: 'phyloview',
           label: 'Neighborhood conservation',
-          description: <div><b>Neighborhood conservation</b>: +/- 10 genes flanking the gene of interest (top row) are color-coded by gene family. Gray genes are from other families. Central genes (green) are shaded based on similarity with gene of interest.</div>,
+          description: '+/- 10 genes flanking the gene of interest (top row) are color-coded by gene family. Gray genes are from other families. Central genes (green) are shaded based on similarity with gene of interest.',
           getComponent: function (app) {
             if (app.state.visibleNodes && app.state.neighborhoods && app.vizWidth) {
               return React.createElement(Phyloview, {
@@ -419,7 +419,7 @@ export default class TreeVis extends React.Component {
            {this.colorSchemeDropdown()}
         </ButtonToolbar>
         <span style={{'marginLeft': `${this.margin + this.treeWidth + this.labelWidth}px`, float:'left'}}>
-          {this.displayModeIdx[activeMode].description}
+          <b>{this.displayModeIdx[activeMode].label}: </b>{this.displayModeIdx[activeMode].description}
         </span>
         {this.props.enableCuration &&
         <div style={{position: 'absolute', left:`${this.margin + this.treeWidth + this.labelWidth + this.vizWidth}px`}}>
