@@ -65,11 +65,21 @@ class App extends Component {
     let set = parsed.set || 'maize_v3';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
-    if (parsed.since) {
-      orthologsSince = {};
-      orthologsSince[parsed.since] = 'keep';
-    }
     taxonomyPromise.then(function (taxonomy) {
+      if (parsed.since) {
+        orthologsSince = {};
+        parsed.since.split(',').forEach(id => {
+          orthologsSince[id] = 'keep';
+          // also include ancestor nodes
+          if (taxonomy.indices.id[id]) {
+            let node = taxonomy.indices.id[id];
+            while (node.parent) {
+              node = node.parent;
+              orthologsSince[node.model.id] = 'keep'
+            }
+          }
+        });
+      }
       let genomesOfInterest = {
         3702:1,
         15368:1,
