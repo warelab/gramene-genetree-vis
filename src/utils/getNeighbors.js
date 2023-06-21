@@ -219,20 +219,27 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
 }
 
 function reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand(neighborhoodsAndFacets) {
+  let oriented = {};
   let neighborhoods = neighborhoodsAndFacets.neighborhoods.map( (neighborhood) => {
     const {genes, center_idx} = neighborhood;
     const centerGenes = genes[center_idx];
     centerGenes.relationToGeneOfInterest = neighborhood.center_relationToGeneOfInterest;
-    if(centerGenes.orientation === '-') {
-      // genes.reverse();
-      genes.forEach( (gene) => {
-        gene.orientation = gene.orientation === '-' ? '+' : '-';
-      });
-      // neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
-      neighborhood.strand = 'reverse';
+    if (!oriented[centerGenes.id]) {
+      if(centerGenes.orientation === '-') {
+        // genes.reverse();
+        genes.forEach( (gene) => {
+          gene.orientation = gene.orientation === '-' ? '+' : '-';
+        });
+        // neighborhood.center_idx = (genes.length - 1) - neighborhood.center_idx;
+        neighborhood.strand = 'reverse';
+      }
+      else {
+        neighborhood.strand = 'forward';
+      }
+      genes.forEach( (gene) => oriented[gene.id]=neighborhood.strand );
     }
     else {
-      neighborhood.strand = 'forward';
+      neighborhood.strand = oriented[centerGenes.id];
     }
     return neighborhood;
   });
@@ -263,7 +270,7 @@ export default function getNeighborhood(genetree, numberOfNeighbors, genomesOfIn
         id: n.model.gene_stable_id,
         relationToGeneOfInterest: n.relationToGeneOfInterest
       }
-    })
+    }).sort((a,b) => b.relationToGeneOfInterest.identity - a.relationToGeneOfInterest.identity )
   ])
     .spread(groupGenesIntoNeighborhoods)
     .then(reverseNeigborhoodsIfGeneOfInterestOnNegativeStrand);

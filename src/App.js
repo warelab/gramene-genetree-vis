@@ -47,7 +47,11 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        'all':'yep'
+        '45580014':'leoti',
+        '1000656001':'2783',
+        '4558':'btx623 v3',
+        '4558001':'btx623 v5.1'
+        // 'all':'yep'
       },
       submission: []
     }
