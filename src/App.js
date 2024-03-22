@@ -37,8 +37,10 @@ function getTaxonomyLUT() {
 }
 
 const defaults = {
-  gene: "Zm00001eb081610",
-  genetree: "MAIZE3GT_424228"
+  Sb_gene: "SORBI_3006G095600",
+  Os_gene: "Os03g0307200",
+  Vv_gene: "Vitvi01g00234",
+  gene: "Zm00001eb206040"
 };
 
 class App extends Component {
@@ -47,11 +49,12 @@ class App extends Component {
     this.myRef = React.createRef();
     this.state = {
       curatableGenomes: {
-        '45580014':'leoti',
-        '1000656001':'2783',
-        '4558':'btx623 v3',
-        '4558001':'btx623 v5.1'
-        // 'all':'yep'
+        // '45580014':'leoti',
+        // '1000656001':'2783',
+        // '4558':'btx623 v3',
+        // '4558001':'btx623 v5.1'
+        // '39947':'Os. Japonica Nipponbare',
+        'all':'yep'
       },
       submission: []
     }
@@ -66,7 +69,7 @@ class App extends Component {
     if (!parsed.gene) {
       parsed.gene = defaults.gene;
     }
-    let set = parsed.set || 'maize_v3';
+    let set = parsed.set || 'maize_v4';
     let taxonomyPromise = GrameneTrees.promise.get();
     let orthologsSince=undefined;
     taxonomyPromise.then(function (taxonomy) {
@@ -85,40 +88,43 @@ class App extends Component {
         });
       }
       let genomesOfInterest = {
-        3702:1,
-        15368:1,
-        3055:1,
-        3847:1,
-        39947:1,
-        88036:1,
-        4558:1,
-        29760:1,
-        4577:1,
+        3702001:1,
+        39947001:1,
+        29760004:1,
+        29760007:1,
+        29760006:1,
+        29760008:1,
+        29760005:1,
+        754098001:1,
+        29760009:1,
+        29760010:1,
+        29760012:1,
+        754101001:1,
+        88036001:1,
+        29760011:1,
+        29760013:1,
+        756011001:1,
+        29760015:1,
+        29760014:1,
+        96939001:1,
+        103349001:1,
+        103352001:1,
+        3055001:1,
+        29760002:1,
+        29760021:1,
+        7227001:1,
+        29760001:1,
+        29760020:1,
+        4558001:1,
         4577001:1,
-        4577002:1,
-        4577003:1,
-        4577004:1,
-        4577005:1,
-        4577006:1,
-        4577007:1,
-        4577008:1,
-        4577009:1,
-        4577010:1,
-        4577011:1,
-        4577012:1,
-        4577013:1,
-        4577014:1,
-        4577015:1,
-        4577016:1,
-        4577017:1,
-        4577018:1,
-        4577019:1,
-        4577020:1,
-        4577021:1,
-        4577022:1,
-        4577023:1,
-        4577024:1,
-        4577025:1
+        29760019:1,
+        4081001:1,
+        29760016:1,
+        103353001:1,
+        3605001:1,
+        506485001:1,
+        103350001:1,
+        29760003:1
       };
       genomesOfInterest = {};
       let genePromise = details('genes', parsed.gene);
