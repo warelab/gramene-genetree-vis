@@ -56,7 +56,7 @@ function getLabelFields() {
   }
 }
 
-export default class TreeVis extends React.Component {
+class TreeVis extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -522,3 +522,5 @@ TreeVis.propTypes = {
   enablePhyloview: PropTypes.bool,
   ensemblUrl: PropTypes.string.isRequired
 };
+
+export default TreeVis;
