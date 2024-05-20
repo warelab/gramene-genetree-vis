@@ -3,7 +3,7 @@
   "version": "4.2.6",
   "main": "dist/index.js",
   "source": "src/components/TreeVis.js",
-  "description": "Visualize a genetree using d3",
+  "description": "Visualize a genetree using d3. t123",
   "repository": {
     "type": "git",
     "url": "git@github.com:warelab/gramene-genetree-vis.git"
