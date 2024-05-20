@@ -152,14 +152,11 @@ function groupGenesIntoNeighborhoods(centralGenes, allGenesAndFacets, color, num
         genes: [] // tbd
       };
       const idx = doc.gene_idx;
-      let first = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
-      let last = (idx > numberOfNeighbors) ? idx - numberOfNeighbors : 0;
-      // extend first and last to capture numberOfNeighbors compara genes
       const compara_idx = doc.compara_idx;
-      const first_compara = (compara_idx > numberOfNeighbors) ? compara_idx - numberOfNeighbors : 0;
-      const last_compara = compara_idx + numberOfNeighbors;
-      while (!!allGenes[first] && allGenes[first].compara_idx > first_compara) first--;
-      while (!!allGenes[last] && allGenes[last].compara_idx < last_compara) last++;
+      let first = idx-1;
+      while (allGenes[first] && allGenes[first].compara_idx + numberOfNeighbors >= compara_idx) first--;
+      let last = idx+1;
+      while (allGenes[last] && allGenes[last].compara_idx - numberOfNeighbors <= compara_idx) last++;
       for (let i = first; i <= last; i++) {
         if (!!allGenes[i]
           && allGenes[i].taxon_id === allGenes[idx].taxon_id
