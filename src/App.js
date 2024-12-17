@@ -142,7 +142,10 @@ class App extends Component {
               else if (node.taxon_id === 1100004558) {
                 node.taxon_name = "Sorghum bicolor"
               }
-              if (node.taxon_id === 297600009 && node.hasOwnProperty('children')) {
+              else if (node.taxon_id === 45580023 && node.hasOwnProperty('children')) {
+                node.taxon_name = "Sorghum bicolor"
+              }
+              else if (node.taxon_id === 297600009 && node.hasOwnProperty('children')) {
                 node.taxon_name = "Vitis vinifera"
               }
               if (node.hasOwnProperty('children')) {
